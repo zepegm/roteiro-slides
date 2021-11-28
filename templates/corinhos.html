@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.88.1">
+    <title>Abrir Músicas</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.1/examples/navbar-fixed/">
+
+    
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{ url_for('static', filename='stylesheets/bootstrap.min.css') }}" rel="stylesheet">
+
+    <style>
+      input[readonly].classname {
+        background-color:white;
+      }
+      div.filter-option {
+        max-height: 700px !important;
+        overflow-y: auto;
+      }
+    </style>
+
+    
+    <!-- Custom styles for this template -->
+    <link href="{{ url_for('static', filename='stylesheets/navbar-top-fixed.css') }}" rel="stylesheet">   
+    <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/Logo Colorido.png') }}">
+  </head>
+  
+  <body style="background-color: rgba(248, 249, 250, 0.726);">
+    
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{{ url_for('index') }}">
+      <img src="{{ url_for('static', filename='images/Logo ADCPTA.png') }}" width="25" height="30" class="d-inline-block align-top" alt="">
+      Roteiro
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <ul class="navbar-nav me-auto mb-2 mb-md-0">
+        <li class="nav-item">
+          <a class="nav-link" href="../abrirbiblia">Abrir Bíblia</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link " href="../abrirharpa">Abrir Harpa</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page"  href="../abrirslidemusica">Músicas</a>
+        </li>       
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<main class="container">
+  <div class="bg-light p-1 rounded">
+    <h1 class="display-5 text-center">Repertório musical da Igreja</h1>
+    <p class="lead text-center">Aqui serão separadas duas categorias, que são os Corinhos (Equipe de louvor, músicas congregacionais, etc...) e os Departamentos (músicas dos grupos).</p>
+    <p class="text-center {{ corstatus }}"><strong>{{ status }}</strong></p>
+    <form action="{{ url_for('abrirslidemusica') }}" method="post" autocomplete="off">
+      <div class="row g-2">
+        <div class="col-sm-3 col-sm-7">
+          <input class="form-control" id="pesquisa" type="text" placeholder="Pesquisa...">
+        </div>
+        <div class="col-md-1 align-self-end" style="width: 10%">
+          <label for="botao" class="form-label"></label>
+          <input type="submit" class="btn btn-md btn-primary" id="abrirSlide" name="abrirSlide" value="Abrir Slide(s)">
+        </div> 
+        <div class="col-sm-1 align-self-end" style="width: 10%">
+          <label for="limpar" class="form-label"></label>
+          <input type="button" class="btn btn-md btn-secondary" id="limpar" name="limpar" value="Limpar Tudo">
+        </div>
+        <div class="col-sm-2 align-self-end"> 
+          <div>
+          {% if noturno == 1 %}
+            <input type="checkbox" class="form-check-input" id="noturno" name="noturno" value="1" checked/> 
+          {% else %} 
+            <input type="checkbox" class="form-check-input" id="noturno" name="noturno" value="1"/>  
+          {% endif %}         
+          <label class="form-check-label" for="noturno">Modo Noturno</label>
+          </div>
+        </div> 
+        <hr class="my-4"/>                 
+        <div class="col-sm-6">
+            <h3>Equipe de louvor, corinhos, etc...</h3>
+            <ul class="list-group" id="listEL">
+
+              <div id="listhead{{ pastasEL[1]['nome'].replace(' ', '') }}" class="list-group-item border-0 text-secondary fw-bold" value="{{pastasEL[1]['total']}}"><hr>{{ pastasEL[1]['nome']}}</div>
+              {% for hino in listaEL[1] %}
+              <li class="list-group-item border-0">
+                <label>
+                  <input class="form-check-input me-1" type="checkbox" name="checkEL" data-pasta="{{ pastasEL[1]['nome'] }}" value="{{pastasEL[1]['dir']}}\{{ pastasEL[1]['nome'] }}\{{ hino }}">
+                  {{ hino[:-5] }}
+                </label>
+              </li>
+              {% endfor %}
+
+              <div id="listhead{{ pastasEL[2]['nome'].replace(' ', '') }}" class="list-group-item border-0 text-secondary fw-bold" value="{{pastasEL[2]['total']}}"><hr>{{ pastasEL[2]['nome']}}</div>
+              {% for hino in listaEL[2] %}
+              <li class="list-group-item border-0">
+                <label>
+                  <input class="form-check-input me-1" type="checkbox" name="checkEL" data-pasta="{{ pastasEL[2]['nome'] }}" value="{{pastasEL[2]['dir']}}\{{ pastasEL[2]['nome'] }}\{{ hino }}">
+                  {{ hino[:-5] }}
+                </label>
+              </li>
+              {% endfor %}
+
+              <div id="listhead{{ pastasEL[0]['nome'].replace(' ', '') }}" class="list-group-item border-0 text-secondary fw-bold" value="{{pastasEL[0]['total']}}"><hr>{{ pastasEL[0]['nome']}}</div>
+              {% for hino in listaEL[0] %}
+              <li class="list-group-item border-0">
+                <label>
+                  <input class="form-check-input me-1" type="checkbox" name="checkEL" data-pasta="{{ pastasEL[0]['nome'] }}" value="{{pastasEL[0]['dir']}}\{{ pastasEL[0]['nome'] }}\{{ hino }}">
+                  {{ hino[:-5] }}
+                </label>
+              </li>
+              {% endfor %}
+
+              <div id="listhead{{ pastasEL[3]['nome'].replace(' ', '') }}" class="list-group-item border-0 text-secondary fw-bold" value="{{pastasEL[3]['total']}}"><hr>{{ pastasEL[3]['nome']}}</div>
+              {% for hino in listaEL[3] %}
+              <li class="list-group-item border-0">
+                <label>
+                  <input class="form-check-input me-1" type="checkbox" name="checkEL" data-pasta="{{ pastasEL[3]['nome'] }}" value="{{pastasEL[3]['dir']}}\{{ pastasEL[3]['nome'] }}\{{ hino }}">
+                  {{ hino[:-5] }}
+                </label>
+              </li>
+              {% endfor %}
+
+              <div id="listhead{{ pastasEL[4]['nome'].replace(' ', '') }}" class="list-group-item border-0 text-secondary fw-bold" value="{{pastasEL[4]['total']}}"><hr>{{ pastasEL[4]['nome']}}</div>
+              {% for hino in listaEL[4] %}
+              <li class="list-group-item border-0">
+                <label>
+                  <input class="form-check-input me-1" type="checkbox" name="checkEL" data-pasta="{{ pastasEL[4]['nome'] }}" value="{{pastasEL[4]['dir']}}\{{ pastasEL[4]['nome'] }}\{{ hino }}">
+                  {{ hino[:-5] }}
+                </label>
+              </li>
+              {% endfor %}
+
+            </ul>
+            
+        </div>   
+        <div class="col-sm-6">
+          <h3>Departamentos (Letras)</h3>
+          <ul class="list-group" id="listDP">
+
+            <div id="listhead{{ pastasDP[4]['nome'].replace(' ', '') }}" class="list-group-item border-0 text-secondary fw-bold" value="{{pastasDP[4]['total']}}"><hr>{{ pastasDP[4]['nome']}}</div>
+            {% for hino in listaDP[4] %}
+            <li class="list-group-item border-0">
+              <label>
+                <input class="form-check-input me-1" type="checkbox" name="checkDP" data-pasta="{{ pastasDP[4]['nome'] }}" value="{{pastasDP[4]['dir']}}\{{ pastasDP[4]['nome'] }}\{{ hino }}">
+                {{ hino[:-5] }}
+              </label>
+            </li>
+            {% endfor %}
+
+            <div id="listhead{{ pastasDP[6]['nome'].replace(' ', '') }}" class="list-group-item border-0 text-secondary fw-bold" value="{{pastasDP[6]['total']}}"><hr>{{ pastasDP[6]['nome']}}</div>
+            {% for hino in listaDP[6] %}
+            <li class="list-group-item border-0">
+              <label>
+                <input class="form-check-input me-1" type="checkbox" name="checkDP" data-pasta="{{ pastasDP[6]['nome'] }}" value="{{pastasDP[6]['dir']}}\{{ pastasDP[6]['nome'] }}\{{ hino }}">
+                {{ hino[:-5] }}
+              </label>
+            </li>
+            {% endfor %}
+
+            <div id="listhead{{ pastasDP[0]['nome'].replace(' ', '') }}" class="list-group-item border-0 text-secondary fw-bold" value="{{pastasDP[0]['total']}}"><hr>{{ pastasDP[0]['nome']}}</div>
+            {% for hino in listaDP[0] %}
+            <li class="list-group-item border-0">
+              <label>
+                <input class="form-check-input me-1" type="checkbox" name="checkDP" data-pasta="{{ pastasDP[0]['nome'] }}" value="{{pastasDP[0]['dir']}}\{{ pastasDP[0]['nome'] }}\{{ hino }}">
+                {{ hino[:-5] }}
+              </label>
+            </li>
+            {% endfor %}
+            
+            <div id="listhead{{ pastasDP[3]['nome'].replace(' ', '') }}" class="list-group-item border-0 text-secondary fw-bold" value="{{pastasDP[3]['total']}}"><hr>{{ pastasDP[3]['nome']}}</div>
+            {% for hino in listaDP[3] %}
+            <li class="list-group-item border-0">
+              <label>
+                <input class="form-check-input me-1" type="checkbox" name="checkDP" data-pasta="{{ pastasDP[3]['nome'] }}" value="{{pastasDP[3]['dir']}}\{{ pastasDP[3]['nome'] }}\{{ hino }}">
+                {{ hino[:-5] }}
+              </label>
+            </li>
+            {% endfor %}
+
+            <div id="listhead{{ pastasDP[7]['nome'].replace(' ', '') }}" class="list-group-item border-0 text-secondary fw-bold" value="{{pastasDP[7]['total']}}"><hr>{{ pastasDP[7]['nome']}}</div>
+            {% for hino in listaDP[7] %}
+            <li class="list-group-item border-0">
+              <label>
+                <input class="form-check-input me-1" type="checkbox" name="checkDP" data-pasta="{{ pastasDP[7]['nome'] }}" value="{{pastasDP[7]['dir']}}\{{ pastasDP[7]['nome'] }}\{{ hino }}">
+                {{ hino[:-5] }}
+              </label>
+            </li>
+            {% endfor %}
+
+            <div id="listhead{{ pastasDP[5]['nome'].replace(' ', '') }}" class="list-group-item border-0 text-secondary fw-bold" value="{{pastasDP[5]['total']}}"><hr>{{ pastasDP[5]['nome']}}</div>
+            {% for hino in listaDP[5] %}
+            <li class="list-group-item border-0">
+              <label>
+                <input class="form-check-input me-1" type="checkbox" name="checkDP" data-pasta="{{ pastasDP[5]['nome'] }}" value="{{pastasDP[5]['dir']}}\{{ pastasDP[5]['nome'] }}\{{ hino }}">
+                {{ hino[:-5] }}
+              </label>
+            </li>
+            {% endfor %} 
+
+            <div id="listhead{{ pastasDP[2]['nome'].replace(' ', '') }}" class="list-group-item border-0 text-secondary fw-bold" value="{{pastasDP[2]['total']}}"><hr>{{ pastasDP[2]['nome']}}</div>
+            {% for hino in listaDP[2] %}
+            <li class="list-group-item border-0">
+              <label>
+                <input class="form-check-input me-1" type="checkbox" name="checkDP" data-pasta="{{ pastasDP[2]['nome'] }}" value="{{pastasDP[2]['dir']}}\{{ pastasDP[2]['nome'] }}\{{ hino }}">
+                {{ hino[:-5] }}
+              </label>
+            </li>
+            {% endfor %}
+
+            
+          </ul>
+      </div>                            
+    </div>
+    </form>
+
+  </div>
+</main>
+
+    <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script> 
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    <script>
+      $(document).ready(function(){
+        const lipastasEL = JSON.parse('{{pastasEL|tojson}}');
+        const lipastasDP = JSON.parse('{{pastasDP|tojson}}');
+
+        //console.log($(".form-check-input[value*='Congregacionais']").length)
+
+        $("#pesquisa").on("keyup", function() {
+          var value = $(this).val().toLowerCase();
+          //$(".list-group-item").filter(function() {
+          $("#listEL li").filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1 || $(this).find("label").find("input").data("pasta").toLowerCase().indexOf(value) > -1);
+            //console.log($(this).find("label").find("input").data("pasta"))
+          });
+
+          $("#listDP li").filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1 || $(this).find("label").find("input").data("pasta").toLowerCase().indexOf(value) > -1);
+            //console.log($(this).find("label").find("input").data("pasta"))
+          });
+
+          for (let i = 0; i < lipastasEL.length; i++) {
+            $("#listhead" + lipastasEL[i].nome.replace(/\s/g, '')).toggle($(".form-check-input[data-pasta*='" + lipastasEL[i].nome + "']").length != $('li[style="display: none;"] label input[data-pasta*="' + lipastasEL[i].nome + '"]').length)
+          }
+
+          for (let i = 0; i < lipastasDP.length; i++) {
+            $("#listhead" + lipastasDP[i].nome.replace(/\s/g, '')).toggle($(".form-check-input[data-pasta*='" + lipastasDP[i].nome + "']").length != $('li[style="display: none;"] label input[data-pasta*="' + lipastasDP[i].nome + '"]').length)
+          }
+        });
+      });
+      </script>
+  </body>
+</html>

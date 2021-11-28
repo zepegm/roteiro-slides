@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.88.1">
+    <title>Abrir Harpa</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.1/examples/navbar-fixed/">
+
+    
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{ url_for('static', filename='stylesheets/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='stylesheets/bootstrapcustom.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='stylesheets/bootstrap-select.min.css') }}" rel="stylesheet">
+
+    <style>
+      input[readonly].classname {
+        background-color:white;
+      }
+    </style>
+
+    
+    <!-- Custom styles for this template -->
+    <link href="{{ url_for('static', filename='stylesheets/navbar-top-fixed.css') }}" rel="stylesheet">   
+    <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/Logo Colorido.png') }}">
+  </head>
+  
+  <body style="background-color: rgba(248, 249, 250, 0.726);">
+    
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{{ url_for('index') }}">
+      <img src="{{ url_for('static', filename='images/Logo ADCPTA.png') }}" width="25" height="30" class="d-inline-block align-top" alt="">
+      Roteiro
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <ul class="navbar-nav me-auto mb-2 mb-md-0">
+        <li class="nav-item">
+          <a class="nav-link" href="../abrirbiblia">Abrir Bíblia</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="../abrirharpa">Abrir Harpa</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="../abrirslidemusica">Músicas</a>
+        </li>       
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<main class="container">
+  <div class="bg-light p-1 rounded">
+    <h1 class="display-5 text-center">Abrir Slides Hinos da Harpa</h1>
+    <p class="lead text-center">Digite o números dos hinos, os separando com um ";" ou pesquise pelo nome no campo abaixo:</p>
+    <p class="text-center {{ corstatus }}"><strong>{{ status }}</strong></p>
+    <form action="{{ url_for('abrirharpa') }}" method="post" autocomplete="off">
+      <div class="row g-3">
+          <div class="col-sm-2 col-sm-5">
+            <label for="numero" class="form-label">Número do Hino:</label>
+            <input type="text" class="form-control numeric" id="numero" name="numero" placeholder="" value="" onkeypress='return event.charCode >= 48 && event.charCode <= 57 || event.charCode == 59' required/>
+            <div class="invalid-feedback">
+              Digite um número válido!
+            </div>           
+        </div>
+        <div class="col-sm-2 align-self-end">
+          <label for="botao" class="form-label"></label>
+          <input type="submit" class="btn btn-md btn-primary" id="abrirSlide" name="abrirSlide" value="Abrir Hino da Harpa">
+        </div> 
+        <div class="col-sm-2 align-self-end"> 
+          <div>
+          {% if noturno == 1 %}
+            <input type="checkbox" class="form-check-input" id="noturno" name="noturno" value="1" checked/> 
+          {% else %} 
+            <input type="checkbox" class="form-check-input" id="noturno" name="noturno" value="1"/>  
+          {% endif %}         
+          <label class="form-check-label" for="noturno">Modo Noturno</label>
+          </div>
+        </div>       
+      </div>      
+    </form>
+
+    <div class="row g-3">
+      <div class="col-sm-12 align-self-end">
+        <hr class="my-4"/>
+      </div>
+    </div>
+
+    <div class="row g-3" >
+      <div class="col-sm-2">
+        <select class="selectpicker" data-live-search="true" multiple title="Pesquisa..." id="listaharpa">
+          {% for row in listahinos %}
+            <option value="{{ row[0][5:9] }}" title="{{'H' + row[0][5:9] }}">{{ row[0] }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-sm-2">      
+        <label for="limpar" class="form-label"></label>
+        <input type="button" class="btn btn-md btn-secondary" id="limpar" name="limpar" value="Limpar Tudo">
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+    <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap-select.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.numeric.js') }}"></script>
+    <script type="text/javascript">
+      $('#listaharpa').change(function() {
+        let text = String($(this).val());
+        text = text.replace(/\s+/g, '');
+        let result = text.replace(/,/g, ';');
+        //console.log(result)
+        $("#numero").val(result)
+      });
+
+      $('#limpar').click(function() {
+        $("#numero").val("");
+        $("#listaharpa").val("");
+        $(".filter-option-inner-inner").text("Pesquisa...");
+        $(".btn").addClass('bs-placeholder');
+      });
+      </script>
+  </body>
+</html>
