@@ -18,7 +18,7 @@ from GeradorGraficos import salvarTudo
 app=Flask(__name__)
 app.secret_key = "abc123"
 
-diretorio = open('diretorio.ini', 'r', encoding='utf8').read()
+diretorio = os.path.expanduser('~') + r'\OneDrive - Secretaria da Educação do Estado de São Paulo\IGREJA'
 historico = os.path.expanduser('~') + r'\OneDrive - Secretaria da Educação do Estado de São Paulo\IGREJA\Historico.db'
 locale.setlocale(locale.LC_ALL, "")
 
