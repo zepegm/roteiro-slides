@@ -36,7 +36,7 @@ def salvarGrafico(lista, titulo, color, filename):
     plt.cla()
 
 
-def salavarTudo():
+def salvarTudo():
 
     historico = os.path.expanduser('~') + r'\OneDrive - Secretaria da Educação do Estado de São Paulo\IGREJA\Historico.db'
     biblia = executarConsultaGeral(historico, 'select Nome, count(Nome) as total from evento_roteiro where evento = 1 group by Nome order by total desc limit 0, 10')

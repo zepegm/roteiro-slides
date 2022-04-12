@@ -11,7 +11,7 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify
 from waitress import serve
 from math import ceil
 from datetime import date
-from GeradorGraficos import salavarTudo
+from GeradorGraficos import salvarTudo
 
 
 # vou ver se consigo abrir certinho
@@ -768,7 +768,7 @@ def novo_evento():
 
 @app.route('/estatisticas', methods=['GET', 'POST'])
 def estatisticas():
-    salavarTudo()
+    salvarTudo()
     return render_template('estatisticas.jinja')
 
 @app.route('/visualizar_roteiros', methods=['GET', 'POST'])
