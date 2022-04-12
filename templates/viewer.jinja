@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.88.1">
+    <title>Visualizar Bíblia</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{ url_for('static', filename='stylesheets/bootstrap.min.css') }}" rel="stylesheet">
+
+    <style>
+      input[readonly].classname {
+        background-color:white;
+      }
+
+      /* The search field */
+      #myInput {
+        box-sizing: border-box;
+        background-image: url("{{ url_for('static', filename='images/searchicon.png') }}");
+        background-position: 14px 12px;
+        background-repeat: no-repeat;
+        font-size: 16px;
+        padding: 14px 20px 12px 45px;
+        border: none;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .menu-title {
+        padding: 5px 10px;
+        font-weight: bold;
+      }
+
+      .nd {
+        font-variant: small-caps;
+      }
+
+      .add {
+        font-style: italic;
+      }
+
+      .sc {
+        font-variant: small-caps;
+      }
+
+      .heading {
+        font-weight: bold;
+      }
+
+      .wj {
+        color: red;
+      }
+      .categoria{
+        background-color: rgb(0, 0, 0, 0);
+      }
+
+      .livro {
+        font-weight: bold;
+        font-size: large;
+        text-align: center;
+      }
+
+      .capitulo {
+        font-weight: bold;
+        font-size: large;
+        text-align: center;
+      } 
+
+      .highlight {
+        background-color: yellow;
+      }      
+    </style>
+
+    
+    <!-- Custom styles for this template -->
+    <link href="{{ url_for('static', filename='stylesheets/navbar-top-fixed.css') }}" rel="stylesheet">   
+    <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/Logo Colorido.png') }}">
+  </head>
+  
+  <body style="background-color: rgba(248, 249, 250, 0.726);">
+    
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{{ url_for('index') }}">
+      <img src="{{ url_for('static', filename='images/Logo ADCPTA.png') }}" width="25" height="30" class="d-inline-block align-top" alt="">
+      Roteiro
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <ul class="navbar-nav me-auto mb-2 mb-md-0">
+        <a href="#" class="nav-item">
+          <a class="nav-link" href="../abrirbiblia">Abrir Bíblia</a>
+        </a>
+        <a href="#" class="nav-item">
+          <a class="nav-link " href="../abrirharpa">Abrir Harpa</a>
+        </a>
+        <a href="#" class="nav-item">
+          <a class="nav-link" href="../abrirslidemusica">Músicas</a>
+        </a>   
+        <a href="#" class="nav-item">
+          <a class="nav-link" href="../apresentador">Apresentador</a>
+        </a>
+        <a href="#" class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#">Visualizador</a>
+        </a>
+        <a href="#" class="nav-item">
+          <a class="nav-link" href="../obs">OBS</a>
+        </a> 
+        <a href="#" class="nav-item">
+          <a class="nav-link" href="../eventos?destino=ver">Eventos</a>
+        </a>                  
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<main class="container">
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="heading">Selecione o que deseja visualizar:</div>
+            <div class="dropdown">
+              <button class="btn btn-danger dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="width:100%">Bíblia</button>
+              <ul class="dropdown-menu" id="categoria" aria-labelledby="dropdownMenuButton">
+                <li><a class="dropdown-item" href="{{url_for('receberView', destino='harpa', pag=1)}}">Harpa</a></li>
+                <li><a class="dropdown-item" href="{{url_for('receberView', destino='musicas')}}">Músicas</a></li>
+              </ul>
+            </div>
+        </div>
+        <div class="col-sm-9">
+            <div class="bg-light p-1 rounded">
+                <h1 class="display-5 text-center">Visualizar Bíblia</h1>
+            </div>
+        </div>
+    </div>
+    <form id="enviarBiblia" action="{{ url_for('receberView') }}" method="post" >
+    <div class="row">
+    <hr>
+      <input type="hidden" id="livroBiblia" name="livroBiblia" value="{{livro}}">
+        <div class="col-sm-2">
+              <label for="livro" class="form-label">Livro:</label>
+              <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" style="width:100%">{{livro}}</button>
+                <ul class="dropdown-menu" id="livro" aria-labelledby="dropdownMenuButton1">
+                  <li><input type="text" placeholder="Pesquisa..." id="myInput" autocomplete="off"></li>
+                  <li class="menu-title">Antigo Testamento</li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Pentateuco">Gênesis</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Pentateuco">Êxodo</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Pentateuco">Levítico</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Pentateuco">Números</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Pentateuco">Deuteronômio</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Históricos">Josué</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Históricos">Juízes</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Históricos">Rute</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Históricos">I Samuel</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Históricos">II Samuel</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Históricos">I Reis</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Históricos">II Reis</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Históricos">I Crônicas</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Históricos">II Crônicas</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Históricos">Esdras</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Históricos">Neemias</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Históricos">Ester</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Poéticos">Jó</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Poéticos">Salmos</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Poéticos">Provérbios</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Poéticos">Eclesiastes</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Poéticos">Cantares</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Profetas">Isaías</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Profetas">Jeremias</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Profetas">Lamentações</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Profetas">Ezequiel</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Profetas">Daniel</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Profetas">Oseias</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Profetas">Joel</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Profetas">Amós</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Profetas">Obadias</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Profetas">Jonas</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Profetas">Miqueias</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Profetas">Naum</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Profetas">Habacuque</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Profetas">Sofonias</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Profetas">Ageu</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Profetas">Zacarias</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Velho Antigo Testamento Profetas">Malaquias</a></li>
+                  <li class="menu-title">Novo Testamento</li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Novo Testamento Evangelhos">Mateus</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Novo Testamento Evangelhos">Marcos</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Novo Testamento Evangelhos">Lucas</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Novo Testamento Evangelhos">João</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Novo Testamento Histórico">Atos</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Novo Testamento Epístolas">Romanos</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Novo Testamento Epístolas">I Coríntios</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Novo Testamento Epístolas">II Coríntios</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Novo Testamento Epístolas">Gálatas</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Novo Testamento Epístolas">Efésios</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Novo Testamento Epístolas">Filipenses</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Novo Testamento Epístolas">Colossenses</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Novo Testamento Epístolas">I Tessalonicenses</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Novo Testamento Epístolas">II Tessalonicenses</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Novo Testamento Epístolas">I Timóteo</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Novo Testamento Epístolas">II Timóteo</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Novo Testamento Epístolas">Tito</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Novo Testamento Epístolas">Filemom</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Novo Testamento Epístolas">Hebreus</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Novo Testamento Epístolas">Tiago</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Novo Testamento Epístolas">I Pedro</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Novo Testamento Epístolas">II Pedro</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Novo Testamento Epístolas">I João</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Novo Testamento Epístolas">II João</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Novo Testamento Epístolas">III João</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Novo Testamento Epístolas">Judas</a></li>
+                  <li><a class="dropdown-item nomeLivro" href="#" data-tokens="Novo Testamento Revelação">Apocalipse</a></li>
+                </ul>
+              </div>
+        </div>
+        <div class="col-sm-1">
+          <label for="livro" class="form-label">Capítulo:</label>
+          <input type="text" class="form-control numeric" id="capitulo" name="capitulo" placeholder="" value="{{capitulo}}" onkeypress='return event.charCode >= 48 && event.charCode <= 57 || event.charCode == 59' required/>
+          <div class="invalid-feedback">Digite um capítulo válido!</div>           
+        </div>
+        <div class="col-sm-1 align-self-end">
+          <input type="submit" class="btn btn-primary" value="Consultar">          
+        </div>
+        </form>
+        <div class="col-sm-1"></div>
+        <div class="col-sm-4 col-sm-6">
+        <form id="enviarBibliaPesquisa" action="{{ url_for('receberView') }}" method="post" > 
+          <label for="pesquisa" class="form-label">Pesquisa por texto:</label>
+          <input type="text" class="form-control" id="pesquisa" name="pesquisa" placeholder="" value="{{txtPesquisa}}" autocomplete="off" required/>
+          <div class="invalid-feedback">
+            Por favor preencha o campo.
+          </div>          
+        </div>
+        <div class="col-sm-1 align-self-end">
+          <input type="submit" class="btn btn-primary" value="Pesquisar">          
+        </div>
+        <input type="hidden" id="paginaInicial" name="paginaInicial" value="1">
+        </form>
+    </div>
+    
+  {% if consultaBD != None %} 
+  <hr>
+  <div class="row g-3">
+    <div class="col-sm-3 col-sm-12">   
+      <h3 class="text-danger">{{ livro + ' cap. ' + capitulo }}</h3>
+      <table class="table table-striped table-hover">
+        <thead class="table-dark">
+          <tr>
+              <th style="vertical-align: middle;">Vers:</th>
+              <th style="vertical-align: middle;">ARC:
+                <a href="javascript:abrirSlide('{{livro}}', {{capitulo}}, 'ARC')">
+                  <img alt="Abrir Slide" src="{{ url_for('static', filename='images/pp.png') }}" width="30" height="30">
+                </a>
+              </th>
+              <th>NAA:
+                <a href="javascript:abrirSlide('{{livro}}', {{capitulo}}, 'NAA')">
+                  <img alt="Abrir Slide" src="{{ url_for('static', filename='images/pp.png') }}" width="30" height="30">
+                </a>              
+              </th>
+              <th>NVI:
+                <a href="javascript:abrirSlide('{{livro}}', {{capitulo}}, 'NVI')">
+                  <img alt="Abrir Slide" src="{{ url_for('static', filename='images/pp.png') }}" width="30" height="30">
+                </a>              
+              </th>
+              <th>NVT:
+                <a href="javascript:abrirSlide('{{livro}}', {{capitulo}}, 'NVT')">
+                  <img alt="Abrir Slide" src="{{ url_for('static', filename='images/pp.png') }}" width="30" height="30">
+                </a>              
+              </th>
+          </tr>
+      </thead>
+        <tbody>
+          {% for valor in consultaBD %}
+          <tr>
+            <td class="capitulo">
+            {% if valor[1] != None %}
+              {{ valor[1]|safe }}
+            {% endif %}
+            </td>
+            <td>
+              {% if valor[2] != None %}
+                {{ valor[2]|safe }}
+              {% endif %}
+            </td>
+            <td>
+              {% if valor[3] != None %}
+                {{ valor[3]|safe }}
+              {% endif %}
+            </td>
+            <td>
+              {% if valor[4] != None %}
+                {{ valor[4]|safe }}
+              {% endif %}
+            </td>
+            <td>
+              {% if valor[5] != None %}
+                {{ valor[5]|safe }}
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+  {% if mensagem != None %} 
+  <hr>
+  <h1 class="text-danger" style="text-align: center">{{mensagem|safe}}</h1>
+  {% endif %} 
+
+  {% if consultaPesquisa != None %} 
+  <hr>
+  <div class="row g-3">
+    <div class="col-sm-3 col-sm-12">   
+      <h3 class="{{cor}}">{{msg}}</h3>
+      {% if total > 0 %}
+      <nav aria-label="Page navigation example">
+        <ul class="pagination">
+          {% if pagina == 1 %}
+          <li class="page-item disabled"><a class="page-link" href="#">Anterior</a></li>
+          {% else %}
+          <li class="page-item"><a class="page-link" href="javascript:alterarPagina({{pagina - 1}})">Anterior</a></li>
+          {% endif %}
+
+          {% if totalPaginas < 6 %}
+            {% for i in range(1, totalPaginas + 1) %}
+            {% if i == pagina %}
+            <li class="page-item active"><a class="page-link" href="#">{{i}}</a></li>
+            {% else %}
+            <li class="page-item"><a class="page-link" href="javascript:alterarPagina({{i}})">{{i}}</a></li>
+            {% endif %}
+            {% endfor %}  
+          {% else %}
+            {% if pagina == 1 %}
+              <li class="page-item active"><a class="page-link" href="#">1</a></li>
+              <li class="page-item"><a class="page-link" href="javascript:alterarPagina(2)">2</a></li>
+              <li class="page-item"><a class="page-link" href="javascript:alterarPagina(3)">3</a></li>
+            {% else %}
+              <li class="page-item"><a class="page-link" href="javascript:alterarPagina(1)">1</a></li>
+            {% endif %}
+            {% if pagina > 3 %}
+              <li class="page-item disabled"><a class="page-link" href="#">...</a></li>
+            {% endif %}
+              {% if pagina == totalPaginas %}
+              <li class="page-item"><a class="page-link" href="javascript:alterarPagina({{pagina - 2}})">{{pagina - 2}}</a></li>
+              {% endif %}
+
+              {% if pagina > 2 %}
+              <li class="page-item"><a class="page-link" href="javascript:alterarPagina({{pagina - 1}})">{{pagina - 1}}</a></li>
+              {% endif %}
+              {% if pagina > 1 and pagina < totalPaginas %}
+              <li class="page-item active"><a class="page-link" href="#">{{pagina}}</a></li>
+                {% if pagina < totalPaginas - 1 %}
+                <li class="page-item"><a class="page-link" href="javascript:alterarPagina({{pagina + 1}})">{{pagina + 1}}</a></li>
+                {% endif %}
+              {% endif %}
+
+            {% if pagina < totalPaginas - 2 %}
+              <li class="page-item disabled"><a class="page-link" href="#">...</a></li>
+            {% endif %}
+            {% if pagina == totalPaginas %}
+              <li class="page-item active"><a class="page-link" href="#">{{totalPaginas}}</a></li>
+            {% else %}
+              <li class="page-item"><a class="page-link" href="javascript:alterarPagina({{totalPaginas}})">{{totalPaginas}}</a></li>
+            {% endif %}                         
+          {% endif %}
+
+          {% if pagina == totalPaginas %}
+          <li class="page-item disabled"><a class="page-link" href="#">Próximo</a></li>
+          {% else %}
+          <li class="page-item"><a class="page-link" href="javascript:alterarPagina({{pagina + 1}})">Próximo</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+      {% endif %}
+      {% if total > 0 %}
+      <table class="table table-striped table-hover" id="tabelaPesquisa">
+        <thead class="table-dark">
+          <tr>
+              <th style="text-align: center">Livro:</th>
+              <th style="text-align: center">Cap:</th>
+              <th style="text-align: center">Vers:</th>
+              <th>ARC:</th>
+              <th>NAA:</th>
+              <th>NVI:</th>
+              <th>NVT:</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for valor in consultaPesquisa %}
+          <tr style="vertical-align: middle;">
+            <td style="text-align: center"><span class="livro text-danger">{{valor['livro']}}</span><br><a href="javascript:verContexto('{{valor['livro']}}', {{valor['cap']}});">Ver Contexto</a></td>
+            <td class="capitulo">{{valor['cap']}}</td>
+            <td style="text-align: center">{{valor['ver']}}</td>
+            <td class="texto" data-livro="{{valor['livro']}}" data-cap="{{valor['cap']}}" data-ver="ARC">{% if valor['ARC'] != None %}{{valor['ARC']|safe}}{% endif %}</td>
+            <td class="texto" data-livro="{{valor['livro']}}" data-cap="{{valor['cap']}}" data-ver="NAA">{% if valor['NAA'] != None %}{{valor['NAA']|safe}}{% endif %}</td>
+            <td class="texto" data-livro="{{valor['livro']}}" data-cap="{{valor['cap']}}" data-ver="NVI">{% if valor['NVI'] != None %}{{valor['NVI']|safe}}{% endif %}</td>
+            <td class="texto" data-livro="{{valor['livro']}}" data-cap="{{valor['cap']}}" data-ver="NVT">{% if valor['NVT'] != None %}{{valor['NVT']|safe}}{% endif %}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %} 
+</main>
+
+    <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script> 
+    <!-- <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script> -->
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    <script type="text/javascript">
+      $("#myInput").on("keyup", function() {
+        var value = $(this).val();
+        console.log(value);
+        $('a.dropdown-item.nomeLivro').filter(function() {
+          var cat = $(this).attr('data-tokens').toLowerCase();
+          $(this).toggle($(this).text().toLowerCase().indexOf(value.toLowerCase()) > -1 || cat.indexOf(value.toLowerCase()) > -1);
+        });
+
+        $(".menu-title").filter(function() {
+          $(this).toggle($('a.dropdown-item[style!="display: none;"][data-tokens*="' + $(this).text() + '"]').length > 0);          
+        });
+      });     
+
+      $('a.dropdown-item.nomeLivro').click(function() {
+        $('#dropdownMenuButton1').text($(this).text());
+        $('#livroBiblia').val($(this).text())
+      }); 
+
+      // verificar se tem resultados de consulta
+      pesquisa = JSON.parse('{{txtPesquisa|tojson}}');
+      pesquisa = pesquisa.trimStart().trimEnd();
+      
+      if (pesquisa != '') {
+        const palavras = pesquisa.split(' ');
+        // vai ter que dar um jeito de pegar cada célula da tabela e realçar o texto
+        $('#tabelaPesquisa tbody tr td.texto').each(function() {
+          var texto = $(this).text();
+          index = 0;
+          for (var i = 0; i < palavras.length; i++) {
+            if (i > 0) {
+              var index = texto.toLowerCase().indexOf(palavras[i].toLowerCase(), index + 31 + palavras[i - 1].length);
+            } else {
+              var index = texto.toLowerCase().indexOf(palavras[i].toLowerCase());
+            }
+            if (index > -1) {
+              console.log(texto);
+              texto = texto.substring(0, index) + '<span class="highlight">' + texto.substring(index, index + palavras[i].length) + "</span>" + texto.substring(index + palavras[i].length);
+              //index = texto.toLowerCase().indexOf(palavras[i].toLowerCase(), index + 31 + palavras[i].length);
+              //var parser = new DOMParser();
+              //var doc = parser.parseFromString(texto, 'text/html');
+            }
+          }
+          textofinal = '<br><a href="javascript:abrirSlide(\'' + $(this).data('livro') + '\', ' + $(this).data('cap') + ', \'' + $(this).data('ver') + '\')">Abrir Slide</a>';
+          $(this).html(texto + textofinal);          
+          //console.log($(this).text());
+        });
+      }
+
+    function verContexto(livro, cap) {
+      $('#livroBiblia').val(livro);
+      $('#capitulo').val(cap);
+      $('#enviarBiblia').submit();
+    }
+
+    function alterarPagina(pag) {
+      $('#pesquisa').val(pesquisa);
+      $('#paginaInicial').val(pag);
+      $('#enviarBibliaPesquisa').submit();
+    }
+
+    function abrirSlide(livro, capitulo, versao) {
+      var dict = {};
+      dict.origem = 'Biblia'
+      dict.livro = livro;
+      dict.capitulo = capitulo;
+      dict.versao = versao;
+      
+      $.ajax({
+        type: "POST",
+        url: "{{ url_for('abrirSlideExternamente') }}",
+        contentType: "application/json",
+        data: JSON.stringify(dict),
+        dataType: "json",
+
+        success: function(response) {
+          //console.log(response)
+        },
+        error: function(err) {
+          console.log(err);
+        }        
+      });      
+    }
+    </script>
+  </body>
+</html>

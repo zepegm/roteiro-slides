@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.88.1">
+    <title>Abrir Bíblia</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{ url_for('static', filename='stylesheets/bootstrap.min.css') }}" rel="stylesheet">
+
+    <style>
+      input[readonly].classname {
+        background-color:white;
+      }
+
+      .nd {
+        font-variant: small-caps;
+      }
+
+      .add {
+        font-style: italic;
+      }
+
+      .sc {
+        font-variant: small-caps;
+      }
+
+      .heading {
+        font-weight: bold;
+      }
+
+      .wj {
+        color: red;
+      }
+      .categoria{
+        background-color: rgb(0, 0, 0, 0);
+      }
+    </style>
+
+    
+    <!-- Custom styles for this template -->
+    <link href="{{ url_for('static', filename='stylesheets/navbar-top-fixed.css') }}" rel="stylesheet">   
+    <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/Logo Colorido.png') }}">
+  </head>
+  
+  <body style="background-color: rgba(248, 249, 250, 0.726);">
+    
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{{ url_for('index') }}">
+      <img src="{{ url_for('static', filename='images/Logo ADCPTA.png') }}" width="25" height="30" class="d-inline-block align-top" alt="">
+      Roteiro
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <ul class="navbar-nav me-auto mb-2 mb-md-0">
+      <ul class="navbar-nav me-auto mb-2 mb-md-0">
+        <li class="nav-item">
+          <a class="nav-link active" href="#">Abrir Bíblia</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="../abrirharpa">Abrir Harpa</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" aria-current="page"  href="../abrirslidemusica">Músicas</a>
+        </li>    
+        <li class="nav-item">
+          <a class="nav-link" href="../apresentador">Apresentador</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="../viewer">Visualizador</a>
+        </li>     
+        <li class="nav-item">
+          <a class="nav-link" href="../obs">OBS</a>
+        </li>           
+        <li class="nav-item">
+          <a class="nav-link" href="../eventos?destino=ver">Eventos</a>
+        </li>          
+      </ul>                 
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<main class="container">
+  <div class="bg-light p-1 rounded">
+    <h1 class="display-5 text-center">Abrir Slides Bíblia</h1>
+    <p class="lead text-center">Escolha o livro, digite o capítulo, é possível visualizar o texto na parte de baixo.</p>
+    <p class="text-center {{ corstatus }}"><strong>{{ status }}</strong></p>
+    <form action="{{ url_for('abrirbiblia') }}" method="post" autocomplete="off">
+      <div class="row g-3">
+          <div class="col-sm-2">
+              <label for="livro" class="form-label">Livro: <strong>(Pesquisar)</strong></label>
+              <input type="text" class="form-control classname" id="livro" name="livro" placeholder="" value="{{ livro }}" required/>
+              <div class="invalid-feedback">
+                Selecione pelo menos um livro!
+              </div>
+          </div>
+          <div class="col-sm-1">
+            <label for="livro" class="form-label">Capítulo:</label>
+            <input type="text" class="form-control numeric" id="capitulo" name="capitulo" placeholder="" value="{{ capitulo }}" required/>
+            <div class="invalid-feedback">
+              Digite um capítulo válido!
+            </div>           
+      </div>
+      <div class="col-sm-3">
+        <label for="versao" class="form-label">Versão:</label>
+        <select type="text" class="form-control" id="versao" name="versao" placeholder="" required>
+          <option value='ARC' selected="selected">ARC - Almeida, Revista e Corrigida</option>
+          {% block content %}
+          {% if versao == 'NAA' %}
+            <option value='NAA' selected="selected">NAA - Nova Almeida Atualizada</option>
+          {% else %}
+            <option value='NAA'>NAA - Nova Almeida Atualizada</option>
+          {% endif %}
+
+          {% if versao == 'NVI' %}
+            <option value='NVI' selected="selected">NVI - Nova Versão Internacional</option>
+          {% else %}
+            <option value='NVI'>NVI - Nova Versão Internacional</option>          
+          {% endif %}
+          
+          {% if versao == 'NVT' %}          
+            <option value='NVT' selected="selected">NVT - Nova Versão Transformadora</option>
+          {% else %}
+          <option value='NVT'>NVT - Nova Versão Transformadora</option>
+          {% endif %}          
+        </select>         
+      </div>
+      <div class="col-sm-2 align-self-end">
+        <label for="botao" class="form-label"></label>
+        <input type="submit" class="btn btn-md btn-primary" id="abrirSlide" name="abrirSlide" value="Abrir Slide Bíblia">
+      </div>
+      <div class="col-sm-2 align-self-end"> 
+        <div>
+        {% if noturno == 1 %}
+          <input type="checkbox" class="form-check-input" id="noturno" name="noturno" value="1" checked/> 
+        {% else %} 
+          <input type="checkbox" class="form-check-input" id="noturno" name="noturno" value="1"/>  
+        {% endif %}         
+        <label class="form-check-label" for="noturno">Modo Noturno</label>
+        </div>
+        <div>
+        {% if rapido == 1 %}  
+          <input type="checkbox" class="form-check-input" id="rapido" name="rapido" value="1" checked/>   
+        {% else %} 
+          <input type="checkbox" class="form-check-input" id="rapido" name="rapido" value="1"/> 
+        {% endif %}  
+          <label class="form-check-label" for="rapido">Modo Rápido</label> 
+        </div>
+      </div>
+      <div class="col-sm-2">
+        <div>
+          <label for="versiculo" class="form-label">Versículo:</label>
+          <input type="text" class="form-control numeric" id="versiculo" name="versiculo" placeholder="" value="{{ versiculo }}"/>
+          {% endblock content %}  
+        </div>      
+      </div>
+    </div>      
+    </form>
+
+    <div class="row g-6">
+      <div class="col-sm-3 col-sm-12">
+        <hr class="my-4"/> 
+      </div>
+      <div class="col-sm-3 col-sm-6">
+        <h3>Antigo Testamento</h3><hr>
+        <div class="row">
+          <div class="col-sm-6 coluna">
+            <ul class="list-group" id="Pentateuco" data-categoria="Pentateuco">
+              <h4 id="PentateucoTitle" class="list-group-item border-0 text-secondary fw-bold categoria">Pentateuco</h4>
+              <a href="#" class="list-group-item list-group-item-action border-1">Gênesis</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Êxodo</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Levítico</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Números</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Deuteronômio</a>
+            </ul>
+            <ul class="list-group" id="Históricos" data-categoria="Históricos">
+              <h4 id="HistoricosTitle" class="list-group-item border-0 text-secondary fw-bold categoria">Históricos</h4>
+              <a href="#" class="list-group-item list-group-item-action border-1">Josué</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Juízes</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Rute</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">I Samuel</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">II Samuel</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">I Reis</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">II Reis</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">I Crônicas</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">II Crônicas</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Esdras</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Neemias</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Ester</a>
+            </ul>
+            <ul class="list-group" id="Poéticos" data-categoria="Poéticos">
+              <h4 id="PoeticosTitle" class="list-group-item border-0 text-secondary fw-bold categoria">Poéticos</h4>
+              <a href="#" class="list-group-item list-group-item-action border-1">Jó</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Salmos</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Provérbios</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Eclesiastes</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Cantares</a>
+            </ul>
+          </div>
+          <div class="col-sm-6 coluna">
+            <ul class="list-group" id="ProfetasMaiores" data-categoria="Profetas Maiores">
+              <h4 id="ProfetasMaioresTitle" class="list-group-item border-0 text-secondary fw-bold categoria">Profetas Maiores</h4>
+              <a href="#" class="list-group-item list-group-item-action border-1">Isaías</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Jeremias</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Lamentações</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Ezequiel</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Daniel</a>
+            </ul>
+            <ul class="list-group" id="ProfetasMenores" data-categoria="Profetas Menores">
+              <h4 id="ProfetasMenores" class="list-group-item border-0 text-secondary fw-bold categoria">Profetas Menores</h4>
+              <a href="#" class="list-group-item list-group-item-action border-1">Oseias</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Joel</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Amós</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Obadias</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Jonas</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Miqueias</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Naum</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Habacuque</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Sofonias</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Ageu</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Zacarias</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Malaquias</a>       
+            </ul>   
+          </div>
+        </div>
+        <br>
+      </div>
+      <div class="col-sm-3 col-sm-6">
+        <h3>Novo Testamento</h3><hr>
+        <div class="row">
+          <div class="col-sm-6 coluna">
+            <ul class="list-group" id="Evangelhos" data-categoria="Evangelhos">
+              <h4 id="Pentateuco" class="list-group-item border-0 text-secondary fw-bold categoria">Evangelhos</h4>
+              <a href="#" class="list-group-item list-group-item-action border-1">Mateus</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Marcos</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Lucas</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">João</a>
+            </ul>
+            <ul class="list-group" id="Histórico" data-categoria="Histórico">              
+              <h4 id="Pentateuco" class="list-group-item border-0 text-secondary fw-bold categoria">Histórico</h4>
+              <a href="#" class="list-group-item list-group-item-action border-1">Atos</a>
+            </ul>
+            <ul class="list-group" id="EpistolasPaulinas" data-categoria="Epístolas Paulinas">
+              <h4 id="Pentateuco" class="list-group-item border-0 text-secondary fw-bold categoria">Epístolas Paulinas</h4>
+              <a href="#" class="list-group-item list-group-item-action border-1">Romanos</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">I Coríntios</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">II Coríntios</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Gálatas</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Efésios</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Filipenses</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Colossenses</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">I Tessalonicenses</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">II Tessalonicenses</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">I Timóteo</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">II Timóteo</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Tito</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Filemom</a>      
+            </ul>   
+          </div>
+          <div class="col-sm-6 coluna">
+            <ul class="list-group" id="EpistolasGerais" data-categoria="Epístolas Gerais">
+              <h4 id="Pentateuco" class="list-group-item border-0 text-secondary fw-bold categoria">Epístolas Gerais</h4>
+              <a href="#" class="list-group-item list-group-item-action border-1">Hebreus</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Tiago</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">I Pedro</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">II Pedro</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">I João</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">II João</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">III João</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Judas</a>
+            </ul>
+            <ul class="list-group" id="Revelacao" data-categoria="Revelação">
+              <h4 id="Pentateuco" class="list-group-item border-0 text-secondary fw-bold categoria">Revelação</h4>
+              <a href="#" class="list-group-item list-group-item-action border-1">Apocalipse</a>
+            </ul>
+          </div>
+        </div>
+      </div>      
+    </div>
+  </div>
+  {% if sucesso == 'ok' %} 
+  <div class="row g-3">
+    <div class="col-sm-3 col-sm-12">   
+      <h3 class="text-danger">{{ livro + ' cap. ' + capitulo }}</h3>
+      <table class="table table-striped table-hover">
+        <thead class="table-dark">
+          <tr>
+              <th>Vers:</th>
+              <th>ARC:</th>
+              <th>NAA:</th>
+              <th>NVI:</th>
+              <th>NVT:</th>
+          </tr>
+      </thead>
+        <tbody>
+          {% for valor in consultaBD %}
+          <tr>
+            <td>
+            {% if valor[1] != None %}
+              {{ valor[1]|safe }}
+            {% endif %}
+            </td>
+            <td>
+              {% if valor[2] != None %}
+                {{ valor[2]|safe }}
+              {% endif %}
+            </td>
+            <td>
+              {% if valor[3] != None %}
+                {{ valor[3]|safe }}
+              {% endif %}
+            </td>
+            <td>
+              {% if valor[4] != None %}
+                {{ valor[4]|safe }}
+              {% endif %}
+            </td>
+            <td>
+              {% if valor[5] != None %}
+                {{ valor[5]|safe }}
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %} 
+
+</main>
+
+    <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script> 
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.numeric.js') }}"></script>
+    <script type="text/javascript">
+      $(".numeric").numeric({ decimal : false , precision: 3});;
+
+      $('a.list-group-item').click(function() {
+        if ($(this).text() != "") {
+          $('.list-group-item').removeClass('active');
+          $(this).addClass('active');
+          $('#livro').val($(this).text())
+          // $(this).addClass('table-warning').siblings().removeClass('table-warning');
+        }
+        //console.log($(this).text())
+      });
+
+      $("#livro").on("keyup", function() {
+        var value = $(this).val();
+        $('a.list-group-item').removeClass('active');
+        $('a.list-group-item').filter(function() {
+          var cat = $(this).parent().attr('data-categoria').toLowerCase();
+          $(this).toggle($(this).text().toLowerCase().indexOf(value.toLowerCase()) > -1 || cat.indexOf(value.toLowerCase()) > -1);
+          if (value.length > 0) {
+            if ($(this).text() == value) {
+              $(this).addClass('active')
+            }
+          }
+        });
+        $(".list-group").each(function(){
+          $(this).find("h4").toggle($(this).find("a.list-group-item[style!='display: none;']").length > 0);
+          //console.log($(this).attr('data-categoria'), ' - ', $(this).find(".list-group-item[style!='display: none;']").length);
+        });
+        $(".coluna").each(function() {
+          $(this).toggle($(this).find("a.list-group-item[style!='display: none;']").length > 0) 
+        });
+      });
+      </script>
+  </body>
+</html>

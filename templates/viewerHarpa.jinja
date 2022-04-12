@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.88.1">
+    <title>Visualizar Harpa</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{ url_for('static', filename='stylesheets/bootstrap.min.css') }}" rel="stylesheet">
+
+    <style>
+      .titulo {
+        text-align: center;
+        font-weight: bold;
+        font-size: x-large;
+      }
+
+      .numero {
+        text-align: right;
+        font-weight: bold;
+        font-size: xx-large;
+      }
+
+      .num {
+        font-weight: bold;
+      }
+
+      .highlight {
+        background-color: yellow;
+      }     
+
+      .estrofe {
+        font-size: large;
+      } 
+
+      .coro {
+        font-style: italic;
+        font-size: large;
+      }
+    </style>
+    
+    <!-- Custom styles for this template -->
+    <link href="{{ url_for('static', filename='stylesheets/navbar-top-fixed.css') }}" rel="stylesheet">   
+    <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/Logo Colorido.png') }}">
+  </head>
+  
+  <body style="background-color: rgba(248, 249, 250, 0.726);">
+    
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{{ url_for('index') }}">
+      <img src="{{ url_for('static', filename='images/Logo ADCPTA.png') }}" width="25" height="30" class="d-inline-block align-top" alt="">
+      Roteiro
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <ul class="navbar-nav me-auto mb-2 mb-md-0">
+        <a href="#" class="nav-item">
+          <a class="nav-link" href="../abrirbiblia">Abrir Bíblia</a>
+        </a>
+        <a href="#" class="nav-item">
+          <a class="nav-link " href="../abrirharpa">Abrir Harpa</a>
+        </a>
+        <a href="#" class="nav-item">
+          <a class="nav-link" href="../abrirslidemusica">Músicas</a>
+        </a>   
+        <a href="#" class="nav-item">
+          <a class="nav-link" href="../apresentador">Apresentador</a>
+        </a>
+        <a href="#" class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#">Visualizador</a>
+        </a>
+        <a href="#" class="nav-item">
+          <a class="nav-link" href="../obs">OBS</a>
+        </a>    
+        <a href="#" class="nav-item">
+          <a class="nav-link" href="../eventos?destino=ver">Eventos</a>
+        </a>                
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<main class="container">
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="heading">Selecione o que deseja visualizar:</div>
+            <div class="dropdown">
+              <button class="btn btn-danger dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="width:100%">Harpa</button>
+              <ul class="dropdown-menu" id="categoria" aria-labelledby="dropdownMenuButton">
+                <li><a class="dropdown-item" href="{{url_for('receberView', voltar='Biblia')}}">Bíblia</a></li>
+                <li><a class="dropdown-item" href="{{url_for('receberView', destino='musicas')}}">Músicas</a></li>
+              </ul>
+            </div>
+        </div>
+        <div class="col-sm-9">
+            <div class="bg-light p-1 rounded">
+                <h1 class="display-5 text-center">Visualizar Harpa</h1>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-5">
+        <form id="enviarPesquisa" action="{{ url_for('receberView', destino='harpa') }}" method="post">
+        <label for="pesquisa" class="form-label">Pesquisa por texto:</label>
+        <input type="text" class="form-control" id="pesquisa" name="pesquisa" placeholder="" value="{{txtPesquisa}}" autocomplete="off" required/>
+        <div class="invalid-feedback">Por favor preencha o campo.</div>          
+      </div>
+      <div class="col-sm-1 align-self-end">
+        <input type="submit" class="btn btn-primary" value="Pesquisar">          
+      </div>
+      <input type="hidden" id="paginaInicial" name="paginaInicial" value="1">
+      </form>
+    </div>
+    <p>
+    {% if harpa != none %}
+    <div class="row">
+      <nav aria-label="Page navigation example">
+        <ul class="pagination">
+          {% if pagina == 1 %}
+            <li class="page-item active"><a class="page-link" href="#">1 - 200</a></li>
+          {% else %}
+            <li class="page-item"><a class="page-link" href="{{url_for('receberView', destino='harpa', pag=1)}}">1 - 200</a></li>
+          {% endif %}
+          {% if pagina == 2 %}
+            <li class="page-item active"><a class="page-link" href="#">201 - 400</a></li>
+          {% else %}
+            <li class="page-item"><a class="page-link" href="{{url_for('receberView', destino='harpa', pag=2)}}">201 - 400</a></li>
+          {% endif %}
+          {% if pagina == 3 %}
+            <li class="page-item active"><a class="page-link" href="#">401 - 640</a></li>
+          {% else %}
+            <li class="page-item"><a class="page-link" href="{{url_for('receberView', destino='harpa', pag=3)}}">401 - 640</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+      </div>
+      
+      <div class="row">
+      <table class="table table-bordered" id="tabelaHarpa">
+        <tbody>
+          {% for hino in harpa %}
+            <tr>
+              <td>
+                <p class="titulo text-primary"><a href="javascript:abrirSlide('{{hino['Hino']}}')">{{hino['Titulo']}}</a></p>
+                <p class="numero">{{hino['Hino']}}</p>
+                {% set cont = namespace(foo=1) %}
+                {% for estrofe in hino['Estrofes'] %}
+                  {% if estrofe['Tipo'] == 'Estrofe' %}
+                    <p class="estrofe"><span class="num">{{cont.foo}}.</span> {{estrofe['Texto']}}</p>
+                    {% set cont.foo = cont.foo + 1 %}
+                  {% else %}
+                    <p class="coro text-primary">{{estrofe['Texto']}}</p>
+                  {% endif %}
+                {% endfor %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+
+    {% if pesquisa != None %}
+      <hr>
+      <div class="row">
+        <div class="col-sm-10"><h1 class="text-danger">{{mensagem|safe}}</h1></div>
+        <div class="col-sm-2"><button class="btn btn-danger" type="button" id="sairPesquisa" style="width:100%">Sair da Pesquisa</button></div>
+      </div>
+      {% if total > 0 %}
+        <div class="row">
+          <table class="table table-striped table-hover" id="tabelaPesquisa">
+            <thead class="table-dark">
+              <tr>
+                <th>HINO</th>
+                <th>Texto:</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for valor in pesquisa %}
+              <tr>
+                <td class="num" style="text-align: center"><a href="javascript:abrirSlide('{{ '{:03d}'.format(valor['HINO']) }}')">{{ '{:03d}'.format(valor['HINO']) }}</a></td>
+                <td class="texto">{{valor['Conteúdo']}}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>  
+        </div>
+      {% endif %}
+    {% endif %}
+</main>
+
+    <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script> 
+    <!-- <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script> -->
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    <!-- <script src="{{ url_for('static', filename='js/pdf.min.js') }}"></script> -->
+    <script type="text/javascript">
+      function abrirSlide(hino) {
+        console.log(hino);
+        var dict = {};
+        dict.origem = 'Harpa';
+        dict.hino = hino;
+        
+        $.ajax({
+          type: "POST",
+          url: "{{ url_for('abrirSlideExternamente') }}",
+          contentType: "application/json",
+          data: JSON.stringify(dict),
+          dataType: "json",
+
+          success: function(response) {
+            //console.log(response)
+          },
+          error: function(err) {
+            console.log(err);
+          }        
+        });      
+      }
+
+      $('#sairPesquisa').click(function() {
+        location.replace("{{url_for('receberView', destino='harpa', pag=1)}}");
+      });
+
+      // verificar se tem resultados de consulta
+      pesquisa = JSON.parse('{{txtPesquisa|tojson}}');
+      pesquisa = pesquisa.trimStart().trimEnd();
+      
+      if (pesquisa != '') {
+        const palavras = pesquisa.split(' ');
+        // vai ter que dar um jeito de pegar cada célula da tabela e realçar o texto
+        $('#tabelaPesquisa tbody tr td.texto').each(function() {
+          var texto = $(this).text();
+          index = 0;
+          for (var i = 0; i < palavras.length; i++) {
+            if (i > 0) {
+              var index = texto.toLowerCase().indexOf(palavras[i].toLowerCase(), index + 31 + palavras[i - 1].length);
+            } else {
+              var index = texto.toLowerCase().indexOf(palavras[i].toLowerCase());
+            }
+            if (index > -1) {
+              console.log(texto);
+              texto = texto.substring(0, index) + '<span class="highlight">' + texto.substring(index, index + palavras[i].length) + "</span>" + texto.substring(index + palavras[i].length);
+              //index = texto.toLowerCase().indexOf(palavras[i].toLowerCase(), index + 31 + palavras[i].length);
+              //var parser = new DOMParser();
+              //var doc = parser.parseFromString(texto, 'text/html');
+            }
+          }
+          $(this).html(texto);
+        });
+      }
+    </script>
+  </body>
+</html>

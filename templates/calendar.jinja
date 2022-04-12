@@ -1,0 +1,67 @@
+<html>
+    <head>
+        <title>Calendário 2022</title>
+        <style>
+            .img {
+                height: 100%;
+                width: 100%;
+                animation-name: fade-in;
+                animation-duration: 0.5s;
+                overflow: hidden;
+            }
+
+            .out {
+                animation-name: fade-out;
+                animation-duration: 0.5s;
+                opacity: 0;
+            }   
+
+            @keyframes fade-in {
+                from {opacity: 0;}
+                to {opacity: 1;}
+            }   
+
+            @keyframes fade-out {
+                from {opacity: 1;}
+                to {opacity: 0;}
+            }      
+
+        </style>
+        <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>
+    </head>
+    <body>
+        {% if resultado == True %}
+        <div id="slide" class="img" style="background:#fff url(/static/images/Output/Calendario.jpg) no-repeat center; background-size: 100% 100%;"></div>
+        {% else %}
+        <div id="slide" class="img" style="background:#fff url({{ url_for('static', filename='images/Background.jpg') }}) no-repeat center; background-size: 100% 100%;"></div>
+        {% endif %}
+
+        <script>
+        setInterval(function() {
+        var dict = {};
+        dict.index = JSON.parse('{{index|tojson}}');
+        dict.filename = JSON.parse('{{filename|tojson}}');
+
+            $.ajax({
+                type: "POST",
+                url: "{{ url_for('exibirCalendario') }}",
+                contentType: "application/json",
+                data: JSON.stringify(dict),
+                dataType: "json",
+                success: function(response) {
+                if (response.sucess) {
+                    //$('#slide').removeClass('img');
+                    $('#slide').addClass('out');
+                    location.reload();
+                    //console.log(response)
+                }
+                //location.reload();
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });
+        }, 2000)
+        </script>
+    </body>
+</html>

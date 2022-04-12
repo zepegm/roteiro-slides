@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.88.1">
+    <title>LOG</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{ url_for('static', filename='stylesheets/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='stylesheets/tui-pagination.css') }}" rel="stylesheet">
+
+    <style>
+      .arquivo {
+        font-weight: bold;
+      }
+
+      .Suces {
+        color: blue;
+      }
+    </style>
+
+    
+    <!-- Custom styles for this template -->
+    <link href="{{ url_for('static', filename='stylesheets/navbar-top-fixed.css') }}" rel="stylesheet">   
+    <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/Logo Colorido.png') }}">
+  </head>
+  
+  <body style="background-color: rgba(248, 249, 250, 0.726);">
+    
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{{ url_for('index') }}">
+      <img src="{{ url_for('static', filename='images/Logo ADCPTA.png') }}" width="25" height="30" class="d-inline-block align-top" alt="">
+      Roteiro
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <ul class="navbar-nav me-auto mb-2 mb-md-0">
+        <a href="#" class="nav-item">
+          <a class="nav-link" href="../abrirbiblia">Abrir Bíblia</a>
+        </a>
+        <a href="#" class="nav-item">
+          <a class="nav-link " href="../abrirharpa">Abrir Harpa</a>
+        </a>
+        <a href="#" class="nav-item">
+          <a class="nav-link" href="../abrirslidemusica">Músicas</a>
+        </a>   
+        <a href="#" class="nav-item">
+          <a class="nav-link" href="../apresentador">Apresentador</a>
+        </a>
+        <a href="#" class="nav-item">
+          <a class="nav-link" href="../viewer">Visualizador</a>
+        </a>
+        <a href="#" class="nav-item">
+          <a class="nav-link" href="../obs">OBS</a>
+        </a>           
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<main class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="bg-light p-1 rounded">
+                <h1 class="display-6 text-center">Registro de LOG</h1>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-4 col-sm-12">
+        <div id="pagination" class="tui-pagination"></div>
+        <form id="enviarPag" name="enviarPag" method="POST" action="{{ url_for('log') }}">
+          <input type="hidden" id="novaPag" name="novaPag" value="1">
+        </form>
+        <table class="table table-striped table-hover" id="tbLog">
+          <thead class="table-dark">
+            <tr>
+                <th>Data:</th>
+                <th>Arquivo:</th>
+                <th>Categoria:</th>
+                <th>Modo:</th>
+                <th>Obs:</th>
+                <th>Status:</th>
+            </tr>
+          </thead>        
+          <tbody>
+            {% for row in log %}
+              <tr>
+                <td>{{row['data']}}</td>
+                <td class="arquivo">{{row['nome']}}</td>
+                <td>{{row['categoria']}}</td>
+                <td>{{row['modo']}}</td>
+                <td>{{row['Obs']}}</td>
+                {% if row['Status'] == '1' %}
+                <td class="text-primary">{{row['status_descricao']}}</td>
+                {% else %}
+                <td class="text-danger">{{row['status_descricao']}}</td>
+                {% endif %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        <table>
+      </div>
+    </div>
+</main>
+
+    <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script> 
+    <!-- <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script> -->
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/tui-pagination.js') }}"></script>
+    <script type="text/javascript">
+      var pagination = new tui.Pagination('pagination', {
+          totalItems: {{total}},
+          itemsPerPage: 15,
+          visiblePages: 5,
+          page: {{pagina}}
+      });
+
+      pagination.on('beforeMove', function(eventData) {
+        $('#novaPag').val(eventData.page);
+        $('#enviarPag').submit();
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.88.1">
+    <title>Estatísticas</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{ url_for('static', filename='stylesheets/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='stylesheets/tui-pagination.css') }}" rel="stylesheet">
+
+    <style>
+      .arquivo {
+        font-weight: bold;
+      }
+
+      .Suces {
+        color: blue;
+      }
+
+      .center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+      }
+    </style>
+
+    
+    <!-- Custom styles for this template -->
+    <link href="{{ url_for('static', filename='stylesheets/navbar-top-fixed.css') }}" rel="stylesheet">   
+    <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/Logo Colorido.png') }}">
+  </head>
+  
+  <body style="background-color: rgba(248, 249, 250, 0.726);">
+
+<main class="container">
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="dropdown" style="text-align: right;">
+          <button class="btn btn-danger dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">TOP - Músicas</button>
+          <ul class="dropdown-menu" id="categoria" aria-labelledby="dropdownMenuButton">
+            <li><a id="item1" class="dropdown-item" href="javascript:mudarGrafico('harpa')">TOP - Harpa</a></li>
+            <li><a id="item2" class="dropdown-item" href="javascript:mudarGrafico('biblia')">TOP - Capítulos Bíblicos</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <button id="retornar" type="button" class="btn btn-secondary">Retornar</button>
+      </div>
+    </div>
+        <br>
+      <img id="grafico" class="center" src="../static/images/topMusicas.png" width="800" height="600">
+</main>
+
+    <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script> 
+    <!-- <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script> -->
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/tui-pagination.js') }}"></script>
+    <script type="text/javascript">
+      function mudarGrafico(destino) {
+        if (destino == 'harpa') {
+          $("#grafico").attr('src', '../static/images/topHarpa.png');
+          $("#dropdownMenuButton").text("TOP - Harpa");
+          $("#item1").text("TOP - Músicas")
+          $("#item1").attr("href", "javascript:mudarGrafico('musica')")
+          $("#item2").text("TOP - Capítulos Bíblicos")
+          $("#item2").attr("href", "javascript:mudarGrafico('biblia')")
+        } else if (destino == 'biblia') {
+          $("#grafico").attr('src', '../static/images/topCapitulos.png');
+          $("#dropdownMenuButton").text("TOP - Capítulos Bíblicos");
+          $("#item1").text("TOP - Músicas")
+          $("#item1").attr("href", "javascript:mudarGrafico('musica')")
+          $("#item2").text("TOP - Harpa")
+          $("#item2").attr("href", "javascript:mudarGrafico('harpa')")
+        } else if (destino == 'musica') {
+          $("#grafico").attr('src', '../static/images/topMusicas.png');
+          $("#dropdownMenuButton").text("TOP - Músicas");
+          $("#item1").text("TOP - Harpa")
+          $("#item1").attr("href", "javascript:mudarGrafico('harpa')")
+          $("#item2").text("TOP - Capítulos Bíblicos")
+          $("#item2").attr("href", "javascript:mudarGrafico('biblia')")          
+        }
+      }
+
+    $("#retornar").click(function() {
+      location.href = "../visualizar_roteiros"
+    });
+    </script>
+  </body>
+</html>

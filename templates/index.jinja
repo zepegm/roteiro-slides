@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.88.1">
+    <title>ADCPTA - Roteiro de Slides</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.1/examples/navbar-fixed/">
+
+    
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{ url_for('static', filename='stylesheets/bootstrap.min.css') }}" rel="stylesheet">
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      .close {
+        cursor: pointer;
+        position: absolute;
+        top: 50%;
+        right: 0%;
+        padding: 12px 16px;
+        transform: translate(0%, -50%);
+      }
+      
+      *.close:hover {color: red; font-weight: bold;}
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+    </style>
+
+    
+    <!-- Custom styles for this template -->
+    <link href="{{ url_for('static', filename='stylesheets/navbar-top-fixed.css') }}" rel="stylesheet">   
+    <link href="{{ url_for('static', filename='stylesheets/signin.css') }}" rel="stylesheet">   
+    <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/Logo Colorido.png') }}">
+  </head>
+  <body>
+    
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">
+        <img src="{{ url_for('static', filename='images/Logo ADCPTA.png') }}" width="25" height="30" class="d-inline-block align-top" alt="">
+        Roteiro
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav me-auto mb-2 mb-md-0">
+          <li class="nav-item">
+            <a class="nav-link" href="../abrirbiblia">Abrir Bíblia</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../abrirharpa">Abrir Harpa</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../abrirslidemusica">Músicas</a>
+          </li>  
+          <li class="nav-item">
+            <a class="nav-link" href="../apresentador">Apresentador</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../viewer">Visualizador</a>
+          </li>  
+          <li class="nav-item">
+            <a class="nav-link" href="../obs">OBS</a>
+          </li>                              
+          <li class="nav-item">
+            <a class="nav-link" href="../eventos?destino=ver">Eventos</a>
+          </li>          
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main class="form-signin">
+      <div class="text-center"><img class="mb-4" src="{{ url_for('static', filename='images/Logo Colorido.png') }}" alt="" width="200" height="250"></div>
+      <h1 class="h3 mb-3 fw-normal text-center">Roteiro de slides</h1>
+  
+      {% if listaPPT|length > 0 %}
+      <div class="form-floating">
+        <ul class="list-group" id="presentations">
+          {% for ppt in listaPPT %}
+          <li class="list-group-item">
+            {% if ppt['check'] == True %}
+            <label><input class="form-check-input me-1" type="checkbox" name="checkEL" value="{{ ppt['caminho'] }}" checked>{{ ppt['nome'] }}</label>
+            {% else %}
+            <label><input class="form-check-input me-1" type="checkbox" name="checkEL" value="{{ ppt['caminho'] }}">{{ ppt['nome'] }}</label>
+            {% endif %}
+            <span class="close">x</span>
+          </li>
+          {% endfor %}
+       </ul>
+      </div>
+      <p>    </p>
+      <form id="proxsld" method="post" action="{{ url_for('proximoSlide') }}">
+        <input type="hidden" id="proximaPRS" name="proximaPRS" value="">
+      <button id="next" class="w-100 btn btn-lg btn-secondary" type="button">Próxima Apresentação</button>
+      </form>
+      <p>    </p>
+      <div class="row g-2">
+      <div class="col">
+      <form id="enviar" method="post" action="{{ url_for('index') }}">
+        <button class="w-100 btn btn-lg btn-primary" type="submit">Carregar Slides</button>
+      </form>
+      </div>
+      <div class="col">
+        <form id="enviar" method="post" action="{{ url_for('carregarSlideAdicional') }}">
+          <button class="w-100 btn btn-lg btn-success" type="submit">Carregar Adicional</button>
+        </form>
+        </div>
+      </div>      
+      {% else %}
+      <form id="enviar" method="post" action="{{ url_for('index') }}">
+        <button class="w-100 btn btn-lg btn-primary" type="submit">Carregar Slides</button>
+      </form>
+    </main>
+    {% endif %}
+
+
+
+<script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script> 
+<script type=text/javascript>$SCRIPT_ROOT = {{ request.script_root|tojson|safe }}; </script>
+<script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/Sortable.min.js') }}"></script>
+<script>
+  Sortable.create(presentations, {
+  animation: 100,
+  group: 'list-1',
+  draggable: '.list-group-item',
+  handle: '.list-group-item',
+  sort: true,
+  filter: '.sortable-disabled',
+  //chosenClass: 'active'
+});
+
+const total = JSON.parse('{{total|tojson}}');
+
+function proximo() {
+  var prox = $('.form-check-input:not(:checked)').val();
+  
+  if (prox != null) {
+    $('.form-check-input[value*="' + prox.replace(/\\/g, '\\\\') + '"]').prop("checked", true);
+    $("#proximaPRS").val(prox)
+    
+    var novalista = [];
+    $(".form-check-input").each(function(){
+      var dict = {};
+      dict.nome = $(this).parent().text()
+      dict.caminho = $(this).val();
+      dict.check = $(this).is(':checked');
+      novalista.push(dict)
+    });
+    
+    $.ajax({
+      type: "POST",
+      url: "{{ url_for('proximoSlide') }}",
+      contentType: "application/json",
+      data: JSON.stringify(novalista),
+      dataType: "json",
+      success: function(response) {
+        //console.log(response)
+      },
+      error: function(err) {
+        console.log(err);
+      }
+    });
+
+    $("#proximaPRS").val(prox)
+    $("#proxsld").submit();
+  }
+}
+
+$("body").keydown(function(e) {
+  if ((e.which || e.keyCode) === 116) {
+      e.preventDefault();
+      proximo();
+    }
+});
+
+$("#next").click(function() {
+  proximo();
+});
+
+/*$(".list-group-item").on("drag", function() {
+  arrastar();
+});
+
+$(".list-group-item").on("touchstart", function() {
+  arrastar();
+});
+
+$(".list-group-item").on("touchend", function() {
+  arrastar();
+});*/
+
+/*$(".list-group-item").on("touchcancel", function() {
+  arrastar();
+});
+
+$(".list-group-item").on("touchleave", function() {
+  arrastar();
+});
+
+$(".list-group-item").on("touchmove", function() {
+  arrastar();
+});*/
+
+$("#presentations").change(function() {
+  arrastar();
+});
+
+$(".close").click(function() {
+  $(this).parent().get(0).remove()
+  arrastar();
+});
+
+function arrastar() {
+  var cont = 0
+  var novalista = [];
+    $(".form-check-input").each(function(){
+      var dict = {};
+      dict.nome = $(this).parent().text()
+      dict.caminho = $(this).val();
+      dict.check = $(this).is(':checked');
+      cont = cont + 1
+      if (cont <= total) {
+        novalista.push(dict)
+      }
+    });
+
+    console.log(novalista);
+
+  $.ajax({
+      type: "POST",
+      url: "{{ url_for('atualizarTabela') }}",
+      contentType: "application/json",
+      data: JSON.stringify(novalista),
+      dataType: "json",
+      success: function(response) {
+        //console.log(response)
+      },
+      error: function(err) {
+        console.log(err);
+      }
+    });
+}
+
+/*$(".form-check-input").change(function() {
+  arrastar();
+});*/
+
+setInterval(function() {
+  var novalista = [];
+  var cont = 0
+    $(".form-check-input").each(function(){
+      var dict = {};
+      dict.caminho = $(this).val();
+      dict.nome = $(this).parent().text()
+      dict.check = $(this).is(':checked');
+      cont = cont + 1
+      if (cont <= total) {
+        novalista.push(dict)
+      }
+    });
+
+    //console.log(novalista)
+
+    // AJAX send request
+    $.ajax({
+      type: "POST",
+      url: "{{ url_for('verificarMudanca') }}",
+      contentType: "application/json",
+      data: JSON.stringify(novalista),
+      dataType: "json",
+      success: function(response) {
+        if (response.sucess) {
+          //location.reload();
+          location.replace("{{ url_for('index') }}");
+        }
+        //location.reload();
+      },
+      error: function(err) {
+        console.log(err);
+      }
+    });
+}, 3000);
+
+</script>
+
+      
+  </body>
+</html>

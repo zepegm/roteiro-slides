@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.88.1">
+    <title>Registrador de Eventos</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{ url_for('static', filename='stylesheets/bootstrap.min.css') }}" rel="stylesheet">
+
+    <style>
+      .arquivo {
+        font-weight: bold;
+      }
+
+      .Suces {
+        color: blue;
+      }
+    </style>
+
+    <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/Logo Colorido.png') }}">
+  </head>
+  
+  <body style="background-color: rgba(248, 249, 250, 0.726);">
+    
+<main class="principal">
+  <form action="" method="post" autocomplete="off">
+    {% if msg != None %}
+    <div class="row">
+      <h1>{{msg|safe}}</h1>
+    </div>
+    {% endif %}
+    <div class="row">
+      <div class="col-sm-2">
+        <label for="data" class="form-label">Data:</label>
+        <input type="date" class="form-control" id="data" name="data" value="{{data}}">
+      </div>
+      <div class="col-sm-3">
+        <label for="tema" class="form-label">Tema:</label>
+        <select name="tema" id="tema" class="form-select" aria-label="Default select example">
+          {% for row in temas %}
+             <option value="{{row['id']}}">{{row['descricao']}}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-sm-3">
+        <label for="obs" class="form-label">Observação:</label>
+        <input type="text" class="form-control" id="obs" name="obs">
+      </div>
+      <div class="col-sm-4">
+        <label for="link" class="form-label">Link do vídeo:</label>
+        <input type="text" class="form-control" id="link" name="link">
+      </div>      
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-sm-1">
+        <button id="novo_evento" class="w-100 btn btn-lg btn-primary" type="button">+</button>
+      </div>
+      <div class="col-sm-3">
+        <button id="import_log" class="w-100 btn btn-lg btn-success" type="button">Importar do Log</button>
+      </div>
+      <div class="col-sm-4">
+        <button id="import_files" class="w-100 btn btn-lg btn-warning" type="button">Importar dos Arquivos Abertos</button>
+      </div>
+      <div class="col-sm-4">
+        <button id="gravar" class="w-100 btn btn-lg btn-secondary" type="button">Gravar!</button>
+      </div>      
+    </div>
+    <br>
+    <div class="row">
+      <div class="form-floating">
+        <ul class="list-group" id="eventos">
+        {% if lista == None %}
+          <li class="list-group-item" id="evento1">
+            <div class="row">
+              <div class="col-sm-3">
+                <input type="text" class="form-control" id="nome1" name="nome1">         
+              </div>
+              <div class="col-sm-2">
+                <select name="cat1" id="cat1" class="form-select categoria" aria-label="Default select example">
+                    {% for row in eventos %}
+                    <option value="{{row['id']}}">{{row['descricao']}}</option>
+                    {% endfor %}
+                </select>
+              </div>
+              <div class="col-sm-3">
+                <select name="sub1" id="sub1" class="form-select" aria-label="Default select example">
+                    {% for row in catBiblia %}
+                    <option value="{{row['id']}}">{{row['descricao']}}</option>
+                    {% endfor %}
+                </select>
+              </div>
+              <div class="col-sm-3">
+                <select name="musc1" id="musc1" class="form-select" aria-label="Default select example" disabled>
+                  <option>-</option>
+                </select>
+              </div>  
+              <div class="col-sm-1"><button id="close1" class="w-100 btn btn-lg btn-danger" type="button">x</button></div>
+            </div>
+          </li>
+          {% else %}
+          {% for row in lista %}
+            <li class="list-group-item" id="evento1">
+              <div class="row">
+                <div class="col-sm-3">
+                  <input type="text" class="form-control" id="nome1" name="nome1" value="{{row['nome']}}">            
+                </div>
+                <div class="col-sm-2">
+                  <select name="cat1" id="cat1" class="form-select categoria" aria-label="Default select example">
+                      {% for val in eventos %}
+                      {% if row['categoria'] == val['id'] %}
+                      <option value="{{val['id']}}" selected>{{val['descricao']}}</option>
+                      {% else %}
+                      <option value="{{val['id']}}">{{val['descricao']}}</option>
+                      {% endif %}
+                      {% endfor %}
+                  </select>
+                </div>   
+                <div class="col-sm-3">
+                  {% if row['categoria'] == 1 %}
+                  <select name="sub1" id="sub1" class="form-select" aria-label="Default select example">
+                    {% for val in catBiblia %}
+                    <option value="{{val['id']}}">{{val['descricao']}}</option>
+                    {% endfor %}
+                  </select>
+                  {% endif %}
+                  {% if row['categoria'] == 2 %}
+                  <select name="sub1" id="sub1" class="form-select" aria-label="Default select example" disabled>
+                    <option>-</option>
+                  </select>
+                  {% endif %}
+                  {% if row['categoria'] == 3 %}
+                  <select name="sub1" id="sub1" class="form-select" aria-label="Default select example">
+                    {% for val in catMusica %}
+                    <option value="{{val['id']}}">{{val['descricao']}}</option>
+                    {% endfor %}
+                  </select>
+                  {% endif %}                  
+                </div>
+                <div class="col-sm-3">
+                  {% if row['categoria'] == 1 %}
+                  <select name="musc1" id="musc1" class="form-select" aria-label="Default select example" disabled>
+                    <option>-</option>
+                  </select>
+                  {% else %}
+                  <select name="musc1" id="musc1" class="form-select" aria-label="Default select example">
+                    {% for val in formaMusical %}
+                    <option value="{{val['id']}}">{{val['descricao']}}</option>
+                    {% endfor %}
+                  </select>
+                  {% endif %}
+                </div>   
+                <div class="col-sm-1"><button id="close1" class="w-100 btn btn-lg btn-danger" type="button">x</button></div>               
+              </div>
+            </li>
+          {% endfor %}
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </form>
+</main>
+
+    <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script> 
+    <!-- <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script> -->
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/Sortable.min.js') }}"></script>
+    <script type="text/javascript">
+      Sortable.create(eventos, {
+      animation: 100,
+      group: 'list-1',
+      draggable: '.list-group-item',
+      handle: '.list-group-item',
+      sort: true,
+      filter: '.sortable-disabled',
+      //chosenClass: 'active'
+    });
+
+      $(document).on("click", "#close1", function() {
+        $(this).parent().parent().parent().remove();
+      });
+
+      $('#novo_evento').click(function () {
+        $('#eventos').append('<li class="list-group-item" id="evento1"><div class="row"><div class="col-sm-3"><input type="text" class="form-control" id="nome1" name="nome1"></div><div class="col-sm-2"><select name="cat1" id="cat1" class="form-select categoria" aria-label="Default select example"><option value="1">Leitura Bíblica</option><option value="2">Harpa</option><option value="3">Música</option></select></div><div class="col-sm-3"><select name="sub1" id="sub1" class="form-select" aria-label="Default select example"><option value="1">Leitura Oficial</option><option value="2">Tema da Pregação</option></select></div><div class="col-sm-3"><select name="sub1" id="sub1" class="form-select" aria-label="Default select example" disabled><option>-</option></select></div><div class="col-sm-1"><button id="close1" class="w-100 btn btn-lg btn-danger" type="button">x</button></div></div></li>');
+      });
+
+      $(document).on("change", ".categoria", function() {
+        val = $(this).val();
+        //console.log(val);
+        switch (val) {
+          case '1':
+            nod = $(this).parent().parent().children().eq(2).children();
+            nod.empty();
+            lista = JSON.parse('{{catBiblia|tojson}}');
+            for (var i in lista) {
+              nod.append('<option value="' + lista[i]['id'] + '">' + lista[i]['descricao'] + '</option>');
+            }
+            nod.removeAttr("disabled");
+            nod = $(this).parent().parent().children().eq(3).children();
+            nod.empty();  
+            nod.append('<option>-</option>');
+            nod.attr("disabled", true);                      
+            break;
+          case '2':
+            nod = $(this).parent().parent().children().eq(2).children();
+            nod.empty();
+            nod.append('<option>-</option>');
+            nod.attr("disabled", true);
+            nod = $(this).parent().parent().children().eq(3).children();
+            nod.empty();
+            nod.removeAttr("disabled");
+            lista = JSON.parse('{{formaMusical|tojson}}');
+            for (var i in lista) {
+              nod.append('<option value="' + lista[i]['id'] + '">' + lista[i]['descricao'] + '</option>');
+            }
+            break;
+          case '3':
+            nod = $(this).parent().parent().children().eq(2).children();
+            nod.empty();
+            lista = JSON.parse('{{catMusica|tojson}}');
+            for (var i in lista) {
+              nod.append('<option value="' + lista[i]['id'] + '">' + lista[i]['descricao'] + '</option>');
+            }            
+            nod.removeAttr("disabled");
+            nod = $(this).parent().parent().children().eq(3).children();
+            nod.empty();
+            nod.removeAttr("disabled");
+            lista = JSON.parse('{{formaMusical|tojson}}');
+            for (var i in lista) {
+              nod.append('<option value="' + lista[i]['id'] + '">' + lista[i]['descricao'] + '</option>');
+            }         
+            break;
+          default:
+            console.log('afs');
+        }
+      });
+
+      $('#import_log').click(function() {
+        location.href = "../novo_evento?import=log&data=" + $('#data').val();
+      });
+
+      $('#import_files').click(function() {
+        location.href = "../novo_evento?import=files&data=" + $('#data').val();
+      });
+
+      $('#gravar').click(function() {
+        // preciso dar um jeito de pegar essa lista
+        lista = []
+        $('li.list-group-item').each(function() {
+          var dict = {}
+          dict.nome = $(this).children().children().eq(0).children().val().replace('.pptx', '');
+          dict.categoria = $(this).children().children().eq(1).children().val();
+          dict.subcategoria = $(this).children().children().eq(2).children().val();
+          dict.forma = $(this).children().children().eq(3).children().val();
+          lista.push(dict);
+        });
+        var evento = {}
+        evento.data = $('#data').val();
+        evento.tema = $('#tema').val();
+        evento.obs = $('#obs').val();
+        evento.link = $('#link').val();
+        evento.lst = lista;
+        
+        $.ajax({
+          type: "POST",
+          url: "{{ url_for('novo_evento') }}",
+          contentType: "application/json",
+          data: JSON.stringify(evento),
+          dataType: "json",
+          success: function(response) {
+            location.href = "../novo_evento?msg=sucess";
+          },
+          error: function(err) {
+            location.href = "../novo_evento?msg=fail";
+          }
+        });
+
+      });
+    </script>
+  </body>
+</html>

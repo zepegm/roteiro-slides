@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.88.1">
+    <title>Registro de Eventos</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{ url_for('static', filename='stylesheets/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='stylesheets/tui-pagination.css') }}" rel="stylesheet">
+
+    <style>
+      th {
+        vertical-align: middle;
+      }
+      .heading {
+        font-weight: bold;
+      }
+    </style>
+
+    <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/Logo Colorido.png') }}">
+  </head>
+  
+  <body style="background-color: rgba(248, 249, 250, 0.726);">
+  <form id="enviarPag" name="enviarPag" method="POST" action="{{ url_for('visualizar_roteiros') }}">
+    <input type="hidden" id="novaPag" name="novaPag" value="1">
+  </form>
+  <main class="principal">
+    <div id="pagination" class="tui-pagination"></div>
+    <form id="enviarFiltro" name="enviarFiltro" method="POST" action="{{ url_for('visualizar_roteiros') }}">
+      <div class="row">
+        <div class="col-sm-3">
+          <label for="nome" class="form-label">Nome:</label>
+          <input type="text" class="form-control" id="nome" name="nome" value="{{origem['nome']}}">
+        </div>
+        <div class="col-sm-2">
+          <label for="datade" class="form-label">De:</label>
+          <input type="date" class="form-control" id="datade" name="datade" value="{{datas[1]}}">        
+        </div>
+        <div class="col-sm-2">
+          <label for="dataate" class="form-label">Até:</label>
+          <input type="date" class="form-control" id="dataate" name="dataate" value="{{datas[0]}}">        
+        </div>       
+        <div class="col-sm-3">
+          <label for="evento" class="form-label">Tipo de Evento:</label>
+          <select name="evento" id="evento" class="form-select" aria-label="Default select example">
+            <option value="0">Selecione...</option>
+            {% for row in temas %}
+            {% if row['id']|int == origem['evento']|int %}
+            <option value="{{row['id']}}" selected>{{row['descricao']}}</option>
+            {% else %}
+            <option value="{{row['id']}}">{{row['descricao']}}</option>
+            {% endif %}
+            {% endfor %}
+          </select>
+        </div> 
+        <div class="col-sm-2">
+          <label for="atividade" class="form-label">Tipo de Atividade:</label>
+          <select name="atividade" id="atividade" class="form-select" aria-label="Default select example">
+            <option value="0">Selecione...</option>
+            {% for row in atividades %}
+            {% if row['id']|int == origem['atividade']|int %}
+            <option value="{{row['id']}}" selected>{{row['descricao']}}</option>
+            {% else %}
+            <option value="{{row['id']}}">{{row['descricao']}}</option>
+            {% endif %}
+            {% endfor %}            
+          </select>
+        </div>  
+      </div>
+      <div class="row">
+        <div class="col-sm-3">
+          <label for="categoria" class="form-label">Tipo de Leitura Bíblica:</label>
+          <select name="categoria" id="categoria" class="form-select" aria-label="Default select example">
+            <option value="0">Selecione...</option>
+            {% for row in catBiblia %}
+            {% if row['id']|int == origem['categoria']|int %}
+            <option value="{{row['id']}}" selected>{{row['descricao']}}</option>
+            {% else %}
+            <option value="{{row['id']}}">{{row['descricao']}}</option>
+            {% endif %}
+            {% endfor %}              
+          </select>
+        </div> 
+        <div class="col-sm-2">
+          <label for="departamento" class="form-label">Departamento:</label>
+          <select name="departamento" id="departamento" class="form-select" aria-label="Default select example">
+            <option value="0">Selecione...</option>
+            {% for row in departamentos %}
+            {% if row['id']|int == origem['departamento']|int %}
+            <option value="{{row['id']}}" selected>{{row['descricao']}}</option>
+            {% else %}
+            <option value="{{row['id']}}">{{row['descricao']}}</option>
+            {% endif %}
+            {% endfor %}               
+          </select>
+        </div>                             
+        <div class="col-sm-2">
+          <label for="musica" class="form-label">Tipo Musical:</label>
+          <select name="musica" id="musica" class="form-select" aria-label="Default select example">
+            <option value="0">Selecione...</option>
+            {% for row in musical %}
+            {% if row['id']|int == origem['musica']|int %}
+            <option value="{{row['id']}}" selected>{{row['descricao']}}</option>
+            {% else %}
+            <option value="{{row['id']}}">{{row['descricao']}}</option>
+            {% endif %}
+            {% endfor %}             
+          </select>
+        </div>
+        <div class="col-sm-1 align-self-end">
+          <label for="botao" class="form-label"></label>
+          <input type="submit" class="btn btn-md btn-primary" id="botao" name="botao" value="Pesquisar">
+        </div> 
+        <div class="col-sm-1 align-self-end">
+          <button type="button" id="estatisticas" class="btn btn-md btn-danger">Estatísticas</button>
+        </div>        
+        <div class="col-sm-3 align-self-end">
+          <h4 class="heading">Total de registros: <span class="text-danger">{{total}}</span></h4>
+        </div>
+      </div>
+      <input type="hidden" id="novaPagPesquisa" name="novaPagPesquisa" value="1">
+    </form>
+    <br>
+    <table class="table table-hover">
+    {% for culto in lista %}
+    <thead class="table-dark head">
+      <tr>
+        <th scope="col">{{culto['data']}} - {{culto['semana']}}</th>
+        <th scope="col">{{culto['descricao']}}</th>
+        {% if culto['Obs'] != None %}
+        <th scope="col">{{culto['Obs']}}</th>
+        {% else %}
+        <th scope="col">-</th>
+        {% endif %}
+        <th scope="col" style="text-align: center"><a class="youtube" href="{{culto['URL']}}" target="_blank"><img alt="Abrir vídeo" src="{{ url_for('static', filename='images/play.png') }}" width="50" height="30"></a></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for evento in culto['eventos'] %}
+    <tr>
+      {% for i in evento %}
+      <td>{{i}}</td>
+      {% endfor %}
+      {% if evento|length < 4 %}
+      <td></td>
+      {% endif %}
+    </tr>
+    {% endfor %}
+    <tr><td colspan="4"></td></tr>
+    </tbody>
+    {% endfor %}
+    </table>
+  </main>
+
+    <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script> 
+    <!-- <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script> -->
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/tui-pagination.js') }}"></script>
+    <script type="text/javascript">
+      var pagination = new tui.Pagination('pagination', {
+          totalItems: {{total}},
+          itemsPerPage: {{perPage}},
+          visiblePages: 5,
+          page: {{pagina}}
+      });
+
+      pagination.on('beforeMove', function(eventData) {
+        if ({{perPage}} == 5) {
+          $('#novaPag').val(eventData.page);
+          $('#enviarPag').submit();
+        } else {
+          $('#novaPagPesquisa').val(eventData.page);
+          $('#enviarFiltro').submit();
+        }
+      });  
+
+      $("#estatisticas").click(function(evt) {
+        evt.preventDefault();
+        console.log('affs')
+        location.href = "../estatisticas"
+      });
+    </script>
+  </body>
+</html>

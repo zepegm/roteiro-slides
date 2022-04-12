@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.88.1">
+    <title>Modo Apresentador</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.1/examples/album/">
+
+    
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{ url_for('static', filename='stylesheets/bootstrap.min.css') }}" rel="stylesheet">
+    <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/Logo Colorido.png') }}">
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      .box-index {
+        box-shadow: 1px 1px 2px black, 0 0 1em blue, 0 0 0.2em blue;
+        color: blue;
+        font-weight: bold;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+    </style>
+
+    
+  </head>
+  <body>
+    
+<header>
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{{ url_for('index') }}">
+        <img src="{{ url_for('static', filename='images/Logo ADCPTA.png') }}" width="25" height="30" class="d-inline-block align-top" alt="">
+        Roteiro
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav me-auto mb-2 mb-md-0">
+          <li class="nav-item">
+            <a class="nav-link" href="../abrirbiblia">Abrir Bíblia</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../abrirharpa">Abrir Harpa</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../abrirslidemusica">Músicas</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="#">Apresentador</a>
+          </li> 
+          <li class="nav-item">
+            <a class="nav-link" href="../viewer">Visualizador</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="../obs">OBS</a>
+          </li>   
+          <li class="nav-item">
+            <a class="nav-link" href="../eventos?destino=ver">Eventos</a>
+          </li>                       
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main>
+{% if index > 0 %}
+  <section class="py-5 text-center container">
+    <div class="row py-lg-5">
+      <h1 class="fw-light">Apresentador de Slides</h1>
+        <p class="lead text-muted">Abaixo você vê o slide atual e prévia do próximo.</p>
+      <div class="col-lg-6 col-md-8 mx-auto">
+        <div class="card shadow-sm">
+          <img class="bd-placeholder-img card-img-top" width="100%" height="100%" src="{{ url_for('static', filename='images/Output/Slide' + index|string + '.jpg') }}" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="#55595c"/></img>
+
+          <div class="card-body">
+            <h1 class="card-text text-center">Slide Atual: {{index}}</h1>
+          </div>
+        </div>        
+      </div>
+      {% if index < listaSlideShow[-1]['index']  %}
+      <div class="col-sm-4">
+        <div class="card shadow-sm">
+          <img class="bd-placeholder-img card-img-top" width="100%" height="100%" src="{{ url_for('static', filename='images/Output/Slide' + (index + 1)|string + '.jpg') }}" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="#55595c"/></img>
+          <div class="card-body">
+            <h4 class="card-text text-center">Próximo Slide: {{index + 1}}</h4>
+          </div>
+        </div>        
+      </div> 
+      {% endif %} 
+      <div class="col-sm-8">          
+        <form id="update" method="POST" action="{{ url_for('apresentador') }}">
+          <input type="hidden" value="{{index}}" id="index_atual" name="index_atual">
+        <p>
+          <a id="anterior" class="btn btn-secondary my-2">Anterior</a>
+          <a id="proximo" class="btn btn-primary my-2">Próximo</a>
+        </p>
+      </form>
+      <form id="proximaPRS" method="POST" action="{{ url_for('proxPRS') }}">
+        <input type="hidden" value="1" id="prs" name="prs">
+      </form>
+      </div>
+    </div>
+  </section>
+
+  <div class="album py-5 bg-light">
+    <div class="container">
+
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-md-4 row-cols-md-5 g-3">
+        {% for sld in listaSlideShow %}
+        {% if index == sld['index'] %}
+        <div class="col box-index">
+        {% else %}
+        <div class="col">
+        {% endif %}
+          <div class="card shadow-sm">
+            <img class="bd-placeholder-img card-img-top" width="100%" height="100%" src="{{ url_for('static', filename='images/Output/' + sld['nome']) }}" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="#55595c"/></img>
+
+            <div class="card-body">
+              <p class="card-text text-center">Slide: {{sld['index']}}</p>
+              <div class="d-flex flex-column">
+                <button type="button" data-index="{{sld['index']}}" class="btn btn-sm btn-outline-secondary">Avançar para Slide</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+{% else %}
+<section class="py-5 text-center container">
+  <div class="row py-lg-5">
+    <h1 class="fw-light">Apresentador de Slides</h1>
+      <strong>Para usar os recursos do apresentador é necessário estar com uma apresentação do PowerPoint em exibição.</strong>
+  </div>
+</section> 
+{% endif %}
+</main>
+
+  <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+  <script>
+    function next() {
+      var index = parseInt($("#index_atual").val())
+      const listaSlideShow = JSON.parse('{{listaSlideShow|tojson}}');
+
+      if (index < (listaSlideShow[listaSlideShow.length - 1].index)) {
+        $("#index_atual").val(index + 1);
+        $("#update").submit();
+      } else {
+        $('#proximaPRS').submit();
+      }
+    }
+
+    function previous() {
+      var index = parseInt($("#index_atual").val()) - 1
+
+      if (index > 0) {
+        $("#index_atual").val(index);
+        $("#update").submit();
+      }
+    }
+
+    $("#proximo").click(function() {
+      next();
+    });
+
+    $("#anterior").click(function() {
+      previous();
+    });
+
+    $(".btn-outline-secondary").click(function() {
+      var index = $(this).data('index')
+      $("#index_atual").val(index);
+      $("#update").submit();
+    });
+
+    $("body").keydown(function(e) {
+      if (e.keyCode == 34 || e.keyCode == 39) {
+        e.preventDefault();
+        next();
+      } else if (e.keyCode == 33 || e.keyCode == 37) {
+        e.preventDefault();
+        previous();
+      }
+    });
+  </script>
+      
+  </body>
+</html>
