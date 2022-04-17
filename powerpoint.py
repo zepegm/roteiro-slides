@@ -125,10 +125,11 @@ def pegarTextoSlideShow():
         pp = win32com.client.GetActiveObject("PowerPoint.Application", pythoncom.CoInitialize())
         if pp.SlideShowWindows.Count > 0:
 
-            filename = pp.SlideShowWindows(1).Presentation.Name
+            #filename = pp.SlideShowWindows(1).Presentation.Name
+            fullname = pp.SlideShowWindows(1).Presentation.FullName
             index = pp.SlideShowWindows(1).View.Slide.SlideIndex
 
-            if filename[:4] != 'HINO' and filename[:-5][-1:].isdigit():
+            if fullname.find('/Bíblia/') > -1:
                 # bíblia... pegar texto da bíblia
                 cabecalho = pp.SlideShowWindows(1).View.Slide.Shapes(2).TextFrame.TextRange.Text
                 lista = cabecalho.replace('I ', 'I-').replace('II ', 'II-').split(' ')
