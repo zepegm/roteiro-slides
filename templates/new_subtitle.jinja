@@ -90,6 +90,8 @@
                 if (tamanho > 0) {
                     textFit($('div'), {alignVert: true, multiLine: true, minFontSize: 10, maxFontSize: 100});
                 }
+                var el = $('.text');
+                el.before( el.clone(true) ).remove();
             })
         </script>
     </body>
