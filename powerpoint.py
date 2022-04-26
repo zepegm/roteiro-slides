@@ -169,10 +169,10 @@ def pegarTextoSlideShow():
                 return conteudo
   
     except:
-        conteudo = {'cabecalho':None, 'texto':None, 'index':0}
+        conteudo = {'cabecalho':None, 'texto':None, 'index':pegarIndexSlideshow()}
         return conteudo
 
-    conteudo = {'cabecalho':None, 'texto':None, 'index':0}
+    conteudo = {'cabecalho':None, 'texto':None, 'index':pegarIndexSlideshow()}
     return conteudo
 
 def verificarCalendario():
