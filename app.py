@@ -12,11 +12,19 @@ from waitress import serve
 from math import ceil
 from datetime import date
 from GeradorGraficos import salvarTudo
+from threading import Lock
+from flask_socketio import SocketIO, emit
+from flask_cors import CORS
 
 
 # vou ver se consigo abrir certinho
 app=Flask(__name__)
 app.secret_key = "abc123"
+app.config['SECRET_KEY'] = 'justasecretkeythatishouldputhere'
+socketio = SocketIO(app)
+CORS(app)
+thread = None
+thread_lock = Lock()
 
 diretorio = os.path.expanduser('~') + r'\OneDrive - Secretaria da Educação do Estado de São Paulo\IGREJA'
 historico = os.path.expanduser('~') + r'\OneDrive - Secretaria da Educação do Estado de São Paulo\IGREJA\Historico.db'
@@ -49,6 +57,17 @@ def retornarFiltroInner(nome, termos, texto):
         return texto
     else:
         return ''
+
+def background_thread():
+    #Example of how to send server generated events to clients.
+    index = 0
+    while True:
+        socketio.sleep(0.5)
+        new_index = pegarIndexSlideshow()
+        #print(new_index)
+        if (index != new_index):
+            index = new_index
+            socketio.emit('legenda', pegarTextoSlideShow())
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -338,39 +357,20 @@ def verificarMudanca():
 
             return jsonify(valor)
 
-@app.route('/subtitle', methods=['GET', 'POST'])
+@app.route('/subtitle')
 def exibirLegenda():
+    legenda = pegarTextoSlideShow()
 
-    if request.method == 'POST':
-        #print('got a post request!')
-
-        if request.is_json: # application/json
-            # handle your ajax request here!
-            index = request.json
-            
-            try:
-                if index != pegarIndexSlideshow():
-                    valor = {'sucess':True}
-                else:
-                    valor = {'sucess':False}
-            except:
-                valor = {'sucess':False}
-            
-            return jsonify(valor)
+    if legenda['index'] > 0:
+    
+        if len(legenda['texto']) > 199:
+            tamanho = 30
+        else:
+            tamanho = 20
     else:
+        tamanho = 0
 
-        legenda = pegarTextoSlideShow()
-
-        try:
-            if len(legenda['texto']) > 199:
-                tamanho = '30vh'
-            else:
-                tamanho = '20vh'
-        except:
-            tamanho = '20vh'
-
-
-        return render_template('subtitle.jinja', legenda=legenda['texto'], cabecalho=legenda['cabecalho'], tamanho=tamanho, index=legenda['index'])
+    return render_template('new_subtitle.jinja', legenda=legenda['texto'], cabecalho=legenda['cabecalho'], tamanho=tamanho)
 
 @app.route('/calendar', methods=['GET', 'POST'])
 def exibirCalendario():
@@ -842,6 +842,16 @@ def visualizar_roteiros():
 
     origem = {'nome':'', 'evento':0, 'atividade':0, 'categoria':0, 'departamento':0, 'musica':0}
     return render_template('visualizarEvento.jinja', lista=lista, total=total, pagina=pagina, datas=datas, temas=temas, atividades=atividades, catBiblia=catBiblia, departamentos=departamentos, musical=musical, perPage=5, origem=origem)
+
+@socketio.on('connect')
+def on_connect():
+    global thread
+    with thread_lock:
+        if thread is None:
+            thread = socketio.start_background_task(background_thread)
+            
+    payload = dict(data='User Connected')
+    emit('log', payload, broadcast=True)
 
 if __name__ == '__main__':
     #app.run('0.0.0.0',port=80)
