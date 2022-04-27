@@ -15,6 +15,7 @@ from GeradorGraficos import salvarTudo
 from threading import Lock
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
+import eventlet.wsgi
 
 
 # vou ver se consigo abrir certinho
@@ -855,4 +856,5 @@ def on_connect():
 
 if __name__ == '__main__':
     #app.run('0.0.0.0',port=80)
-    serve(app, host='0.0.0.0', port=80, threads=8)
+    #serve(app, host='0.0.0.0', port=80, threads=8)
+    eventlet.wsgi.server(eventlet.listen(('', 80)), app)
