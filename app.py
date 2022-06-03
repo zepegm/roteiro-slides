@@ -214,7 +214,7 @@ def abrirharpa():
                     sucesso += 1
                     resultado += hino.zfill(3) + ', '
                     # registrar no log
-                    inserirDadosBasico(historico, "insert into log values (datetime('now', 'localtime'), 'HINO " + hino.zfill(3) + ".pptx', 2, " + eNoturno(noturno) + ", '" + executarConsulta('Musicas.db', "select Conteúdo from [Harpa] where Hino = {} and Tipo = 'Titulo'".format(hino))[0] + "', 1)")
+                    inserirDadosBasico(historico, "insert into log values (datetime('now', 'localtime'), 'HINO " + hino.zfill(3) + ".pptx', 2, " + eNoturno(noturno) + ", '" + executarConsulta('Musicas.db', "select Conteúdo from [Harpa] where Hino = {} and Tipo = 'Titulo'".format(hino))[0].replace("'", "''") + "', 1)")
 
         if sucesso == 1:
             status = 'Hino ' + resultado[0:-2] + ' aberto com sucesso!'
@@ -283,13 +283,13 @@ def abrirslidemusica():
             prs = ppt(diretorio + noturno + '\\' + m)
             sucesso += 1
             musicasAbertas += '"' + m[m.rfind('\\') + 1:-5] + '", '
-            inserirDadosBasico(historico, "insert into log values (datetime('now', 'localtime'), '" + m[m.rfind('\\') + 1:] + "', 3, " + eNoturno(noturno) + ", '" + m[m.rfind('\\', 1, m.rfind('\\')) + 1:m.rfind('\\')] + "', 1)")
+            inserirDadosBasico(historico, "insert into log values (datetime('now', 'localtime'), '" + m[m.rfind('\\') + 1:].replace("'", "''") + "', 3, " + eNoturno(noturno) + ", '" + m[m.rfind('\\', 1, m.rfind('\\')) + 1:m.rfind('\\')] + "', 1)")
 
         for m in musicas_dep:
             prs = ppt(diretorio + noturno + '\\' + m)
             sucesso += 1
             musicasAbertas += '"' + m[m.rfind('\\') + 1:-5] + '", '
-            inserirDadosBasico(historico, "insert into log values (datetime('now', 'localtime'), '" + m[m.rfind('\\') + 1:] + "', 3, " + eNoturno(noturno) + ", '" + m[m.rfind('\\', 1, m.rfind('\\')) + 1:m.rfind('\\')] + "', 1)")
+            inserirDadosBasico(historico, "insert into log values (datetime('now', 'localtime'), '" + m[m.rfind('\\') + 1:].replace("'", "''") + "', 3, " + eNoturno(noturno) + ", '" + m[m.rfind('\\', 1, m.rfind('\\')) + 1:m.rfind('\\')] + "', 1)")
 
         if sucesso > 1:
             status = 'Arquivos ' + musicasAbertas[:-2] + ' abertos com sucesso!'
@@ -580,7 +580,7 @@ def abrirSlideExternamente():
 
                 caminho = diretorio + modoNoturno + r'\HARPA' + r'\HINO ' + lista['hino'] + '.pptx'
                 # criar sql do log
-                sql = "insert into log values (datetime('now', 'localtime'), 'HINO " + lista['hino'] + ".pptx', 2, " + eNoturno(modoNoturno) + ", '" + executarConsulta('Musicas.db', "select Conteúdo from [Harpa] where Hino = {} and Tipo = 'Titulo'".format(lista['hino']))[0] + "', 1)"
+                sql = "insert into log values (datetime('now', 'localtime'), 'HINO " + lista['hino'] + ".pptx', 2, " + eNoturno(modoNoturno) + ", '" + executarConsulta('Musicas.db', "select Conteúdo from [Harpa] where Hino = {} and Tipo = 'Titulo'".format(lista['hino']))[0].replace("'", "''") + "', 1)"
 
 
             if os.path.isfile(caminho):
@@ -609,7 +609,7 @@ def abrirSlideExternamente():
             try:
                 prs = ppt(caminho)
                 valor = {'sucess':True}
-                inserirDadosBasico(historico, "insert into log values (datetime('now', 'localtime'), '" + request.args['hino'][request.args['hino'].rfind('/') + 1:] + "', 3, " + eNoturno(modoNoturno) + ", '" + request.args['hino'][request.args['hino'].rfind('/', 1, request.args['hino'].rfind('/')) + 1:request.args['hino'].rfind('/')] + "', 1)")
+                inserirDadosBasico(historico, "insert into log values (datetime('now', 'localtime'), '" + request.args['hino'][request.args['hino'].rfind('/') + 1:].replace("'", "''") + "', 3, " + eNoturno(modoNoturno) + ", '" + request.args['hino'][request.args['hino'].rfind('/', 1, request.args['hino'].rfind('/')) + 1:request.args['hino'].rfind('/')] + "', 1)")
             except:
                 inserirDadosBasico(historico, "insert into log values (datetime('now', 'localtime'), 'ERRO GRAVE!', 4, " + eNoturno(modoNoturno) + ", '-', 3)")
                 valor = {'sucess':False}
