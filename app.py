@@ -137,7 +137,7 @@ def carregarSlideAdicional():
 @app.route('/abrirbiblia', methods=['GET', 'POST'])
 def abrirbiblia():
     if request.method == 'POST':
-        livro = request.form['livro']
+        livro = request.form['livro'].replace('1', 'I').replace('2', 'II').replace('3', 'III')
         capitulo = request.form['capitulo']
         versao = request.form['versao']
         versiculo =  request.form['versiculo']
@@ -168,12 +168,12 @@ def abrirbiblia():
             consultaBD = executarConsultaBibliaFormat('BibliaFormat.db', livro, capitulo)
             # registrar no log
             inserirDadosBasico(historico, "insert into log values (datetime('now', 'localtime'), '" + livro + ' - ' + '{0:03}'.format(int(capitulo)) + ".pptx', 1, " + eNoturno(noturno) + ", '" + livro + ', cap. ' + capitulo + " - " + versao + "', 1)")
-            return render_template('biblianew.jinja', status='Arquivo aberto com sucesso!', corstatus='text-primary', livro=livro, capitulo=capitulo, versao=versao, noturno=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Noturno'")[0], rapido=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Rapido'")[0], versiculo=versiculo, sucesso='ok', consultaBD=consultaBD)
+            return render_template('biblianew.jinja', status='Arquivo aberto com sucesso!', corstatus='text-primary', livro=request.form['livro'], capitulo=capitulo, versao=versao, noturno=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Noturno'")[0], rapido=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Rapido'")[0], versiculo=versiculo, sucesso='ok', consultaBD=consultaBD)
 
         else:
             # registrar no log
             inserirDadosBasico(historico, "insert into log values (datetime('now', 'localtime'), '" + livro + ' - ' + '{0:03}'.format(int(capitulo)) + ".pptx', 1, " + eNoturno(noturno) + ", '" + livro + ', cap. ' + capitulo + " - " + versao + "', 2)")
-            return render_template('biblianew.jinja', status='Esse capítulo não existe!', corstatus='text-danger', livro=livro, capitulo=capitulo, versao=versao, noturno=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Noturno'")[0], rapido=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Rapido'")[0], versiculo=versiculo, sucesso='', consultaBD='')
+            return render_template('biblianew.jinja', status='Esse capítulo não existe!', corstatus='text-danger', livro=request.form['livro'], capitulo=capitulo, versao=versao, noturno=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Noturno'")[0], rapido=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Rapido'")[0], versiculo=versiculo, sucesso='', consultaBD='')
 
     return render_template('biblianew.jinja', status='', corstatus='', livro='', capitulo='', versao='', noturno=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Noturno'")[0], rapido=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Rapido'")[0], versiculo='', sucesso='', consultaBD='')
     
