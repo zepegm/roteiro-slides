@@ -4,7 +4,7 @@ import csv
 import locale
 from io import StringIO
 from unittest import result
-from PDF import verificarHash
+#from PDF import verificarHash
 from powerpoint import ppt, pegarSlidesAbertos, pegarSlideShow, pegarIndexSlideshow, avancarIndexSlideShow, pegarTextoSlideShow, verificarCalendario, encerrarTodasApresentacoes, pegarNomeSlideShow
 from consultaAcess import executarConsultaBibliaFormat, executarConsulta, executarConsultaLista, inserirListaRoteiro, executarConsultaGeral, alterarConfig, alterarConfigViewBiblia, consultarHarpaBD, alterarConfigViewMusica, inserirDadosBasico, consultarListaFiltrada
 from flask import Flask, render_template, request, redirect, url_for, jsonify
@@ -423,13 +423,13 @@ def receberView():
         # isso aqui é para as músicas
         if request.args['destino'] == 'musicas':
             alterarConfig('Roteiro.db', 3, 'View', 'visita')
-            categoria = executarConsulta('Roteiro.db', 'select * from ConfigMusica')
+            #categoria = executarConsulta('Roteiro.db', 'select * from ConfigMusica')
 
             if request.method == 'POST':
                 pesquisa = request.form['pesquisa']
                 # primeiro vamos verificar o hash dos pdfs
-                verificarHash()
-                # agora que o banco está estabilizado, eu posso fazer a consulta
+                #verificarHash() - não é mais necessário
+                
                 pesquisa = '%' + str(request.form['pesquisa']).lower().replace("'", "’").replace('%', '').replace(' ', '%').replace('á','_').replace('à','_').replace('â','_').replace('ã','_').replace('é','_').replace('ê','_').replace('í','_').replace('ó','_').replace('ô','_').replace('õ','_').replace('ú','_').replace('ç','_') + '%'
                 sql = "select * from MusicasPDF where texto like '" + pesquisa + "' order by arquivo, pag"
                 resultados = executarConsultaGeral('Musicas.db', sql)
@@ -441,10 +441,10 @@ def receberView():
                 else:
                     mensagem = '<span class="text-primary">Total de ' + str(len(resultados)) + ' resultados!</span>'
 
-                return render_template('viewerMusicas.jinja', categoria=categoria, pesquisa=request.form['pesquisa'].replace("'", "’"), resultados=resultados, mensagem=mensagem, total=len(resultados))
+                return render_template('viewerMusicas.jinja', pesquisa=request.form['pesquisa'].replace("'", "’"), resultados=resultados, mensagem=mensagem, total=len(resultados))
 
 
-            return render_template('viewerMusicas.jinja', categoria=categoria, pesquisa='', resultados=None)
+            return render_template('viewerMusicas.jinja', pesquisa='', resultados=None)
 
         # isso aqui é para a harpa
         if request.args['destino'] == 'harpa':
@@ -855,6 +855,6 @@ def on_connect():
     emit('log', payload, broadcast=True)
 
 if __name__ == '__main__':
-    #app.run('0.0.0.0',port=80)
+    app.run('0.0.0.0',port=80)
     #serve(app, host='0.0.0.0', port=80, threads=8)
-    eventlet.wsgi.server(eventlet.listen(('', 80)), app)
+    #eventlet.wsgi.server(eventlet.listen(('', 80)), app)

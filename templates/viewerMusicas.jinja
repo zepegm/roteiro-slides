@@ -98,26 +98,6 @@
     </div>
     <hr>
     <div class="row">
-      <div class="col-sm-4">
-        <label for="livro" class="form-label">Selecione a pasta da música:</label>
-        <div class="dropdown">
-          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" style="width:100%">{{categoria[0]}}</button>
-          <ul class="dropdown-menu" id="livro" aria-labelledby="dropdownMenuButton1">
-            <li class="menu-title">Corinhos, Equipe de Louvor, etc</li>
-            <li><a id="avu" class="dropdown-item categoria" href="javascript:alterarCategoria('Avulsos', 'Avulsos.pdf', 'avu', 1)">Avulsos</a></li>
-            <li><a id="cong" class="dropdown-item categoria" href="javascript:alterarCategoria('Congregacionais', 'Congregacionais.pdf', 'cong', 1)">Congregacionais</a></li>
-            <li><a id="eql" class="dropdown-item categoria" href="javascript:alterarCategoria('Equipe de Louvor','Equipe de louvor.pdf', 'eql', 1)">Equipe de Louvor</a></li>
-            <li><a id="maeql" class="dropdown-item categoria" href="javascript:alterarCategoria('Músicas Antigas da Equipe de Louvor','Músicas Antigas da Equipe de Louvor.pdf', 'maeql', 1)">Músicas Antigas da Equipe de Louvor</a></li>
-            <li><a id="retiro" class="dropdown-item categoria" href="javascript:alterarCategoria('Músicas Antigas de Retiros','Músicas Antigas de Retiros.pdf', 'retiro', 1)">Músicas Antigas de Retiros</a></li>
-            <li class="menu-title">Departamentos</li>
-            <li><a id="adol" class="dropdown-item categoria" href="javascript:alterarCategoria('Adolescentes','Adolescentes.pdf', 'adol', 1)">Adolescentes</a></li>
-            <li><a id="kids" class="dropdown-item categoria" href="javascript:alterarCategoria('Crianças','Crianças.pdf', 'kids', 1)">Crianças</a></li>
-            <li><a id="newg" class="dropdown-item categoria" href="javascript:alterarCategoria('Nova Geração','Nova Geração.pdf', 'newg', 1)">Nova Geração</a></li>
-            <li><a id="orc" class="dropdown-item categoria" href="javascript:alterarCategoria('Orquestra','Orquestra.pdf', 'orc', 1)">Orquestra</a></li>
-            <li><a id="umadecap" class="dropdown-item categoria" href="javascript:alterarCategoria('UMADECAP','UMADECAP.pdf', 'umadecap', 1)">UMADECAP</a></li>
-          </ul>
-        </div>
-      </div>
       <div class="col-sm-7">
         <form id="enviarPesquisa" action="{{url_for('receberView', destino='musicas')}}" method="post" > 
           <label for="pesquisa" class="form-label">Pesquisa por texto:</label>
@@ -136,7 +116,7 @@
       <div id="principal" class="col-sm-12">
         <br>
         {% if resultados == None %}
-        <iframe id="iframepdf" src="{{ url_for('static', filename='docs/' + categoria[1]) }}#view=FitH" width="100%" height="800x"></iframe>      
+        <iframe id="iframepdf" src="{{ url_for('static', filename='docs/Músicas.pdf') }}#view=FitH" width="100%" height="800x"></iframe>      
         {% else %}
         <div id="headPesquisa" class="row">
           <div class="col-sm-10"><h1 class="text-danger">{{mensagem|safe}}</h1></div>
