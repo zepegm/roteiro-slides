@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.88.1">
+    <title>Abrir Bíblia</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{ url_for('static', filename='stylesheets/bootstrap.min.css') }}" rel="stylesheet">
+
+    <style>
+      input[readonly].classname {
+        background-color:white;
+      }
+
+      .nd {
+        font-variant: small-caps;
+      }
+
+      .add {
+        font-style: italic;
+      }
+
+      .sc {
+        font-variant: small-caps;
+      }
+
+      .heading {
+        font-weight: bold;
+      }
+
+      .wj {
+        color: red;
+      }
+      .categoria{
+        background-color: rgb(0, 0, 0, 0);
+      }
+
+      p {
+        text-align: justify;
+      }
+    </style>
+
+    
+    <!-- Custom styles for this template -->
+    <link href="{{ url_for('static', filename='stylesheets/navbar-top-fixed.css') }}" rel="stylesheet">   
+    <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/Logo Colorido.png') }}">
+  </head>
+  
+  <body style="background-color: rgba(248, 249, 250, 0.726);">
+    
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{{ url_for('index') }}">
+      <img src="{{ url_for('static', filename='images/Logo ADCPTA.png') }}" width="25" height="30" class="d-inline-block align-top" alt="">
+      Roteiro
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <ul class="navbar-nav me-auto mb-2 mb-md-0">
+      <ul class="navbar-nav me-auto mb-2 mb-md-0">
+        <li class="nav-item">
+          <a class="nav-link" href="../abrirbiblia">Abrir Bíblia</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="../abrirharpa">Abrir Harpa</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" aria-current="page"  href="../abrirslidemusica">Músicas</a>
+        </li>    
+        <li class="nav-item">
+          <a class="nav-link" href="../apresentador">Apresentador</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="../viewer">Visualizador</a>
+        </li>     
+        <li class="nav-item">
+          <a class="nav-link" href="../obs">OBS</a>
+        </li>           
+        <li class="nav-item">
+          <a class="nav-link" href="../eventos?destino=ver">Eventos</a>
+        </li>   
+        <li class="nav-item">
+            <a class="nav-link active" href="#">Sobre</a>
+        </li>               
+      </ul>                 
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<main class="container">
+  <div class="bg-light p-1 rounded">
+    <h1 class="display-5 text-center">Sobre - <span class="heading">Slide Master Index</span></h1>
+    <hr>
+    <p>Esse software foi desenvolvido por mim, Giuseppe Garcez Manzella para ser usado no computador do templo Sede da Igreja Assembleia de Deus do Ministério de Cachoeira Paulista.</p>
+    <p>Esse programa nasceu na necessidade do fato de não existirem muitos softwares que interagem diretamente com o PowerPoint, pois até existem softwares de slides para igrejas, mas eles são limitados no quesito formatação e não tem uma ligação direta com o PowerPoint, para nossa igreja que sempre teve todos os seus slides feitos e prontos no PowerPoint esses softwares seriam apenas um retrabalho imenso para portar todo o conteúdo. Além disso a falta de liberdade na formatação dos slides é um pouco incômoda, eles não são versáteis o suficiente pra fazer algo simples como deixar a letra no <span class="wj">Slide 1</span> de um tamanho e no <span class="wj">Slide 2</span> de outro.</p>
+    <p>O nome deste software é <span class="heading">"Slide Master Index". </span>Seu nome é assim porque ele funciona como um tipo de <span class="heading">índice,</span> já que ele tem em sua memória a localização e a hierarquia das pastas de todos os arquivos usados na projeção dos eventos da igreja, e basta um comando simples para ele localizar o arquivo e abri-lo, por isso ele é realmente um <span style="font-style: italic;">index</span> (índice).</p>
+    <p>Ele é divido nos seguintes módulos: </p>
+    <ul>
+        <li><span class="heading">Abrir Bíblia:</span> Como toda igreja Cristã, a Assembleia de Deus adota o uso da Bíblia Sagrada, no nosso templo específico é usada principalmente a versão clássica "Almeida, Revista e Corrigida", porém existem slides tanto dessa versão e de outras três, totalizando quatro, assim o módulo permite abrir o capítulo correspondente do livro de qualquer uma das quatro versões, podendo abrir e iniciar a projeção instantaneamente, assim como também é possível alternar entre as cores deles, fundo branco e letra preta ou fundo preto e letra branca, o que eu chamo de <span class="heading">modo noturno.</span></li>
+        <li><span class="heading">Abrir Harpa:</span> O hinário oficial da Assembleia de Deus se chama Harpa Cristã, ela é adotada e ainda utilizada no nosso templo, composta por 636 músicas cristãs clássicas e mais 4 hinos pátrios, recentemente retirados pela editora oficial, existem também 640 slides correspondentes a cada música, todos estão nomeados por padrão, o que torna o processo de localização e abertura muito fácil, bastando digitar apenas o número do hino. Também tem a funcionalidade de modo noturno.</li>
+        <li><span class="heading">Abrir Músicas:</span> São as músicas fora do hinário oficial, são usadas eventualmente durante as reuniões das igrejas sendo cantadas pelos grupos ou departamentos, não existe um hinário fixo, portanto o programa apenas lista os arquivos presentes nas pastas e essa lista é atualizada dinamicamente conforme os arquivos das pastas são mudados. Também tem a funcionalidade de modo noturno.</li>
+        <li><span class="heading">Roteiro:</span> Após os arquivos serem abertos é possível carregar uma lista na tela principal, essa lista pode ser ajustada arrastando com o mouse e basta apertar o botão ou teclar F5 na tela inicial e o software vai projetar os slides de acordo com a lista.</li>
+        <li><span class="heading">Apresentador:</span> Se uma apresentação estiver ativa é possível usar essa função para visualizar os slides e navegar entre eles, é apenas um substituto ao apresentador oficial do PowerPoint.</li>
+        <li><span class="heading">Visualizador:</span> É possível conferir por aqui a letra de cada slide, a Bíblia e a Harpa são conteúdos fechados, muito dificilmente vai haver qualquer alteração, portanto existem dois bancos de dados internos no programa com todo o conteúdo das duas, assim é possível ver, pesquisar e até abrir o slide correspondente. As músicas também têm um banco de dados interno e um PDF geral com a letra de todas elas, porém são dados variáveis, visto que mais músicas são acrescentadas assim como retiradas quando convém.</li>
+        <li><span class="heading">Eventos:</span> Módulo criado para ser utilizado especificamente pela Igreja Sede da Assembleia de Deus do Ministério de Cachoeira Paulista, pois todos os cultos e reuniões de terça, domingo e eventos especiais são transmitidos pelo Youtube e posteriormente salvos para assistir, assim esse módulo serve para salvar os dados do evento específico constando o que foi lido, cantado, etc... e o link do vídeo do Youtube com uma pequena identificação do evento.</li>
+        <li><span class="heading">OBS:</span> Outro módulo que foi criado para ser utilizado especificamente na transmissão dos cultos da Igreja Sede da Assembleia de Deus de Cachoeira Paulista, pois ele converte o texto do slide e converte em uma legenda que é enviada como uma página web para o software OBS e é utilizada na transmissão dos cultos. Também consegue enviar os slides como uma imagem da apresentação ativa.</li>
+    </ul>
+
+</main>
+
+    <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script> 
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.numeric.js') }}"></script>
+  </body>
+</html>

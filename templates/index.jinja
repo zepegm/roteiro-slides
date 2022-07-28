@@ -82,6 +82,9 @@
           <li class="nav-item">
             <a class="nav-link" href="../eventos?destino=ver">Eventos</a>
           </li>          
+          <li class="nav-item">
+            <a class="nav-link" href="../sobre">Sobre</a>
+          </li>
         </ul>
       </div>
     </div>
@@ -89,7 +92,7 @@
 
   <main class="form-signin">
       <div class="text-center"><img class="mb-4" src="{{ url_for('static', filename='images/Logo Colorido.png') }}" alt="" width="200" height="250"></div>
-      <h1 class="h3 mb-3 fw-normal text-center">Roteiro de slides</h1>
+      <h1 class="h3 mb-3 fw-normal text-center"><a style="font-weight: bold;">Slide Master Index</a><br>Roteiro de slides</h1>
   
       {% if listaPPT|length > 0 %}
       <div class="form-floating">

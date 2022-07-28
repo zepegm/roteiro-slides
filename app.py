@@ -426,12 +426,12 @@ def receberView():
             #categoria = executarConsulta('Roteiro.db', 'select * from ConfigMusica')
 
             if request.method == 'POST':
-                pesquisa = request.form['pesquisa']
+                pesquisaLimpa = request.form['pesquisa'].replace(',', '').replace('.', '').replace('!', '').replace('?', '').replace("'", "’").replace('%', '')
                 # primeiro vamos verificar o hash dos pdfs
                 #verificarHash() - não é mais necessário
                 
-                pesquisa = '%' + str(request.form['pesquisa']).lower().replace("'", "’").replace('%', '').replace(' ', '%').replace('á','_').replace('à','_').replace('â','_').replace('ã','_').replace('é','_').replace('ê','_').replace('í','_').replace('ó','_').replace('ô','_').replace('õ','_').replace('ú','_').replace('ç','_') + '%'
-                sql = "select * from MusicasPDF where texto like '" + pesquisa + "' order by arquivo, pag"
+                pesquisa = '%' + pesquisaLimpa.replace(' ', '_') + '%'
+                sql = "select Pastas.pasta, MusicasPDF.titulo, MusicasPDF.página, MusicasPDF.texto from MusicasPDF INNER JOIN Pastas ON MusicasPDF.idPasta = Pastas.id where texto like '" + pesquisa + "' or titulo like '" + pesquisa + "' order by titulo, página"
                 resultados = executarConsultaGeral('Musicas.db', sql)
 
                 if len(resultados) == 0:
@@ -441,7 +441,7 @@ def receberView():
                 else:
                     mensagem = '<span class="text-primary">Total de ' + str(len(resultados)) + ' resultados!</span>'
 
-                return render_template('viewerMusicas.jinja', pesquisa=request.form['pesquisa'].replace("'", "’"), resultados=resultados, mensagem=mensagem, total=len(resultados))
+                return render_template('viewerMusicas.jinja', pesquisa=pesquisaLimpa, resultados=resultados, mensagem=mensagem, total=len(resultados))
 
 
             return render_template('viewerMusicas.jinja', pesquisa='', resultados=None)
@@ -844,6 +844,10 @@ def visualizar_roteiros():
     origem = {'nome':'', 'evento':0, 'atividade':0, 'categoria':0, 'departamento':0, 'musica':0}
     return render_template('visualizarEvento.jinja', lista=lista, total=total, pagina=pagina, datas=datas, temas=temas, atividades=atividades, catBiblia=catBiblia, departamentos=departamentos, musical=musical, perPage=5, origem=origem)
 
+@app.route('/sobre', methods=['GET', 'POST'])
+def sobre():
+    return render_template('sobre.html')
+
 @socketio.on('connect')
 def on_connect():
     global thread
@@ -855,6 +859,6 @@ def on_connect():
     emit('log', payload, broadcast=True)
 
 if __name__ == '__main__':
-    app.run('0.0.0.0',port=80)
+    #app.run('0.0.0.0',port=80)
     #serve(app, host='0.0.0.0', port=80, threads=8)
-    #eventlet.wsgi.server(eventlet.listen(('', 80)), app)
+    eventlet.wsgi.server(eventlet.listen(('', 80)), app)
