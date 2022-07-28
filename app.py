@@ -430,7 +430,7 @@ def receberView():
                 # primeiro vamos verificar o hash dos pdfs
                 #verificarHash() - não é mais necessário
                 
-                pesquisa = '%' + pesquisaLimpa.replace(' ', '_') + '%'
+                pesquisa = '%' + pesquisaLimpa.upper().replace(' ', '_') + '%'
                 sql = "select Pastas.pasta, MusicasPDF.titulo, MusicasPDF.página, MusicasPDF.texto from MusicasPDF INNER JOIN Pastas ON MusicasPDF.idPasta = Pastas.id where texto like '" + pesquisa + "' or titulo like '" + pesquisa + "' order by titulo, página"
                 resultados = executarConsultaGeral('Musicas.db', sql)
 
@@ -859,6 +859,6 @@ def on_connect():
     emit('log', payload, broadcast=True)
 
 if __name__ == '__main__':
-    app.run('0.0.0.0',port=80)
+    #app.run('0.0.0.0',port=80)
     #serve(app, host='0.0.0.0', port=80, threads=8)
-    #eventlet.wsgi.server(eventlet.listen(('', 80)), app)
+    eventlet.wsgi.server(eventlet.listen(('', 80)), app)
