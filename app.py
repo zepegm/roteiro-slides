@@ -859,6 +859,6 @@ def on_connect():
     emit('log', payload, broadcast=True)
 
 if __name__ == '__main__':
-    #app.run('0.0.0.0',port=80)
+    app.run('0.0.0.0',port=80)
     #serve(app, host='0.0.0.0', port=80, threads=8)
-    eventlet.wsgi.server(eventlet.listen(('', 80)), app)
+    #eventlet.wsgi.server(eventlet.listen(('', 80)), app)

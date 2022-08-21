@@ -18,6 +18,13 @@ class ppt:
 
         try:
             self.objCOM = self.app.Presentations(caminho)
+            
+            # verificar se os arquivos estão compatíveis
+            original = caminho[caminho.find('IGREJA'):]
+            file = self.objCOM.fullName[self.objCOM.fullName.find('IGREJA'):].replace('/', '\\')
+            if original != file:
+                self.objCOM.Exit()
+                self.objCOM = self.app.Presentations(caminho)
         except:
             self.objCOM = self.app.Presentations.Open(FileName=caminho, WithWindow=1)
 
