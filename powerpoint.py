@@ -23,7 +23,7 @@ class ppt:
             original = caminho[caminho.find('IGREJA'):]
             file = self.objCOM.fullName[self.objCOM.fullName.find('IGREJA'):].replace('/', '\\')
             if original != file:
-                self.objCOM.Exit()
+                self.objCOM.Close()
                 self.objCOM = self.app.Presentations(caminho)
         except:
             self.objCOM = self.app.Presentations.Open(FileName=caminho, WithWindow=1)
