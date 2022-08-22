@@ -42,6 +42,26 @@
                 background: rgb(0, 0, 0, 0.8);               
             }
 
+            .nd {
+                font-variant: small-caps;
+            }
+
+            .add {
+                font-style: italic;
+            }
+
+            .sc {
+                font-variant: small-caps;
+            }
+
+            .heading {
+                font-weight: bold;
+            }
+
+            .wj {
+                color: yellow;
+            }            
+
             @keyframes fade-in {
                 from {color: rgba(255, 255, 255, 0);}
                 to {color: rgba(255, 255, 255, 1);}
@@ -75,23 +95,27 @@
             var socket = io()
 
             socket.on('legenda', function(legenda) {
-                $('.head').text(legenda['cabecalho'])
-                $('.text').text(legenda['texto'])
-                if (legenda['texto'].length < 1) {
-                    tamanho = 0
-                } else if (legenda['texto'].length < 200) {
-                    tamanho = 20
+                if ($('.text').text() != legenda['texto'].replace(/<[^>]*>/g, '')) {
+
+                $('.head').text(legenda['cabecalho']);
+                $('.text').html(legenda['texto']);
+                //console.log(legenda['texto']);
+                if ($('.text').text().length < 1) {
+                    tamanho = 0;
+                } else if ($('.text').text().length < 100) {
+                    tamanho = 20;
                 } else {
-                    tamanho = 30
+                    tamanho = 30;
                 }
-                $('.text').attr('style', "height:" + tamanho + "vh")
-                $('.retangulo').attr('style', "height:" + tamanho + "vh")
-                $('.head').attr('style', "bottom:" + tamanho + "vh")
+                $('.text').attr('style', "height:" + tamanho + "vh");
+                $('.retangulo').attr('style', "height:" + tamanho + "vh");
+                $('.head').attr('style', "bottom:" + tamanho + "vh");
                 if (tamanho > 0) {
                     textFit($('div'), {alignVert: true, multiLine: true, minFontSize: 10, maxFontSize: 100});
                 }
                 var el = $('.text');
                 el.before( el.clone(true) ).remove();
+                }
             })
         </script>
     </body>

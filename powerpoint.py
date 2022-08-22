@@ -151,7 +151,7 @@ def pegarTextoSlideShow():
                     cap = re.sub("[^0-9]", "", lista[1].split(':')[0])
                     ver = re.sub("[^0-9]", "", lista[1].split(':')[1])
 
-                texto = executarConsulta("Biblia.db", "select " + versao + " from " + retornarCategoria(livro) + " where livro = '" + livro + "' and cap = " + cap + " and ver = " + ver)[0]
+                texto = executarConsulta("BibliaFormat.db", "select " + versao + " from " + livro + " where cap = " + cap + " and ver = " + ver)[0]
                 head = livro + ' ' + cap + ':' + ver + ' - '  + versao
                 
                 conteudo = {"cabecalho":head, "texto":texto, 'index':index}
