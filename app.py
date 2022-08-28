@@ -27,8 +27,8 @@ CORS(app)
 thread = None
 thread_lock = Lock()
 
-diretorio = os.path.expanduser('~') + r'\OneDrive - Secretaria da Educação do Estado de São Paulo\IGREJA'
-historico = os.path.expanduser('~') + r'\OneDrive - Secretaria da Educação do Estado de São Paulo\IGREJA\Historico.db'
+diretorio = os.path.expanduser('~') + r'\OneDrive\IGREJA'
+historico = os.path.expanduser('~') + r'\OneDrive\IGREJA\Historico.db'
 locale.setlocale(locale.LC_ALL, "")
 
 def eNoturno(noturno):
