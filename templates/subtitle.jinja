@@ -42,6 +42,26 @@
                 background: rgb(0, 0, 0, 0.8);               
             }
 
+            .nd {
+                font-variant: small-caps;
+            }
+
+            .add {
+                font-style: italic;
+            }
+
+            .sc {
+                font-variant: small-caps;
+            }
+
+            .heading {
+                font-weight: bold;
+            }
+
+            .wj {
+                color: yellow;
+            }            
+
             @keyframes fade-in {
                 from {color: rgba(255, 255, 255, 0);}
                 to {color: rgba(255, 255, 255, 1);}
@@ -60,40 +80,43 @@
         </style>
         <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>
         <script src="{{ url_for('static', filename='js/textFit.min.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/socket.io.min.js') }}"></script>
     </head>
     <body>
-        {%if not cabecalho == None %}
-        <div class="head" style="bottom:{{tamanho|safe}}">{{ cabecalho }}</div>
-        {% endif %}
+        <div class="head" style="bottom:{{tamanho|safe}}vh">{{ cabecalho }}</div>
+        <div class="retangulo" style="height:{{tamanho|safe}}vh"></div>
+        <div class="text" style="height:{{tamanho|safe}}vh">{{ legenda|safe }}</div>
 
-        {% if not legenda == None %}
-        <div class="retangulo" style="height:{{tamanho|safe}}"></div>
-        <div class="text" style="height:{{tamanho|safe}}">{{ legenda|safe }}</div>
-        {% endif %}
         <script>
-            textFit($('div'), {alignVert: true, multiLine: true, minFontSize: 10, maxFontSize: 100});
+            var tamanho = {{tamanho|safe}}
+            if (tamanho > 0) {
+                textFit($('div'), {alignVert: true, multiLine: true, minFontSize: 10, maxFontSize: 100});
+            }
+            var socket = io()
 
-            setInterval(function() {
-                var index = JSON.parse('{{index|tojson}}');
+            socket.on('legenda', function(legenda) {
+                if ($('.text').text() != legenda['texto'].replace(/<[^>]*>/g, '')) {
 
-                $.ajax({
-                    type: "POST",
-                    url: "{{ url_for('exibirLegenda') }}",
-                    contentType: "application/json",
-                    data: JSON.stringify(index),
-                    dataType: "json",
-                    success: function(response) {
-                    if (response.sucess) {
-                        location.reload();
-                        //console.log(response)
-                    }
-                    //location.reload();
-                    },
-                    error: function(err) {
-                        console.log(err);
-                    }
-                });
-            }, 500)
+                $('.head').text(legenda['cabecalho']);
+                $('.text').html(legenda['texto']);
+                //console.log(legenda['texto']);
+                if ($('.text').text().length < 1) {
+                    tamanho = 0;
+                } else if ($('.text').text().length < 100) {
+                    tamanho = 20;
+                } else {
+                    tamanho = 30;
+                }
+                $('.text').attr('style', "height:" + tamanho + "vh");
+                $('.retangulo').attr('style', "height:" + tamanho + "vh");
+                $('.head').attr('style', "bottom:" + tamanho + "vh");
+                if (tamanho > 0) {
+                    textFit($('div'), {alignVert: true, multiLine: true, minFontSize: 10, maxFontSize: 100});
+                }
+                var el = $('.text');
+                el.before( el.clone(true) ).remove();
+                }
+            })
         </script>
     </body>
 </html>

@@ -19,18 +19,72 @@
       .heading {
         font-weight: bold;
       }
+      #imgpos {
+        position: absolute;
+        width: 100px;
+        height: 110px;
+        padding: 10px;
+    	}
     </style>
-
+    <link href="{{ url_for('static', filename='stylesheets/navbar-top-fixed.css') }}" rel="stylesheet">   
     <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/Logo Colorido.png') }}">
   </head>
   
   <body style="background-color: rgba(248, 249, 250, 0.726);">
-  <form id="enviarPag" name="enviarPag" method="POST" action="{{ url_for('visualizar_roteiros') }}">
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{{ url_for('index') }}">
+      <img src="{{ url_for('static', filename='images/Logo ADCPTA.png') }}" width="25" height="30" class="d-inline-block align-top" alt="">
+      Roteiro
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <ul class="navbar-nav me-auto mb-2 mb-md-0">
+      <ul class="navbar-nav me-auto mb-2 mb-md-0">
+        <li class="nav-item">
+          <a class="nav-link" href="../abrirbiblia">Abrir Bíblia</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="../abrirharpa">Abrir Harpa</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" aria-current="page"  href="../abrirslidemusica">Músicas</a>
+        </li>    
+        <li class="nav-item">
+          <a class="nav-link" href="../apresentador">Apresentador</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="../viewer">Visualizador</a>
+        </li>     
+        <li class="nav-item">
+          <a class="nav-link" href="../obs">OBS</a>
+        </li>           
+        <li class="nav-item">
+          <a class="nav-link active" href="#">Eventos</a>
+        </li>          
+        <li class="nav-item">
+          <a class="nav-link" href="../sobre">Sobre</a>
+        </li>        
+      </ul>                 
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+  <h1 class="display-5 text-center">Registro de Eventos</h1>
+  <form id="enviarPag" name="enviarPag" method="POST" action="{{ url_for('eventos') }}">
     <input type="hidden" id="novaPag" name="novaPag" value="1">
   </form>
   <main class="container-fluid">
-    <div id="pagination" class="tui-pagination"></div>
-    <form id="enviarFiltro" name="enviarFiltro" method="POST" action="{{ url_for('visualizar_roteiros') }}">
+    <div class="row">
+      <div class="col-sm-12" style="text-align: right;">
+        <span><div id="pagination" class="tui-pagination"></div></span><span><p class="text-secondary" style="text-align: center;">Exibindo {{lista|length}} itens por página.</p></span>
+      </div>
+    </div>
+    <form id="enviarFiltro" name="enviarFiltro" method="POST" action="{{ url_for('eventos') }}">
       <div class="row">
         <div class="col-sm-3">
           <label for="nome" class="form-label">Nome:</label>
@@ -38,7 +92,7 @@
         </div>
         <div class="col-sm-2">
           <label for="datade" class="form-label">De:</label>
-          <input type="date" class="form-control" id="datade" name="datade" value="{{datas[1]}}">        
+          <input type="date" class="form-control" id="datade" name="datade" value="{{datas[1]}}">
         </div>
         <div class="col-sm-2">
           <label for="dataate" class="form-label">Até:</label>
@@ -118,28 +172,42 @@
         <div class="col-sm-1 align-self-end">
           <button type="button" id="estatisticas" class="btn btn-md btn-danger">Estatísticas</button>
         </div>        
-        <div class="col-sm-3 align-self-end">
-          <h4 class="heading">Total de registros: <span class="text-danger">{{total}}</span></h4>
+        <div class="col-sm-1 align-self-end">
+          <button type="button" id="novo" class="btn btn-md btn-secondary">Novo</button>
+        </div>        
+        <div class="col-sm-2 align-self-end">
+          <h4 class="heading">Total: <span class="text-danger">{{total}} </span> <span class="text-primary">(Pg. {{pagina}})</span></h4>
         </div>
       </div>
       <input type="hidden" id="novaPagPesquisa" name="novaPagPesquisa" value="1">
     </form>
     <br>
+    {% if origem['pesquisa'] %}
+      <div class="row">
+        <div class="col-sm-12">
+          <button type="button" id="sairPesquisa" class="btn btn-md btn-secondary">Sair da Pesquisa...</button>
+        </div>
+      </div>
+      <br>
+    {% endif %}
+    <div class="row">
+    <div class="col-sm-12">
     <table class="table table-hover">
     {% for culto in lista %}
     <thead class="table-dark head">
       <tr>
-        <th scope="col">{{culto['data']}} - {{culto['semana']}}</th>
+        <th scope="col">{{culto['data']}} - {{culto['semanal']}}</th>
         <th scope="col">{{culto['descricao']}}</th>
-        {% if culto['Obs'] != None %}
-        <th scope="col">{{culto['Obs']}}</th>
+        {% if culto['obs'] != None %}
+        <th scope="col">{{culto['obs']}}</th>
         {% else %}
         <th scope="col">-</th>
         {% endif %}
-        <th scope="col" style="text-align: center"><a class="youtube" href="{{culto['URL']}}" target="_blank"><img alt="Abrir vídeo" src="{{ url_for('static', filename='images/play.png') }}" width="50" height="30"></a></th>
+        <th scope="col" style="text-align: center"><a class="youtube" href="{{culto['url']}}" target="_blank"><img alt="Abrir vídeo" src="{{ url_for('static', filename='images/play.png') }}" width="50" height="30"></a></th>
       </tr>
     </thead>
-    <tbody>
+    <tbody data="{{culto}}">
+
     {% for evento in culto['eventos'] %}
     <tr>
       {% for i in evento %}
@@ -154,13 +222,18 @@
     </tbody>
     {% endfor %}
     </table>
+    </div>
+    </div>
   </main>
 
     <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script> 
     <!-- <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script> -->
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/tui-pagination.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/core.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/md5.js') }}"></script>
     <script type="text/javascript">
+
       var pagination = new tui.Pagination('pagination', {
           totalItems: {{total}},
           itemsPerPage: {{perPage}},
@@ -169,7 +242,8 @@
       });
 
       pagination.on('beforeMove', function(eventData) {
-        if ({{perPage}} == 5) {
+        var origem = {{origem|tojson}}
+        if (!origem['pesquisa']) {
           $('#novaPag').val(eventData.page);
           $('#enviarPag').submit();
         } else {
@@ -183,6 +257,18 @@
         console.log('affs')
         location.href = "../estatisticas"
       });
+
+      $("#sairPesquisa").click(function(evt) {
+          location.href = "../eventos";
+      });
+
+      $('#novo').click(function(evt) {
+        var senha = CryptoJS.MD5(prompt('Digite a senha:')).toString();
+        if (senha == 'f744deb599586656f42823afe88d744e') {
+          location.href = "../novo_evento";
+        }
+      });
+      
     </script>
   </body>
 </html>

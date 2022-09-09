@@ -14,8 +14,6 @@
 
     <!-- Bootstrap core CSS -->
     <link href="{{ url_for('static', filename='stylesheets/bootstrap.min.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='stylesheets/bootstrapcustom.min.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='stylesheets/bootstrap-select.min.css') }}" rel="stylesheet">
 
     <style>
       input[readonly].classname {
@@ -53,7 +51,19 @@
         </li>      
         <li class="nav-item">
           <a class="nav-link" href="../apresentador">Apresentador</a>
-        </li>         
+        </li>    
+        <li class="nav-item">
+          <a class="nav-link" href="../viewer">Visualizador</a>
+        </li>    
+        <li class="nav-item">
+          <a class="nav-link" href="../obs">OBS</a>
+        </li>    
+        <li class="nav-item">
+          <a class="nav-link" href="../eventos">Eventos</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="../sobre">Sobre</a>
+        </li>        
       </ul>
     </div>
   </div>
@@ -66,27 +76,36 @@
     <p class="text-center {{ corstatus }}"><strong>{{ status }}</strong></p>
     <form action="{{ url_for('abrirharpa') }}" method="post" autocomplete="off">
       <div class="row g-3">
-          <div class="col-sm-2 col-sm-5">
+          <div class="col-sm-2 col-sm-3">
             <label for="numero" class="form-label">Número do Hino:</label>
             <input type="text" class="form-control numeric" id="numero" name="numero" placeholder="" value="" onkeypress='return event.charCode >= 48 && event.charCode <= 57 || event.charCode == 59' required/>
             <div class="invalid-feedback">
               Digite um número válido!
             </div>           
-        </div>
-        <div class="col-sm-2 align-self-end">
+          </div>
+        <div class="col-sm-2 align-self-end" style="text-align : center">
           <label for="botao" class="form-label"></label>
           <input type="submit" class="btn btn-md btn-primary" id="abrirSlide" name="abrirSlide" value="Abrir Hino da Harpa">
-        </div> 
-        <div class="col-sm-2 align-self-end"> 
-          <div>
+        </div>
+        <div class="col-sm-2 align-self-end">
           {% if noturno == 1 %}
             <input type="checkbox" class="form-check-input" id="noturno" name="noturno" value="1" checked/> 
           {% else %} 
             <input type="checkbox" class="form-check-input" id="noturno" name="noturno" value="1"/>  
           {% endif %}         
           <label class="form-check-label" for="noturno">Modo Noturno</label>
-          </div>
-        </div>       
+        </div>         
+        <div class="col-sm-2 align-self-end">      
+          <label for="limpar" class="form-label"></label>
+          <input type="button" class="btn btn-md btn-secondary" id="limpar" name="limpar" value="Limpar Tudo">
+        </div>   
+        <div class="col-sm-2 col-sm-3">
+          <label for="numero" class="form-label">Pesquisa:</label>
+          <input type="text" class="form-control numeric" id="pesquisa" name="pesquisa" placeholder="" value=""/>
+          <div class="invalid-feedback">
+            Digite um número válido!
+          </div>           
+        </div>        
       </div>      
     </form>
 
@@ -97,19 +116,35 @@
     </div>
 
     <div class="row g-3" >
-      <div class="col-sm-3">
-        <select class="selectpicker" data-live-search="true" multiple title="Pesquisa..." id="listaharpa">
-          {% for row in listahinos %}
-            <option value="{{ row[0][5:9] }}" title="{{'H' + row[0][5:9] }}">{{ row[0] }}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <div class="col-sm-2">      
-        <label for="limpar" class="form-label"></label>
-        <input type="button" class="btn btn-md btn-secondary" id="limpar" name="limpar" value="Limpar Tudo">
-      </div>
-    </div>
+        <div class="col-sm-4 coluna">
+          <ul class="list-group" id="listaHarpa1">
+            {% for row in listahinos %}
+              <li class="list-group-item border-0">
+                <label>
+                  <input class="form-check-input me-1" type="checkbox" name="checkHarpa" value="{{ loop.index }}">
+                  {{ row[0] }}
+                </label>
+              </li>
 
+              {% if loop.index == 214 %}
+                </ul>
+                </div>
+                <div class="col-sm-4 coluna">
+                <ul class="list-group" id="listaHarpa2">
+              {% endif %} 
+
+
+              {% if loop.index == 428 %}
+                </ul>
+                </div>
+                <div class="col-sm-4">
+                <ul class="list-group" id="listaHarpa3">
+              {% endif %}               
+
+            {% endfor %}
+          </ul>
+        </div>
+    </div>
   </div>
 
 </main>
@@ -118,23 +153,58 @@
     <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/bootstrap-select.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/jquery.numeric.js') }}"></script>
     <script type="text/javascript">
-      $('#listaharpa').change(function() {
-        let text = String($(this).val());
-        text = text.replace(/\s+/g, '');
-        let result = text.replace(/,/g, ';');
-        //console.log(result)
-        $("#numero").val(result)
+
+      $('.list-group').change(function() {
+        //let text = String($('input[name=checkHarpa]').val());
+        let text = String($('input[name="checkHarpa"]:checked').serialize());
+        text = text.replace(/checkHarpa=/g, '');
+        let array = text.split('&')
+  
+        for (var i = 0; i < array.length; i++) {
+          array[i] = array[i].padStart(3, '0')
+        }
+        
+        let result = array.join(';');
+        //console.log(result);
+        if (result != "000") {
+          $("#numero").val(result);
+        } else {
+          $("#numero").val("");
+        }
       });
 
       $('#limpar').click(function() {
         $("#numero").val("");
         $("#listaharpa").val("");
-        $(".filter-option-inner-inner").text("Pesquisa...");
-        $(".btn").addClass('bs-placeholder');
+        $('input[name="checkHarpa"]:checked').prop("checked", false);
       });
+
+      $("#pesquisa").on("keyup", function() {
+          var value = $(this).val().toLowerCase();
+          //console.log(value);
+          //$(".list-group-item").filter(function() {
+          $("#listaHarpa1 li").filter(function() {
+            //console.log($(this).find("label").text());
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1 || $(this).find("label").text().toLowerCase().indexOf(value) > -1);
+            //console.log($(this).find("label").find("input").data("pasta"))
+          });
+          $("#listaHarpa2 li").filter(function() {
+            //console.log($(this).find("label").text());
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1 || $(this).find("label").text().toLowerCase().indexOf(value) > -1);
+            //console.log($(this).find("label").find("input").data("pasta"))
+          });          
+          $("#listaHarpa3 li").filter(function() {
+            //console.log($(this).find("label").text());
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1 || $(this).find("label").text().toLowerCase().indexOf(value) > -1);
+            //console.log($(this).find("label").find("input").data("pasta"))
+          });  
+
+        $(".coluna").each(function() {
+          $(this).toggle($(this).find("li.list-group-item[style!='display: none;']").length > 0) 
+        });                
+      });
+
       </script>
   </body>
 </html>

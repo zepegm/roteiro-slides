@@ -168,14 +168,14 @@ def abrirbiblia():
             consultaBD = executarConsultaBibliaFormat('BibliaFormat.db', livro, capitulo)
             # registrar no log
             inserirDadosBasico(historico, "insert into log values (datetime('now', 'localtime'), '" + livro + ' - ' + '{0:03}'.format(int(capitulo)) + ".pptx', 1, " + eNoturno(noturno) + ", '" + livro + ', cap. ' + capitulo + " - " + versao + "', 1)")
-            return render_template('biblianew.jinja', status='Arquivo aberto com sucesso!', corstatus='text-primary', livro=request.form['livro'], capitulo=capitulo, versao=versao, noturno=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Noturno'")[0], rapido=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Rapido'")[0], versiculo=versiculo, sucesso='ok', consultaBD=consultaBD)
+            return render_template('biblia.jinja', status='Arquivo aberto com sucesso!', corstatus='text-primary', livro=request.form['livro'], capitulo=capitulo, versao=versao, noturno=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Noturno'")[0], rapido=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Rapido'")[0], versiculo=versiculo, sucesso='ok', consultaBD=consultaBD)
 
         else:
             # registrar no log
             inserirDadosBasico(historico, "insert into log values (datetime('now', 'localtime'), '" + livro + ' - ' + '{0:03}'.format(int(capitulo)) + ".pptx', 1, " + eNoturno(noturno) + ", '" + livro + ', cap. ' + capitulo + " - " + versao + "', 2)")
-            return render_template('biblianew.jinja', status='Esse capítulo não existe!', corstatus='text-danger', livro=request.form['livro'], capitulo=capitulo, versao=versao, noturno=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Noturno'")[0], rapido=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Rapido'")[0], versiculo=versiculo, sucesso='', consultaBD='')
+            return render_template('biblia.jinja', status='Esse capítulo não existe!', corstatus='text-danger', livro=request.form['livro'], capitulo=capitulo, versao=versao, noturno=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Noturno'")[0], rapido=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Rapido'")[0], versiculo=versiculo, sucesso='', consultaBD='')
 
-    return render_template('biblianew.jinja', status='', corstatus='', livro='', capitulo='', versao='', noturno=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Noturno'")[0], rapido=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Rapido'")[0], versiculo='', sucesso='', consultaBD='')
+    return render_template('biblia.jinja', status='', corstatus='', livro='', capitulo='', versao='', noturno=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Noturno'")[0], rapido=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Rapido'")[0], versiculo='', sucesso='', consultaBD='')
     
 
 @app.route('/abrirharpa', methods=['GET', 'POST'])
@@ -222,10 +222,10 @@ def abrirharpa():
         elif sucesso > 1:
             status = 'Hinos ' + resultado[0:-2] + ' abertos com sucesso!'
             corstatus = 'text-primary' 
-        return render_template('new harpa.jinja', listahinos=listahinos, status=status, corstatus=corstatus, noturno=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Harpa' and configuration = 'Noturno'")[0])
+        return render_template('harpa.jinja', listahinos=listahinos, status=status, corstatus=corstatus, noturno=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Harpa' and configuration = 'Noturno'")[0])
 
 
-    return render_template('new harpa.jinja', listahinos=listahinos, status='', corstatus='', noturno=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Harpa' and configuration = 'Noturno'")[0])
+    return render_template('harpa.jinja', listahinos=listahinos, status='', corstatus='', noturno=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Harpa' and configuration = 'Noturno'")[0])
 
 @app.route('/abrirslidemusica', methods=['GET', 'POST'])
 def abrirslidemusica():
@@ -371,7 +371,7 @@ def exibirLegenda():
     else:
         tamanho = 0
 
-    return render_template('new_subtitle.jinja', legenda=legenda['texto'], cabecalho=legenda['cabecalho'], tamanho=tamanho)
+    return render_template('subtitle.jinja', legenda=legenda['texto'], cabecalho=legenda['cabecalho'], tamanho=tamanho)
 
 @app.route('/calendar', methods=['GET', 'POST'])
 def exibirCalendario():
@@ -399,18 +399,6 @@ def exibirCalendario():
 
     resultado = verificarCalendario()
     return render_template('calendar.jinja', resultado=resultado['resultado'], index=resultado['index'], filename=resultado['filename'])
-
-@app.route('/newHarpa')
-def abrirNewHarpa():
-    listahinos = []
-    with open('listaharpa.csv', newline='', encoding="latin1") as csvfile:
-        content = csvfile.read().replace('\\', '\\\\').replace('""', r'\"')
-        spamreader = csv.reader(StringIO(content), doublequote=False, escapechar='\\', delimiter=';')
-        
-        for row in spamreader:
-            listahinos.append(row)
-
-    return render_template('new harpa.jinja', listahinos=listahinos)
 
 @app.route('/viewer', methods=['GET', 'POST'])
 def receberView():
@@ -679,16 +667,6 @@ def log():
     log = executarConsultaGeral(historico, r"select strftime('%d/%m/%Y - %H:%M:%S', data) as data, nome, Categoria.descricao as categoria, Modo.descricao as modo, obs, Status.descricao as status_descricao, log.status from log, Categoria, Modo, Status where log.categoria = Categoria.id and log.modo = Modo.id and Status.id = log.Status order by log.data desc limit " + str(pagina * 15 - 15) + ", 15")
     return render_template('log.jinja', log=log, pagina=pagina, total=total)
 
-@app.route('/eventos', methods=['GET', 'POST'])
-def eventos():
-
-    if 'destino' in request.args:
-        destino = request.args['destino']
-    else:
-        destino = 'novo'
-
-    return render_template('eventos.jinja', destino=destino)
-
 @app.route('/novo_evento', methods=['GET', 'POST'])
 def novo_evento():
 
@@ -772,9 +750,8 @@ def estatisticas():
     salvarTudo()
     return render_template('estatisticas.jinja')
 
-@app.route('/visualizar_roteiros', methods=['GET', 'POST'])
-def visualizar_roteiros():
-
+@app.route('/eventos', methods=['GET', 'POST'])
+def eventos():
     pagina = 1
     # listas
     DIAS = ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-Feira', 'Sexta-feira', 'Sábado', 'Domingo']
@@ -800,20 +777,25 @@ def visualizar_roteiros():
             forma_musical = request.form['musica']
             pagina = int(request.form['novaPagPesquisa'])
 
-            origem = {'nome':request.form['nome'], 'evento':tema, 'atividade':evento, 'categoria':subcategoria, 'departamento':departamento, 'musica':forma_musical}
-            datas = [dataFim, dataIni]
+            origem = {'nome':request.form['nome'], 'evento':tema, 'atividade':evento, 'categoria':subcategoria, 'departamento':departamento, 'musica':forma_musical, 'pesquisa':True}
+            datas = (dataFim, dataIni)
 
             # primeiro filtrar a lista principal
             sql = r'select Roteiro.id, strftime("%d/%m/%Y", data) as data, Tema.descricao, obs, url from Roteiro, Tema ' + \
             retornarFiltroInner(request.form['nome'], [evento, subcategoria, departamento, forma_musical], 'INNER JOIN evento_roteiro as Rot on Roteiro.id = Rot.id') + \
             retornarFiltro(evento, ' and Rot.Evento = ') + retornarFiltro(subcategoria, ' and Rot.subCategoria = ') + retornarFiltro(departamento, ' and Rot.departamento = ') + retornarFiltro(forma_musical, ' and Rot.formaMusical = ') + retornarFiltroInner(request.form['nome'], [], ' and Nome like "' + nome + '"') + \
             ' where Roteiro.tema = Tema.id and Roteiro.data >= "' + dataIni + '" and Roteiro.data <= "' + dataFim + '"' + retornarFiltro(tema, ' and Tema.id = ') + retornarFiltroInner(request.form['nome'], [], ' and Rot.Nome like "' + nome + '"') + ' group by Roteiro.id order by Roteiro.data desc LIMIT ' + str(pagina * 10 - 10) + ", 10"
+            #print(sql)
             lista = executarConsultaGeral(historico, sql)
+            print(sql)
             sql = 'select count(DISTINCT Roteiro.id) as total from Roteiro, Tema ' + retornarFiltroInner(request.form['nome'], [evento, subcategoria, departamento, forma_musical], 'INNER JOIN evento_roteiro as Rot on Roteiro.id = Rot.id') + retornarFiltro(evento, ' and Rot.Evento = ') + retornarFiltro(subcategoria, ' and Rot.subCategoria = ') + retornarFiltro(departamento, ' and Rot.departamento = ') + retornarFiltro(forma_musical, ' and Rot.formaMusical = ') + retornarFiltroInner(request.form['nome'], [], ' and Nome like "' + nome + '"') + \
             ' where Roteiro.tema = Tema.id and Roteiro.data >= "' + dataIni + '" and Roteiro.data <= "' + dataFim + '"' + retornarFiltro(tema, ' and Tema.id = ') + retornarFiltroInner(request.form['nome'], [], ' and Rot.Nome like "' + nome + '"')
             
             #print(sql)
             total = executarConsulta(historico, sql)[0]
+
+            dicionario = []
+
             for item in lista:
                 sql = 'SELECT Nome, Evento.descricao as Categoria, SubCategoria.descricao as Sub, Departamento.descricao as Dep, "Forma Musical".descricao as FM ' + \
                 'FROM evento_roteiro as Rot INNER JOIN Evento ON Rot.Evento = Evento.id ' + \
@@ -823,26 +805,37 @@ def visualizar_roteiros():
                 retornarFiltro(evento, ' and Rot.Evento = ') + retornarFiltro(subcategoria, ' and Rot.subCategoria = ') + retornarFiltro(departamento, ' and Rot.departamento = ') + retornarFiltro(forma_musical, ' and Rot.formaMusical = ') + ' and Nome like "' + nome + '"'
                 eventos = consultarListaFiltrada(historico, sql)
                 data = date(year=int(item['data'][6:]), month=int(item['data'][3:5]), day=int(item['data'][0:2]))
-                item['semana'] = DIAS[data.weekday()]
-                item['eventos'] = eventos
+                evt = {'id':item['id'], 'data':item['data'], 'descricao':item['descricao'], 'obs':item['Obs'], 'url':item['URL'], 'semanal':DIAS[data.weekday()], 'eventos':eventos}
+                
+                dicionario.append(evt)
             
-            return render_template('visualizarEvento.jinja', lista=lista, total=total, pagina=pagina, datas=datas, temas=temas, atividades=atividades, catBiblia=catBiblia, departamentos=departamentos, musical=musical, perPage=10, origem=origem)
+            return render_template('visualizarEvento.jinja', lista=dicionario, total=total, pagina=pagina, datas=datas, temas=temas, atividades=atividades, catBiblia=catBiblia, departamentos=departamentos, musical=musical, perPage=10, origem=origem)
 
-    lista = executarConsultaGeral(historico, r'select Roteiro.id, strftime("%d/%m/%Y", data) as data, Tema.descricao, obs, url from Roteiro, Tema where Roteiro.tema = Tema.id order by Roteiro.data desc LIMIT ' + str(pagina * 5 - 5) + ", 5")
+    sql = r'select Roteiro.id, strftime("%d/%m/%Y", data) as data, Tema.descricao, obs, url from Roteiro, Tema where Roteiro.tema = Tema.id order by Roteiro.data desc LIMIT ' + str(pagina * 10 - 10) + ', 10'
+    #print(sql)
+    lista = executarConsultaGeral(historico, sql)
     total = executarConsulta(historico, 'select count(*) as total from Roteiro')[0]
+
+    dicionario = []
+
     for item in lista:
+        #print(item)
         sql = 'SELECT Nome, Evento.descricao as Categoria, SubCategoria.descricao as Sub, Departamento.descricao as Dep, "Forma Musical".descricao as FM ' + \
         'FROM evento_roteiro as Rot INNER JOIN Evento ON Rot.Evento = Evento.id ' + \
         'LEFT JOIN SubCategoria ON Rot.subCategoria = SubCategoria.id ' + \
         'LEFT JOIN Departamento ON Rot.departamento = Departamento.id ' + \
         'LEFT JOIN [Forma Musical] ON Rot.formaMusical = "Forma Musical".id WHERE Rot.ID = {}'.format(item['id'])
+        #print(sql)
         eventos = consultarListaFiltrada(historico, sql)
         data = date(year=int(item['data'][6:]), month=int(item['data'][3:5]), day=int(item['data'][0:2]))
-        item['semana'] = DIAS[data.weekday()]
-        item['eventos'] = eventos
+        
+        evt = {'id':item['id'], 'data':item['data'], 'descricao':item['descricao'], 'obs':item['Obs'], 'url':item['URL'], 'semanal':DIAS[data.weekday()], 'eventos':eventos}
+        
+        dicionario.append(evt)
 
-    origem = {'nome':'', 'evento':0, 'atividade':0, 'categoria':0, 'departamento':0, 'musica':0}
-    return render_template('visualizarEvento.jinja', lista=lista, total=total, pagina=pagina, datas=datas, temas=temas, atividades=atividades, catBiblia=catBiblia, departamentos=departamentos, musical=musical, perPage=5, origem=origem)
+    origem = {'nome':'', 'evento':0, 'atividade':0, 'categoria':0, 'departamento':0, 'musica':0, 'pesquisa':False}
+    print(datas)
+    return render_template('visualizarEvento.jinja', lista=dicionario, total=total, pagina=pagina, datas=datas, temas=temas, atividades=atividades, catBiblia=catBiblia, departamentos=departamentos, musical=musical, perPage=10, origem=origem)
 
 @app.route('/sobre', methods=['GET', 'POST'])
 def sobre():

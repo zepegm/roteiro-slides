@@ -36,6 +36,48 @@
   
   <body style="background-color: rgba(248, 249, 250, 0.726);">
 
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{{ url_for('index') }}">
+      <img src="{{ url_for('static', filename='images/Logo ADCPTA.png') }}" width="25" height="30" class="d-inline-block align-top" alt="">
+      Roteiro
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <ul class="navbar-nav me-auto mb-2 mb-md-0">
+      <ul class="navbar-nav me-auto mb-2 mb-md-0">
+        <li class="nav-item">
+          <a class="nav-link" href="../abrirbiblia">Abrir Bíblia</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="../abrirharpa">Abrir Harpa</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" aria-current="page"  href="../abrirslidemusica">Músicas</a>
+        </li>    
+        <li class="nav-item">
+          <a class="nav-link" href="../apresentador">Apresentador</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="../viewer">Visualizador</a>
+        </li>     
+        <li class="nav-item">
+          <a class="nav-link" href="../obs">OBS</a>
+        </li>           
+        <li class="nav-item">
+          <a class="nav-link active" href="#">Eventos</a>
+        </li>          
+        <li class="nav-item">
+          <a class="nav-link" href="../sobre">Sobre</a>
+        </li>        
+      </ul>                 
+      </ul>
+    </div>
+  </div>
+</nav>
+
 <main class="container">
     <div class="row">
       <div class="col-sm-6">
@@ -86,7 +128,7 @@
       }
 
     $("#retornar").click(function() {
-      location.href = "../visualizar_roteiros"
+      location.href = "../eventos"
     });
     </script>
   </body>

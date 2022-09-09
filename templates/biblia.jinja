@@ -8,14 +8,8 @@
     <meta name="generator" content="Hugo 0.88.1">
     <title>Abrir Bíblia</title>
 
-    <link rel="canonical" href="https://getbootstrap.com/docs/5.1/examples/navbar-fixed/">
-
-    
-
     <!-- Bootstrap core CSS -->
     <link href="{{ url_for('static', filename='stylesheets/bootstrap.min.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='stylesheets/bootstrapcustom.min.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='stylesheets/bootstrap-select.min.css') }}" rel="stylesheet">
 
     <style>
       input[readonly].classname {
@@ -41,6 +35,9 @@
       .wj {
         color: red;
       }
+      .categoria{
+        background-color: rgb(0, 0, 0, 0);
+      }
     </style>
 
     
@@ -62,92 +59,33 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarCollapse">
       <ul class="navbar-nav me-auto mb-2 mb-md-0">
+      <ul class="navbar-nav me-auto mb-2 mb-md-0">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="../abrirbiblia">Abrir Bíblia</a>
+          <a class="nav-link active" href="#">Abrir Bíblia</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link " href="../abrirharpa">Abrir Harpa</a>
+          <a class="nav-link" href="../abrirharpa">Abrir Harpa</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="../abrirslidemusica">Músicas</a>
-        </li>   
+          <a class="nav-link" aria-current="page"  href="../abrirslidemusica">Músicas</a>
+        </li>    
         <li class="nav-item">
           <a class="nav-link" href="../apresentador">Apresentador</a>
-        </li>            
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="../viewer">Visualizador</a>
+        </li>     
+        <li class="nav-item">
+          <a class="nav-link" href="../obs">OBS</a>
+        </li>           
+        <li class="nav-item">
+          <a class="nav-link" href="../eventos">Eventos</a>
+        </li>          
+        <li class="nav-item">
+          <a class="nav-link" href="../sobre">Sobre</a>
+        </li>        
+      </ul>                 
       </ul>
-      <div>
-      <form class="d-flex">
-        <select class="selectpicker me-3" data-live-search="true" placeholder="Pesquisa..." id="pesquisa">
-          <option selected>Pesquisa...</option>
-          <option data-tokens="Antigo Velho Testamento Pentateuco">Gênesis</option>
-          <option data-tokens="Antigo Velho Testamento Pentateuco">Êxodo</option>
-          <option data-tokens="Antigo Velho Testamento Pentateuco">Levítico</option>
-          <option data-tokens="Antigo Velho Testamento Pentateuco">Números</option>
-          <option data-tokens="Antigo Velho Testamento Pentateuco">Deuteronômio</option>
-          <option data-tokens="Antigo Velho Testamento Histórico">Josué</option>
-          <option data-tokens="Antigo Velho Testamento Histórico">Juízes</option>
-          <option data-tokens="Antigo Velho Testamento Histórico">Rute</option>
-          <option data-tokens="Antigo Velho Testamento Histórico">I Samuel</option>
-          <option data-tokens="Antigo Velho Testamento Histórico">II Samuel</option>
-          <option data-tokens="Antigo Velho Testamento Histórico">I Reis</option>
-          <option data-tokens="Antigo Velho Testamento Histórico">II Reis</option>
-          <option data-tokens="Antigo Velho Testamento Histórico">I Crônicas</option>
-          <option data-tokens="Antigo Velho Testamento Histórico">II Crônicas</option>
-          <option data-tokens="Antigo Velho Testamento Histórico">Esdras</option>
-          <option data-tokens="Antigo Velho Testamento Histórico">Neemias</option>
-          <option data-tokens="Antigo Velho Testamento Histórico">Ester</option>
-          <option data-tokens="Antigo Velho Testamento Poético">Jó</option>
-          <option data-tokens="Antigo Velho Testamento Poético">Salmos</option>
-          <option data-tokens="Antigo Velho Testamento Poético">Provérbios</option>
-          <option data-tokens="Antigo Velho Testamento Poético">Eclesiastes</option>
-          <option data-tokens="Antigo Velho Testamento Poético">Cantares</option>
-          <option data-tokens="Antigo Velho Testamento Profeta">Isaías</option>
-          <option data-tokens="Antigo Velho Testamento Profeta">Jeremias</option>
-          <option data-tokens="Antigo Velho Testamento Profeta">Lamentações</option>
-          <option data-tokens="Antigo Velho Testamento Profeta">Ezequiel</option>
-          <option data-tokens="Antigo Velho Testamento Profeta">Daniel</option>
-          <option data-tokens="Antigo Velho Testamento Profeta">Oseias</option>
-          <option data-tokens="Antigo Velho Testamento Profeta">Joel</option>
-          <option data-tokens="Antigo Velho Testamento Profeta">Amós</option>
-          <option data-tokens="Antigo Velho Testamento Profeta">Obadias</option>
-          <option data-tokens="Antigo Velho Testamento Profeta">Jonas</option>
-          <option data-tokens="Antigo Velho Testamento Profeta">Miqueias</option>
-          <option data-tokens="Antigo Velho Testamento Profeta">Naum</option>
-          <option data-tokens="Antigo Velho Testamento Profeta">Habacuque</option>
-          <option data-tokens="Antigo Velho Testamento Profeta">Sofonias</option>
-          <option data-tokens="Antigo Velho Testamento Profeta">Ageu</option>
-          <option data-tokens="Antigo Velho Testamento Profeta">Zacarias</option>
-          <option data-tokens="Antigo Velho Testamento Profeta">Malaquias</option>
-          <option data-tokens="Novo Testamento Nova Aliança Evangelho">Mateus</option>
-          <option data-tokens="Novo Testamento Nova Aliança Evangelho">Marcos</option>
-          <option data-tokens="Novo Testamento Nova Aliança Evangelho">Lucas</option>
-          <option data-tokens="Novo Testamento Nova Aliança Evangelho">João</option>
-          <option data-tokens="Novo Testamento Nova Aliança Histórico">Atos</option>
-          <option data-tokens="Novo Testamento Nova Aliança Epístola">Romanos</option>
-          <option data-tokens="Novo Testamento Nova Aliança Epístola">I Coríntios</option>
-          <option data-tokens="Novo Testamento Nova Aliança Epístola">II Coríntios</option>
-          <option data-tokens="Novo Testamento Nova Aliança Epístola">Gálatas</option>
-          <option data-tokens="Novo Testamento Nova Aliança Epístola">Efésios</option>
-          <option data-tokens="Novo Testamento Nova Aliança Epístola">Filipenses</option>
-          <option data-tokens="Novo Testamento Nova Aliança Epístola">Colossenses</option>
-          <option data-tokens="Novo Testamento Nova Aliança Epístola">I Tessalonicenses</option>
-          <option data-tokens="Novo Testamento Nova Aliança Epístola">II Tessalonicenses</option>
-          <option data-tokens="Novo Testamento Nova Aliança Epístola">I Timóteo</option>
-          <option data-tokens="Novo Testamento Nova Aliança Epístola">II Timóteo</option>
-          <option data-tokens="Novo Testamento Nova Aliança Epístola">Tito</option>
-          <option data-tokens="Novo Testamento Nova Aliança Epístola">Filemom</option>
-          <option data-tokens="Novo Testamento Nova Aliança Epístola">Hebreus</option>
-          <option data-tokens="Novo Testamento Nova Aliança Epístola">Tiago</option>
-          <option data-tokens="Novo Testamento Nova Aliança Epístola">I Pedro</option>
-          <option data-tokens="Novo Testamento Nova Aliança Epístola">II Pedro</option>
-          <option data-tokens="Novo Testamento Nova Aliança Epístola">I João</option>
-          <option data-tokens="Novo Testamento Nova Aliança Epístola">II João</option>
-          <option data-tokens="Novo Testamento Nova Aliança Epístola">III João</option>
-          <option data-tokens="Novo Testamento Nova Aliança Epístola">Judas</option>
-          <option data-tokens="Novo Testamento Nova Aliança Revelação">Apocalipse</option>          
-        </select>
-      </form>
-      </div>
     </div>
   </div>
 </nav>
@@ -160,8 +98,8 @@
     <form action="{{ url_for('abrirbiblia') }}" method="post" autocomplete="off">
       <div class="row g-3">
           <div class="col-sm-2">
-              <label for="livro" class="form-label">Livro Escolhido:</label>
-              <input type="text" readonly class="form-control classname" id="livro" name="livro" placeholder="" value="{{ livro }}" required/>
+              <label for="livro" class="form-label">Livro: <strong>(Pesquisar)</strong></label>
+              <input type="text" class="form-control classname" id="livro" name="livro" placeholder="" value="{{ livro }}" required/>
               <div class="invalid-feedback">
                 Selecione pelo menos um livro!
               </div>
@@ -229,121 +167,125 @@
     </div>      
     </form>
 
-    <div class="row g-3">
+    <div class="row g-6">
       <div class="col-sm-3 col-sm-12">
-        <hr class="my-4"/>    
-        <table class="table text-center" id="myTable">
-          <thead>
-              <tr>
-                  <th colspan="4"><h3>Antigo Testamento</h3></th>
-                  <th></th>
-                  <th colspan="3"><h3>Novo Testamento</h3></th>
-              </tr>
-          </thead>
-          <tbody>
-            <tr>
-                <td>Gênesis</td>
-                <td>I Reis</td>
-                <td>Eclesiastes</td>
-                <td>Obadias</td>
-                <td class="table-dark"></td>
-                <td>Mateus</td>
-                <td>Filipenses</td>
-                <td>I Pedro</td>
-            </tr>
-            <tr>
-                <td>Êxodo</td>
-                <td>II Reis</td>
-                <td>Cantares</td>
-                <td>Jonas</td>
-                <td class="table-dark"></td>
-                <td>Marcos</td>
-                <td>Colossenses</td>
-                <td>II Pedro</td>
-            </tr>
-            <tr>
-                <td>Levítico</td>
-                <td>I Crônicas</td>
-                <td>Isaías</td>
-                <td>Miqueias</td>
-                <td class="table-dark"></td>
-                <td>Lucas</td>
-                <td>I Tessalonicenses</td>
-                <td>I João</td>
-            </tr>
-            <tr>
-                <td>Números</td>
-                <td>II Crônicas</td>
-                <td>Jeremias</td>
-                <td>Naum</td>
-                <td class="table-dark"></td>
-                <td>João</td>
-                <td>II Tessalonicenses</td>
-                <td>II João</td>
-            </tr>
-            <tr>
-                <td>Deuteronômio</td>
-                <td>Esdras</td>
-                <td>Lamentações</td>
-                <td>Habacuque</td>
-                <td class="table-dark"></td>
-                <td>Atos</td>
-                <td>I Timóteo</td>
-                <td>III João</td>
-            </tr>
-            <tr>
-                <td>Josué</td>
-                <td>Neemias</td>
-                <td>Ezequiel</td>
-                <td>Sofonias</td>
-                <td class="table-dark"></td>
-                <td>Romanos</td>
-                <td>II Timóteo</td>
-                <td>Judas</td>
-            </tr>
-            <tr>
-                <td>Juízes</td>
-                <td>Ester</td>
-                <td>Daniel</td>
-                <td>Ageu</td>
-                <td class="table-dark"></td>
-                <td>I Coríntios</td>
-                <td>Tito</td>
-                <td>Apocalipse</td>
-            </tr>
-            <tr>
-                <td>Rute</td>
-                <td>Jó</td>
-                <td>Oseias</td>
-                <td>Zacarias</td>
-                <td class="table-dark"></td>
-                <td>II Coríntios</td>
-                <td>Filemom</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>I Samuel</td>
-                <td>Salmos</td>
-                <td>Joel</td>
-                <td>Malaquias</td>
-                <td class="table-dark"></td>
-                <td>Gálatas</td>
-                <td>Hebreus</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>II Samuel</td>
-                <td>Provérbios</td>
-                <td>Amós</td>
-                <td></td>
-                <td class="table-dark"></td>
-                <td>Efésios</td>
-                <td>Tiago</td>
-                <td></td>
-            </tr>
-          </tbody>
-        </table>
+        <hr class="my-4"/> 
       </div>
+      <div class="col-sm-3 col-sm-6">
+        <h3>Antigo Testamento</h3><hr>
+        <div class="row">
+          <div class="col-sm-6 coluna">
+            <ul class="list-group" id="Pentateuco" data-categoria="Pentateuco">
+              <h4 id="PentateucoTitle" class="list-group-item border-0 text-secondary fw-bold categoria">Pentateuco</h4>
+              <a href="#" class="list-group-item list-group-item-action border-1">Gênesis</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Êxodo</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Levítico</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Números</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Deuteronômio</a>
+            </ul>
+            <ul class="list-group" id="Históricos" data-categoria="Históricos">
+              <h4 id="HistoricosTitle" class="list-group-item border-0 text-secondary fw-bold categoria">Históricos</h4>
+              <a href="#" class="list-group-item list-group-item-action border-1">Josué</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Juízes</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Rute</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">1 Samuel</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">2 Samuel</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">1 Reis</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">2 Reis</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">1 Crônicas</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">2 Crônicas</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Esdras</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Neemias</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Ester</a>
+            </ul>
+            <ul class="list-group" id="Poéticos" data-categoria="Poéticos">
+              <h4 id="PoeticosTitle" class="list-group-item border-0 text-secondary fw-bold categoria">Poéticos</h4>
+              <a href="#" class="list-group-item list-group-item-action border-1">Jó</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Salmos</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Provérbios</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Eclesiastes</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Cantares</a>
+            </ul>
+          </div>
+          <div class="col-sm-6 coluna">
+            <ul class="list-group" id="ProfetasMaiores" data-categoria="Profetas Maiores">
+              <h4 id="ProfetasMaioresTitle" class="list-group-item border-0 text-secondary fw-bold categoria">Profetas Maiores</h4>
+              <a href="#" class="list-group-item list-group-item-action border-1">Isaías</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Jeremias</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Lamentações</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Ezequiel</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Daniel</a>
+            </ul>
+            <ul class="list-group" id="ProfetasMenores" data-categoria="Profetas Menores">
+              <h4 id="ProfetasMenores" class="list-group-item border-0 text-secondary fw-bold categoria">Profetas Menores</h4>
+              <a href="#" class="list-group-item list-group-item-action border-1">Oseias</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Joel</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Amós</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Obadias</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Jonas</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Miqueias</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Naum</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Habacuque</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Sofonias</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Ageu</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Zacarias</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Malaquias</a>       
+            </ul>   
+          </div>
+        </div>
+        <br>
+      </div>
+      <div class="col-sm-3 col-sm-6">
+        <h3>Novo Testamento</h3><hr>
+        <div class="row">
+          <div class="col-sm-6 coluna">
+            <ul class="list-group" id="Evangelhos" data-categoria="Evangelhos">
+              <h4 id="Pentateuco" class="list-group-item border-0 text-secondary fw-bold categoria">Evangelhos</h4>
+              <a href="#" class="list-group-item list-group-item-action border-1">Mateus</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Marcos</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Lucas</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">João</a>
+            </ul>
+            <ul class="list-group" id="Histórico" data-categoria="Histórico">              
+              <h4 id="Pentateuco" class="list-group-item border-0 text-secondary fw-bold categoria">Histórico</h4>
+              <a href="#" class="list-group-item list-group-item-action border-1">Atos</a>
+            </ul>
+            <ul class="list-group" id="EpistolasPaulinas" data-categoria="Epístolas Paulinas">
+              <h4 id="Pentateuco" class="list-group-item border-0 text-secondary fw-bold categoria">Epístolas Paulinas</h4>
+              <a href="#" class="list-group-item list-group-item-action border-1">Romanos</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">1 Coríntios</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">2 Coríntios</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Gálatas</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Efésios</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Filipenses</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Colossenses</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">1 Tessalonicenses</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">2 Tessalonicenses</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">1 Timóteo</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">2 Timóteo</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Tito</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Filemom</a>      
+            </ul>   
+          </div>
+          <div class="col-sm-6 coluna">
+            <ul class="list-group" id="EpistolasGerais" data-categoria="Epístolas Gerais">
+              <h4 id="Pentateuco" class="list-group-item border-0 text-secondary fw-bold categoria">Epístolas Gerais</h4>
+              <a href="#" class="list-group-item list-group-item-action border-1">Hebreus</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Tiago</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">1 Pedro</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">2 Pedro</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">1 João</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">2 João</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">3 João</a>
+              <a href="#" class="list-group-item list-group-item-action border-1">Judas</a>
+            </ul>
+            <ul class="list-group" id="Revelacao" data-categoria="Revelação">
+              <h4 id="Pentateuco" class="list-group-item border-0 text-secondary fw-bold categoria">Revelação</h4>
+              <a href="#" class="list-group-item list-group-item-action border-1">Apocalipse</a>
+            </ul>
+          </div>
+        </div>
+      </div>      
     </div>
   </div>
   {% if sucesso == 'ok' %} 
@@ -399,40 +341,41 @@
 </main>
 
     <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script> 
-    <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/bootstrap-select.js') }}"></script>
     <script src="{{ url_for('static', filename='js/jquery.numeric.js') }}"></script>
     <script type="text/javascript">
       $(".numeric").numeric({ decimal : false , precision: 3});;
 
-      $('#myTable tbody tr td').click(function() {
+      $('a.list-group-item').click(function() {
         if ($(this).text() != "") {
-          $('#myTable tbody tr td').removeClass('table-warning');
-          $(this).addClass('table-warning');
+          $('.list-group-item').removeClass('active');
+          $(this).addClass('active');
           $('#livro').val($(this).text())
           // $(this).addClass('table-warning').siblings().removeClass('table-warning');
         }
         //console.log($(this).text())
       });
 
-      $('#pesquisa').change(function() {
-        if($(this).val() != "Pesquisa...") {
-          $('#livro').val($(this).val())
-          $('#myTable tbody tr td').removeClass('table-warning');
-        }
+      $("#livro").on("keyup", function() {
+        var value = $(this).val();
+        $('a.list-group-item').removeClass('active');
+        $('a.list-group-item').filter(function() {
+          var cat = $(this).parent().attr('data-categoria').toLowerCase();
+          $(this).toggle($(this).text().toLowerCase().indexOf(value.toLowerCase()) > -1 || cat.indexOf(value.toLowerCase()) > -1);
+          if (value.length > 0) {
+            if ($(this).text() == value) {
+              $(this).addClass('active')
+            }
+          }
+        });
+        $(".list-group").each(function(){
+          $(this).find("h4").toggle($(this).find("a.list-group-item[style!='display: none;']").length > 0);
+          //console.log($(this).attr('data-categoria'), ' - ', $(this).find(".list-group-item[style!='display: none;']").length);
+        });
+        $(".coluna").each(function() {
+          $(this).toggle($(this).find("a.list-group-item[style!='display: none;']").length > 0) 
+        });
       });
-
-      /* aparentemente tem uma solução melhor...
-      $('#abrirSlide').click(function(e) {
-        e.preventDefault()
-        $.getJSON('/background_process', 
-          function(data) {
-            // do nothing
-          });
-          return false; 
-      });*/
       </script>
   </body>
 </html>
