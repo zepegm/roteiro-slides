@@ -15,6 +15,7 @@ from GeradorGraficos import salvarTudo
 from threading import Lock
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
+from ytdown import downloadMP3
 import eventlet.wsgi
 
 
@@ -846,6 +847,16 @@ def eventos():
 def sobre():
     return render_template('sobre.html')
 
+@app.route('/download_mp3', methods=['GET', 'POST'])
+def download_mp3():
+    if request.method == 'POST':
+        if 'url' in request.form:
+            caminho = downloadMP3(request.form['url'])
+            msg = 'Arquivo <>'
+            return render_template('youtubeMP3.jinja', caminho=caminho)
+    
+    return render_template('youtubeMP3.jinja', caminho=None)
+
 @socketio.on('connect')
 def on_connect():
     global thread
@@ -857,6 +868,6 @@ def on_connect():
     emit('log', payload, broadcast=True)
 
 if __name__ == '__main__':
-    #app.run('0.0.0.0',port=80)
+    app.run('0.0.0.0',port=80)
     #serve(app, host='0.0.0.0', port=80, threads=8)
-    eventlet.wsgi.server(eventlet.listen(('', 80)), app)
+    #eventlet.wsgi.server(eventlet.listen(('', 80)), app)
