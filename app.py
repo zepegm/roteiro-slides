@@ -591,16 +591,21 @@ def abrirSlideExternamente():
         else:
             modoNoturno = ''        
 
-        caminho = diretorio + modoNoturno + '\\' + request.args['hino']
+        nomes = executarConsulta('Musicas.db', 'select MusicasPDF.titulo, Pastas.pasta FROM MusicasPDF INNER JOIN Pastas ON MusicasPDF.idpasta = Pastas.id WHERE MusicasPDF.id = ' + request.args['hino'])
+        caminho = diretorio + modoNoturno + '\\Corinhos, Equipe de Louvor, etc\\' + nomes[1] + '\\' + nomes[0] + ".pptx"
         
-        if os.path.isfile(caminho):
-            try:
-                prs = ppt(caminho)
-                valor = {'sucess':True}
-                inserirDadosBasico(historico, "insert into log values (datetime('now', 'localtime'), '" + request.args['hino'][request.args['hino'].rfind('/') + 1:].replace("'", "''") + "', 3, " + eNoturno(modoNoturno) + ", '" + request.args['hino'][request.args['hino'].rfind('/', 1, request.args['hino'].rfind('/')) + 1:request.args['hino'].rfind('/')] + "', 1)")
-            except:
-                inserirDadosBasico(historico, "insert into log values (datetime('now', 'localtime'), 'ERRO GRAVE!', 4, " + eNoturno(modoNoturno) + ", '-', 3)")
-                valor = {'sucess':False}
+        if not os.path.isfile(caminho):
+            caminho = diretorio + modoNoturno + '\\DEPARTAMENTOS (LETRAS)\\' + nomes[1] + '\\' + nomes[0] + ".pptx"
+
+        print(caminho)
+
+        try:
+            prs = ppt(caminho)
+            valor = {'sucess':True}
+            inserirDadosBasico(historico, "insert into log values (datetime('now', 'localtime'), '" + request.args['hino'][request.args['hino'].rfind('/') + 1:].replace("'", "''") + "', 3, " + eNoturno(modoNoturno) + ", '" + request.args['hino'][request.args['hino'].rfind('/', 1, request.args['hino'].rfind('/')) + 1:request.args['hino'].rfind('/')] + "', 1)")
+        except:
+            inserirDadosBasico(historico, "insert into log values (datetime('now', 'localtime'), 'ERRO GRAVE!', 4, " + eNoturno(modoNoturno) + ", '-', 3)")
+            valor = {'sucess':False}
 
     return ('', 204)
 
