@@ -7,7 +7,7 @@ from unittest import result
 #from PDF import verificarHash
 from powerpoint import ppt, pegarSlidesAbertos, pegarSlideShow, pegarIndexSlideshow, avancarIndexSlideShow, pegarTextoSlideShow, verificarCalendario, encerrarTodasApresentacoes, pegarNomeSlideShow
 from consultaAcess import executarConsultaBibliaFormat, executarConsulta, executarConsultaLista, inserirListaRoteiro, executarConsultaGeral, alterarConfig, alterarConfigViewBiblia, consultarHarpaBD, alterarConfigViewMusica, inserirDadosBasico, consultarListaFiltrada
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, render_template, request, redirect, url_for, jsonify, send_file
 # from waitress import serve
 from math import ceil
 from datetime import date
@@ -851,11 +851,13 @@ def sobre():
 def download_mp3():
     if request.method == 'POST':
         if 'url' in request.form:
-            caminho = downloadMP3(request.form['url'])
-            msg = 'Arquivo <>'
-            return render_template('youtubeMP3.jinja', caminho=caminho)
+            try:
+                caminho = downloadMP3(request.form['url'])
+                return send_file(caminho['caminho'], as_attachment=True, download_name=caminho['nome'])
+            except:
+                return render_template('youtubeMP3.jinja', msg='URL Inválida! Por favor digite um endereço válido.')
     
-    return render_template('youtubeMP3.jinja', caminho=None)
+    return render_template('youtubeMP3.jinja', msg='')
 
 @socketio.on('connect')
 def on_connect():
@@ -868,6 +870,6 @@ def on_connect():
     emit('log', payload, broadcast=True)
 
 if __name__ == '__main__':
-    app.run('0.0.0.0',port=80)
+    #app.run('0.0.0.0',port=80)
     #serve(app, host='0.0.0.0', port=80, threads=8)
-    #eventlet.wsgi.server(eventlet.listen(('', 80)), app)
+    eventlet.wsgi.server(eventlet.listen(('', 80)), app)
