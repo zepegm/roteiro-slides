@@ -95,22 +95,31 @@
         <p class="lead text-muted">Abaixo você vê o slide atual e prévia do próximo.</p>
       <div class="col-lg-6 col-md-8 mx-auto">
         <div class="card shadow-sm">
-          <img class="bd-placeholder-img card-img-top" width="100%" height="100%" src="{{ url_for('static', filename='images/Output/Slide' + index|string + '.jpg') }}" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="#55595c"/></img>
+          <img class="bd-placeholder-img card-img-top" id="imgAtual" width="100%" height="100%" src="{{ url_for('static', filename='images/Output/Slide' + index|string + '.jpg') }}" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="#55595c"/></img>
 
           <div class="card-body">
-            <h1 class="card-text text-center">Slide Atual: {{index}}</h1>
+            <h1 class="card-text text-center" id="slideAtual">Slide Atual: {{index}}</h1>
           </div>
         </div>        
       </div>
       {% if index < listaSlideShow[-1]['index']  %}
       <div class="col-sm-4">
         <div class="card shadow-sm">
-          <img class="bd-placeholder-img card-img-top" width="100%" height="100%" src="{{ url_for('static', filename='images/Output/Slide' + (index + 1)|string + '.jpg') }}" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="#55595c"/></img>
+          <img class="bd-placeholder-img card-img-top" id="imgProx" width="100%" height="100%" src="{{ url_for('static', filename='images/Output/Slide' + (index + 1)|string + '.jpg') }}" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="#55595c"/></img>
           <div class="card-body">
-            <h4 class="card-text text-center">Próximo Slide: {{index + 1}}</h4>
+            <h4 class="card-text text-center" id="proximoSlide">Próximo Slide: {{index + 1}}</h4>
           </div>
         </div>        
       </div> 
+      {% else %} 
+      <div class="col-sm-4">
+        <div class="card shadow-sm">
+          <img class="bd-placeholder-img card-img-top" id="imgProx" width="100%" height="100%" src="{{ url_for('static', filename='images/Fim.jpg') }}" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="#55595c"/></img>
+          <div class="card-body">
+            <h4 class="card-text text-center" id="proximoSlide">Próximo Slide: -</h4>
+          </div>
+        </div>        
+      </div>       
       {% endif %} 
       <div class="col-sm-8">          
         <form id="update" method="POST" action="{{ url_for('apresentador') }}">
@@ -133,9 +142,9 @@
       <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-md-4 row-cols-md-5 g-3">
         {% for sld in listaSlideShow %}
         {% if index == sld['index'] %}
-        <div class="col box-index">
+        <div class="col box-index" id="box{{sld['index']}}">
         {% else %}
-        <div class="col">
+        <div class="col" id="box{{sld['index']}}">
         {% endif %}
           <div class="card shadow-sm">
             <img class="bd-placeholder-img card-img-top" width="100%" height="100%" src="{{ url_for('static', filename='images/Output/' + sld['nome']) }}" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="#55595c"/></img>
@@ -165,12 +174,27 @@
   <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>
   <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
   <script>
+
+    const listaSlideShow = JSON.parse('{{listaSlideShow|tojson}}');
+
     function next() {
       var index = parseInt($("#index_atual").val())
-      const listaSlideShow = JSON.parse('{{listaSlideShow|tojson}}');
 
       if (index < (listaSlideShow[listaSlideShow.length - 1].index)) {
         $("#index_atual").val(index + 1);
+        $('#slideAtual').html("Slide Atual: " + (index + 1));
+
+        if (index + 1 == listaSlideShow[listaSlideShow.length - 1].index) {
+          $('#proximoSlide').html("Próximo Slide: -");
+          $('#imgProx').attr("src", "../static/images/Fim.jpg");
+        } else {
+          $('#proximoSlide').html("Próximo Slide: " + (index + 2));
+          $('#imgProx').attr("src", "../static/images/Output/Slide" + (index + 2) + ".jpg");
+        }
+
+        $('#imgAtual').attr("src", "../static/images/Output/Slide" + (index + 1) + ".jpg");
+        $('.col').removeClass('box-index');
+        $('#box' + (index + 1)).addClass('box-index');
         $("#update").submit();
       } else {
         $('#proximaPRS').submit();
@@ -182,6 +206,12 @@
 
       if (index > 0) {
         $("#index_atual").val(index);
+        $('#slideAtual').html("Slide Atual: " + index);
+        $('#proximoSlide').html("Próximo Slide: " + (index + 1));
+        $('#imgAtual').attr("src", "../static/images/Output/Slide" + index + ".jpg");
+        $('#imgProx').attr("src", "../static/images/Output/Slide" + (index + 1) + ".jpg"); 
+        $('.col').removeClass('box-index');
+        $('#box' + index).addClass('box-index');               
         $("#update").submit();
       }
     }
@@ -197,6 +227,19 @@
     $(".btn-outline-secondary").click(function() {
       var index = $(this).data('index')
       $("#index_atual").val(index);
+      $('#slideAtual').html("Slide Atual: " + index);
+
+      if (index == listaSlideShow[listaSlideShow.length - 1].index) {
+        $('#proximoSlide').html("Próximo Slide: -");
+        $('#imgProx').attr("src", "../static/images/Fim.jpg");
+      } else {
+        $('#proximoSlide').html("Próximo Slide: " + (index + 1));
+        $('#imgProx').attr("src", "../static/images/Output/Slide" + (index + 1) + ".jpg");
+      }
+
+      $('#imgAtual').attr("src", "../static/images/Output/Slide" + index + ".jpg");
+      $('.col').removeClass('box-index');
+      $('#box' + index).addClass('box-index');         
       $("#update").submit();
     });
 

@@ -82,6 +82,7 @@ def index():
     if request.method == 'POST':
         lista = pegarSlidesAbertos()
         inserirListaRoteiro('Roteiro.db', lista)
+        socketio.emit('refresh', 1)
 
     listaPPT = executarConsultaLista('Roteiro.db')
     return render_template('index.jinja', listaPPT=listaPPT, total=len(listaPPT))
@@ -104,6 +105,7 @@ def proximoSlide():
             prs.iniciarApresentacao()
             #return render_template('index.jinja', listaPPT=executarConsultaLista('Roteiro.db'))
     
+    socketio.emit('refresh', 1)
     return redirect(url_for('index'))
 
 @app.route('/atualizarTabela', methods=['GET', 'POST'])
@@ -115,6 +117,7 @@ def atualizarTabela():
             # handle your ajax request here!
             novalista = request.json
             inserirListaRoteiro('Roteiro.db', novalista)
+            socketio.emit('update', novalista)
             return jsonify(success=True)
         else:
             # handle your form submit here!
@@ -135,7 +138,7 @@ def carregarSlideAdicional():
         if not sld['caminho'] in caminhos:
             inserirListaRoteiro('Roteiro.db', sld)
 
-
+    socketio.emit('refresh', 1)
     return redirect(url_for('index'))
 
 
@@ -320,11 +323,10 @@ def apresentador():
     # pegar o index e recarregar tudo
     if request.method == "POST" and 'index_atual' in request.form:
         avancarIndexSlideShow(int(request.form['index_atual']))
-        listaSlideShow = pegarSlideShow(False)
-    else:
-        listaSlideShow = pegarSlideShow(True)
+        return ('', 204)
+        
+    listaSlideShow = pegarSlideShow(True)
     index = pegarIndexSlideshow()
-
     return render_template('apresentador.jinja', listaSlideShow=listaSlideShow, index=index)
 
 @app.route('/proxPRS', methods=['GET', 'POST'])

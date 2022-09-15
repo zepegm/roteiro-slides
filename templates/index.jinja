@@ -143,6 +143,7 @@
 <script type=text/javascript>$SCRIPT_ROOT = {{ request.script_root|tojson|safe }}; </script>
 <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/Sortable.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/socket.io.min.js') }}"></script>
 <script>
   Sortable.create(presentations, {
   animation: 100,
@@ -154,7 +155,33 @@
   //chosenClass: 'active'
 });
 
+
 const total = JSON.parse('{{total|tojson}}');
+var shield = false;
+
+var socket = io();
+socket.on('update', function(lista) {
+  //console.log(lista);
+  if (!shield && $('.sortable-chosen').length < 1) {
+    $('#presentations').empty();
+    for (item in lista) {
+      //console.log(item);
+      if (lista[item]['check']) {
+        $('#presentations').append('<li class="list-group-item"><label><input class="form-check-input me-1" type="checkbox" name="checkEL" value="' + lista[item]['caminho'] + '" checked>' + lista[item]['nome'] + '</label><span class="close">x</span></li>');
+      } else {
+        $('#presentations').append('<li class="list-group-item"><label><input class="form-check-input me-1" type="checkbox" name="checkEL" value="' + lista[item]['caminho'] + '">' + lista[item]['nome'] + '</label><span class="close">x</span></li>');
+      }
+    }
+    //location.replace("{{ url_for('index') }}");
+  } else {
+    shield = false;
+  }
+  
+});
+
+socket.on('refresh', function(val) {
+  location.href = "{{url_for('index')}}"
+});
 
 function proximo() {
   var prox = $('.form-check-input:not(:checked)').val();
@@ -230,12 +257,13 @@ $("#presentations").change(function() {
   arrastar();
 });
 
-$(".close").click(function() {
+$("#presentations").on("click", ".close", function() {
   $(this).parent().get(0).remove()
   arrastar();
 });
 
 function arrastar() {
+  shield = true;
   var cont = 0
   var novalista = [];
     $(".form-check-input").each(function(){
@@ -249,7 +277,7 @@ function arrastar() {
       }
     });
 
-    console.log(novalista);
+    //console.log(novalista);
 
   $.ajax({
       type: "POST",
@@ -258,7 +286,7 @@ function arrastar() {
       data: JSON.stringify(novalista),
       dataType: "json",
       success: function(response) {
-        //console.log(response)
+        //shield = true;
       },
       error: function(err) {
         console.log(err);
@@ -268,7 +296,7 @@ function arrastar() {
 
 /*$(".form-check-input").change(function() {
   arrastar();
-});*/
+});
 
 setInterval(function() {
   var novalista = [];
@@ -304,7 +332,7 @@ setInterval(function() {
         console.log(err);
       }
     });
-}, 3000);
+}, 3000);*/
 
 </script>
 
