@@ -23,6 +23,17 @@
         max-height: 700px !important;
         overflow-y: auto;
       }
+      .titulo {
+          text-align: center;
+          font-family: Arial, Helvetica, sans-serif;
+          visibility: hidden;
+      }
+      .center {
+          display: block;
+          margin-left: auto;
+          margin-right: auto;
+          visibility: hidden;
+      }      
     </style>
 
     
@@ -51,7 +62,7 @@
           <a class="nav-link " href="../abrirharpa">Abrir Harpa</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" aria-current="page"  href="#">Músicas</a>
+          <a class="nav-link" aria-current="page"  href="../abrirslidemusica">Músicas</a>
         </li>    
         <li class="nav-item">
           <a class="nav-link" href="../apresentador">Apresentador</a>
@@ -79,20 +90,23 @@
 <main class="container">
   <div class="bg-light p-1 rounded">
     <h1 class="display-5 text-center">Download Youtube MP3</h1>
-    <p class="lead text-center">Digite a URL do vídeo quer será baixado e convertido em MP3.</p>
-    <p class="text-center text-danger"><strong>{{msg}}</strong></p>
+    <p class="lead text-center">Esse módulo foi feito para baixar Playbacks com mais facilidade, só digita a URL do vídeo do YouTube e clique em "Baixar".</p>
+    <p class="text-center text-danger"><strong id="erro">{{msg}}</strong></p>
+    <p class="text-center text-primary"><strong id="final"></strong></p>
     <form action="{{ url_for('download_mp3') }}" method="post" autocomplete="off" id="baixar">
       <div class="row">
         <div class="col-sm-10">
           <input class="form-control" id="url" name="url" type="text" placeholder="Digite a URL..." required>
         </div>
         <div class="col-sm-2">
-          <input class="form-control btn btn-primary" type="submit" value="Baixar">
+          <input class="form-control btn btn-primary" type="submit" value="Baixar" id="botao">
         </div>
       </div>
     </form>
     <div class="row">
       <div id="loading" class="col-sm-12">
+        <img class="center" src="../static/images/loading.gif" class="d-inline-block align-top" alt="">
+        <h1 class="titulo">Por favor aguarde...</h1>
       </div>
     </div>
   </div>
@@ -102,8 +116,40 @@
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
     <script>
       $('#baixar').submit(function() {
-        $('#loading').append('<iframe src="../loading" height="500" width="100%"></iframe>')
+        $('.titulo').css("visibility", "visible")
+        $('.center').css("visibility", "visible")
+        $('#final').html("");
+        $('#erro').html("");
+        $('#url').prop("readonly", true);
+        $('#botao').prop("disabled", true);
+        $('#botao').val('Aguarde...');
+
+        interval = setInterval(function() {
+        // AJAX send request
+        $.ajax({
+          type: "POST",
+          url: "{{ url_for('pegarProgressoDownload') }}",
+          contentType: "application/json",
+          dataType: "json",
+          success: function(response) {
+            if (response == 'Encerrado...') {
+              $('.titulo').css("visibility", "hidden")
+              $('.titulo').html('Por favor aguarde...');
+              $('.center').css("visibility", "hidden")
+              $('#url').prop("readonly", false);
+              $('#botao').prop("disabled", false);
+              $('#botao').val('Baixar');          
+              $('#final').html("Arquivo baixado com sucesso!");
+              clearInterval(interval);
+            } else {
+              $('.titulo').html(response);
+            }
+          },
+        });
+        }, 500);
+
       });
+
     </script>
   </body>
 </html>

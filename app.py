@@ -8,21 +8,24 @@ from unittest import result
 from powerpoint import ppt, pegarSlidesAbertos, pegarSlideShow, pegarIndexSlideshow, avancarIndexSlideShow, pegarTextoSlideShow, verificarCalendario, encerrarTodasApresentacoes, pegarNomeSlideShow
 from consultaAcess import executarConsultaBibliaFormat, executarConsulta, executarConsultaLista, inserirListaRoteiro, executarConsultaGeral, alterarConfig, alterarConfigViewBiblia, consultarHarpaBD, alterarConfigViewMusica, inserirDadosBasico, consultarListaFiltrada
 from flask import Flask, render_template, request, redirect, url_for, jsonify, send_file
-# from waitress import serve
+from waitress import serve
 from math import ceil
 from datetime import date
 from GeradorGraficos import salvarTudo
 from threading import Lock
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
-from ytdown import downloadMP3
-import eventlet.wsgi
+from ytdown import ytdlp
+#from gevent.pywsgi import WSGIServer
+#from gevent import monkey
+#import eventlet
 
 
 # vou ver se consigo abrir certinho
 app=Flask(__name__)
 app.secret_key = "abc123"
 app.config['SECRET_KEY'] = 'justasecretkeythatishouldputhere'
+#socketio = SocketIO(app, async_mode='threading')
 socketio = SocketIO(app)
 CORS(app)
 thread = None
@@ -31,6 +34,7 @@ thread_lock = Lock()
 diretorio = os.path.expanduser('~') + r'\OneDrive - Secretaria da Educação do Estado de São Paulo\IGREJA'
 historico = os.path.expanduser('~') + r'\OneDrive - Secretaria da Educação do Estado de São Paulo\IGREJA\Historico.db'
 locale.setlocale(locale.LC_ALL, "")
+youtube = ytdlp()
 
 def eNoturno(noturno):
     if noturno != '':
@@ -603,7 +607,7 @@ def abrirSlideExternamente():
         try:
             prs = ppt(caminho)
             valor = {'sucess':True}
-            inserirDadosBasico(historico, "insert into log values (datetime('now', 'localtime'), '" + request.args['hino'][request.args['hino'].rfind('/') + 1:].replace("'", "''") + "', 3, " + eNoturno(modoNoturno) + ", '" + request.args['hino'][request.args['hino'].rfind('/', 1, request.args['hino'].rfind('/')) + 1:request.args['hino'].rfind('/')] + "', 1)")
+            inserirDadosBasico(historico, "insert into log values (datetime('now', 'localtime'), '" + nomes[0] + ".pptx', 3, " + eNoturno(modoNoturno) + ", '" + nomes[1] + "', 1)")
         except:
             inserirDadosBasico(historico, "insert into log values (datetime('now', 'localtime'), 'ERRO GRAVE!', 4, " + eNoturno(modoNoturno) + ", '-', 3)")
             valor = {'sucess':False}
@@ -630,7 +634,11 @@ def alterarConfigExternamente():
 
 @app.route('/loading', methods=['GET', 'POST'])
 def loading():
-    return render_template('carregando.html')
+    if 'msg' in request.args:
+        msg = request.args['msg']
+    else:
+        msg = "Por favor aguarde..."
+    return render_template('carregando.html', msg=msg)
 
 
 @app.route('/obs', methods=['GET', 'POST'])
@@ -852,12 +860,25 @@ def download_mp3():
     if request.method == 'POST':
         if 'url' in request.form:
             try:
-                caminho = downloadMP3(request.form['url'])
+                caminho = youtube.downloadMP3(request.form['url'])
                 return send_file(caminho['caminho'], as_attachment=True, download_name=caminho['nome'])
             except:
-                return render_template('youtubeMP3.jinja', msg='URL Inválida! Por favor digite um endereço válido.')
+                return render_template('youtubeMP3.jinja', msg='Erro! URL inválida ou erro no sistema, por favor tente novamente.')
     
     return render_template('youtubeMP3.jinja', msg='')
+
+@app.route('/pegarProgressoDownload', methods=['GET', 'POST'])
+def pegarProgressoDownload():
+    
+    if request.method == 'POST':
+        #print('got a post request!')
+
+        if request.is_json: # application/json
+            # handle your ajax request here!
+            valor = youtube.getText()
+
+            return jsonify(valor)
+
 
 @socketio.on('connect')
 def on_connect():
@@ -871,5 +892,9 @@ def on_connect():
 
 if __name__ == '__main__':
     #app.run('0.0.0.0',port=80)
-    #serve(app, host='0.0.0.0', port=80, threads=8)
-    eventlet.wsgi.server(eventlet.listen(('', 80)), app)
+    serve(app, host='0.0.0.0', port=80, threads=8)
+    #eventlet.wsgi.server(eventlet.listen(('', 80)), app)
+    #socketio.run(app, port=80,host='0.0.0.0', debug=True) 
+    #monkey.patch_all()
+    #http_server = WSGIServer(('0.0.0.0', 80), app)
+    #http_server.serve_forever()
