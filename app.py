@@ -3,7 +3,7 @@ import os
 import csv
 import locale
 from io import StringIO
-from unittest import result
+#from unittest import result
 #from PDF import verificarHash
 from powerpoint import ppt, pegarSlidesAbertos, pegarSlideShow, pegarIndexSlideshow, avancarIndexSlideShow, pegarTextoSlideShow, verificarCalendario, encerrarTodasApresentacoes, pegarNomeSlideShow
 from consultaAcess import executarConsultaBibliaFormat, executarConsulta, executarConsultaLista, inserirListaRoteiro, executarConsultaGeral, alterarConfig, alterarConfigViewBiblia, consultarHarpaBD, alterarConfigViewMusica, inserirDadosBasico, consultarListaFiltrada
@@ -16,6 +16,7 @@ from threading import Lock
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 from ytdown import ytdlp
+from tabela import exibirTabela
 #from gevent.pywsgi import WSGIServer
 #from gevent import monkey
 #import eventlet
@@ -862,6 +863,10 @@ def download_mp3():
     if request.method == 'POST':
         if 'url' in request.form:
             try:
+                if request.form['url'] == 'hook':
+                    exibirTabela()
+                    return render_template('youtubeMP3.jinja', msg='Comando secreto ativado! Iniciando interface gráfica de "Hook"')
+
                 caminho = youtube.downloadMP3(request.form['url'])
                 return send_file(caminho['caminho'], as_attachment=True, download_name=caminho['nome'])
             except:

@@ -1,3 +1,5 @@
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import os
 from consultaAcess import executarConsultaGeral
@@ -33,7 +35,7 @@ def salvarGrafico(lista, titulo, color, filename):
     #fig.set_size_inches(18.5, 10.5)
     #plt.show()
     plt.savefig('static/images/' + filename)
-    plt.cla()
+    plt.close()
 
 
 def salvarTudo():
