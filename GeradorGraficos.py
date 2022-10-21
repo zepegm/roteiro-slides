@@ -1,10 +1,12 @@
-import matplotlib
-matplotlib.use('Agg')
+#import matplotlib
+#matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import os
 from consultaAcess import executarConsultaGeral
 
 def salvarGrafico(lista, titulo, color, filename):
+
+    plt.switch_backend('Agg')
 
     nomes = []
     total = []

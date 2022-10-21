@@ -2,11 +2,12 @@ import cv2
 import os
 import sqlite3
 import numpy as np
-import matplotlib
-matplotlib.use('Agg')
+#import matplotlib
+#matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 def exibirFotos(id):
+    plt.switch_backend('TkAgg')
     fig = plt.gcf()
     fig.canvas.manager.set_window_title('Visualizar fotos de registro')
 
@@ -38,7 +39,7 @@ def exibirFotos(id):
         cont += 1
 
     plt.show()
-
+    plt.close()
     cur.close()
     con.close()
 
