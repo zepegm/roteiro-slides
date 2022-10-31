@@ -13,8 +13,9 @@
     <link href="{{ url_for('static', filename='stylesheets/tui-pagination.css') }}" rel="stylesheet">
 
     <style>
-      .arquivo {
-        font-weight: bold;
+      .title {
+        text-align: center;
+        color: red;
       }
 
       .Suces {
@@ -81,54 +82,200 @@
   </div>
 </nav>
 
-<main class="container">
+<main class="container-fluid">
     <div class="row">
-      <div class="col-sm-6">
-        <div class="dropdown" style="text-align: right;">
-          <button class="btn btn-danger dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">TOP - Músicas</button>
-          <ul class="dropdown-menu" id="categoria" aria-labelledby="dropdownMenuButton">
-            <li><a id="item1" class="dropdown-item" href="javascript:mudarGrafico('harpa')">TOP - Harpa</a></li>
-            <li><a id="item2" class="dropdown-item" href="javascript:mudarGrafico('biblia')">TOP - Capítulos Bíblicos</a></li>
-          </ul>
-        </div>
+      <div class="col-sm-12">
+        <h1 class="title">TOP 10 - Slides mais utilizados</h1>
       </div>
-      <div class="col-sm-6">
+      <div class="col-sm-2">
+        <label for="cb_ano" class="form-label">Filtrar por ano específico:</label>
+        <select class="form-select" id="cb_ano" name="cb_ano" onchange="alterarAno()">
+            <option>Geral</option>
+            {% for lista in anos %}
+                <option>{{lista['ano']}}</option>
+            {% endfor %}
+        </select>      
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-4">
+        <p class="fs-2">Harpa:</p>
+        <canvas id="harpa" width="600" height="400"></canvas>  
+      </div>
+      <div class="col-sm-4">
+        <p class="fs-2">Músicas:</p>
+        <canvas id="musica" width="600" height="400"></canvas>  
+      </div>
+      <div class="col-sm-4">
+        <p class="fs-2">Bíblia:</p>
+        <canvas id="biblia" width="600" height="400"></canvas>  
+      </div>                  
+      <div class="col-sm-12">
+        <br>
         <button id="retornar" type="button" class="btn btn-secondary">Retornar</button>
       </div>
     </div>
-        <br>
-      <img id="grafico" class="center" src="../static/images/topMusicas.png" width="800" height="600">
 </main>
 
     <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script> 
     <!-- <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script> -->
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/tui-pagination.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/chart.min.js') }}"></script>
     <script type="text/javascript">
-      function mudarGrafico(destino) {
-        if (destino == 'harpa') {
-          $("#grafico").attr('src', '../static/images/topHarpa.png');
-          $("#dropdownMenuButton").text("TOP - Harpa");
-          $("#item1").text("TOP - Músicas")
-          $("#item1").attr("href", "javascript:mudarGrafico('musica')")
-          $("#item2").text("TOP - Capítulos Bíblicos")
-          $("#item2").attr("href", "javascript:mudarGrafico('biblia')")
-        } else if (destino == 'biblia') {
-          $("#grafico").attr('src', '../static/images/topCapitulos.png');
-          $("#dropdownMenuButton").text("TOP - Capítulos Bíblicos");
-          $("#item1").text("TOP - Músicas")
-          $("#item1").attr("href", "javascript:mudarGrafico('musica')")
-          $("#item2").text("TOP - Harpa")
-          $("#item2").attr("href", "javascript:mudarGrafico('harpa')")
-        } else if (destino == 'musica') {
-          $("#grafico").attr('src', '../static/images/topMusicas.png');
-          $("#dropdownMenuButton").text("TOP - Músicas");
-          $("#item1").text("TOP - Harpa")
-          $("#item1").attr("href", "javascript:mudarGrafico('harpa')")
-          $("#item2").text("TOP - Capítulos Bíblicos")
-          $("#item2").attr("href", "javascript:mudarGrafico('biblia')")          
+
+    const harpa = {{harpa}};
+    const biblia = {{biblia}};
+    const musica = {{musica}};
+
+    labels_grap = [];
+    data_grap = [];
+
+    for (var i = 0; i < harpa.length; i++) {
+      labels_grap.push(harpa[i]['Nome']);
+      data_grap.push(harpa[i]['total']);
+    }
+
+    const ctx_harpa = document.getElementById('harpa').getContext('2d');
+    const myChart_harpa = new Chart(ctx_harpa, {
+        type: 'bar',
+        data: {
+            labels: labels_grap,
+            datasets: [{
+                label: 'teste',
+                data: data_grap,
+                backgroundColor: [
+                    //'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)'//,
+                    //'rgba(255, 206, 86, 0.2)',
+                    //'rgba(75, 192, 192, 0.2)',
+                    //'rgba(153, 102, 255, 0.2)',
+                    //'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                    //'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)'//,
+                    //'rgba(255, 206, 86, 1)',
+                    //'rgba(75, 192, 192, 1)',
+                    //'rgba(153, 102, 255, 1)',
+                    //'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            //responsive: false, 
+            //maintainAspectRatio: false,
+            plugins: {
+              legend: false,
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
         }
-      }
+    });
+
+    labels_grap = [];
+    data_grap = [];
+
+    for (var i = 0; i < biblia.length; i++) {
+      labels_grap.push(biblia[i]['Nome']);
+      data_grap.push(biblia[i]['total']);
+    }
+
+    const ctx_biblia = document.getElementById('biblia').getContext('2d');
+    const myChart_biblia = new Chart(ctx_biblia, {
+        type: 'bar',
+        data: {
+            labels: labels_grap,
+            datasets: [{
+                label: 'teste',
+                data: data_grap,
+                backgroundColor: [
+                    //'rgba(255, 99, 132, 0.2)',
+                    //'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)'//,
+                    //'rgba(75, 192, 192, 0.2)',
+                    //'rgba(153, 102, 255, 0.2)',
+                    //'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                    //'rgba(255, 99, 132, 1)',
+                    //'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)'//,
+                    //'rgba(75, 192, 192, 1)',
+                    //'rgba(153, 102, 255, 1)',
+                    //'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            //responsive: false, 
+            //maintainAspectRatio: false,
+            plugins: {
+              legend: false,
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    labels_grap = [];
+    data_grap = [];
+
+    for (var i = 0; i < musica.length; i++) {
+      labels_grap.push(musica[i]['Nome']);
+      data_grap.push(musica[i]['total']);
+    }
+
+    const ctx_musica = document.getElementById('musica').getContext('2d');
+    const myChart_musica = new Chart(ctx_musica, {
+        type: 'bar',
+        data: {
+            labels: labels_grap,
+            datasets: [{
+                label: 'teste',
+                data: data_grap,
+                backgroundColor: [
+                    //'rgba(255, 99, 132, 0.2)',
+                    //'rgba(54, 162, 235, 0.2)',
+                    //'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)'//,
+                    //'rgba(153, 102, 255, 0.2)',
+                    //'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                    //'rgba(255, 99, 132, 1)',
+                    //'rgba(54, 162, 235, 1)',
+                    //'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)'//,
+                    //'rgba(153, 102, 255, 1)',
+                    //'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            //responsive: false, 
+            //maintainAspectRatio: false,
+            plugins: {
+              legend: false,
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
 
     $("#retornar").click(function() {
       location.href = "../eventos"

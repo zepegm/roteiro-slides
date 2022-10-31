@@ -11,7 +11,7 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify, s
 from waitress import serve
 from math import ceil
 from datetime import date
-from GeradorGraficos import salvarTudo
+#from GeradorGraficos import salvarTudo
 from threading import Lock
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
@@ -764,8 +764,11 @@ def novo_evento():
 
 @app.route('/estatisticas', methods=['GET', 'POST'])
 def estatisticas():
-    salvarTudo()
-    return render_template('estatisticas.jinja')
+    biblia = executarConsultaGeral(historico, 'select Nome, count(Nome) as total from evento_roteiro where evento = 1 group by Nome order by total desc limit 0, 10')
+    musica = executarConsultaGeral(historico, 'select Nome, count(Nome) as total from evento_roteiro where evento = 3 group by Nome order by total desc limit 0, 10')
+    harpa = executarConsultaGeral(historico, 'select Nome, count(Nome) as total from evento_roteiro where evento = 2 group by Nome order by total desc limit 0, 10')
+    anos = executarConsultaGeral(historico, "select distinct strftime('%Y', Data) as ano from Roteiro order by ano desc")
+    return render_template('estatisticas.jinja', biblia=biblia, musica=musica, harpa=harpa, anos=anos)
 
 @app.route('/eventos', methods=['GET', 'POST'])
 def eventos():
