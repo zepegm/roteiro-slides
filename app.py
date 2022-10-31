@@ -764,6 +764,24 @@ def novo_evento():
 
 @app.route('/estatisticas', methods=['GET', 'POST'])
 def estatisticas():
+
+    if request.method == 'POST':
+        #print('got a post request!')
+
+        if request.is_json: # application/json
+            # handle your ajax request here!
+            ano = request.json
+            if ano != 'Geral':
+                biblia = executarConsultaGeral(historico, "select Nome, count(Nome) as total from evento_roteiro, Roteiro where evento = 1 and evento_roteiro.id = Roteiro.id and Roteiro.Data < '{}-01-01' and Roteiro.Data > '{}-12-31' group by Nome order by total desc limit 0, 10".format(int(ano) + 1, int(ano) - 1))
+                musica = executarConsultaGeral(historico, "select Nome, count(Nome) as total from evento_roteiro, Roteiro where evento = 3 and evento_roteiro.id = Roteiro.id and Roteiro.Data < '{}-01-01' and Roteiro.Data > '{}-12-31' group by Nome order by total desc limit 0, 10".format(int(ano) + 1, int(ano) - 1))
+                harpa = executarConsultaGeral(historico, "select Nome, count(Nome) as total from evento_roteiro, Roteiro where evento = 2 and evento_roteiro.id = Roteiro.id and Roteiro.Data < '{}-01-01' and Roteiro.Data > '{}-12-31' group by Nome order by total desc limit 0, 10".format(int(ano) + 1, int(ano) - 1))
+            else:
+                biblia = executarConsultaGeral(historico, 'select Nome, count(Nome) as total from evento_roteiro where evento = 1 group by Nome order by total desc limit 0, 10')
+                musica = executarConsultaGeral(historico, 'select Nome, count(Nome) as total from evento_roteiro where evento = 3 group by Nome order by total desc limit 0, 10')
+                harpa = executarConsultaGeral(historico, 'select Nome, count(Nome) as total from evento_roteiro where evento = 2 group by Nome order by total desc limit 0, 10')
+
+            return {'biblia':biblia, 'musica':musica, 'harpa':harpa}
+
     biblia = executarConsultaGeral(historico, 'select Nome, count(Nome) as total from evento_roteiro where evento = 1 group by Nome order by total desc limit 0, 10')
     musica = executarConsultaGeral(historico, 'select Nome, count(Nome) as total from evento_roteiro where evento = 3 group by Nome order by total desc limit 0, 10')
     harpa = executarConsultaGeral(historico, 'select Nome, count(Nome) as total from evento_roteiro where evento = 2 group by Nome order by total desc limit 0, 10')

@@ -141,7 +141,7 @@
         data: {
             labels: labels_grap,
             datasets: [{
-                label: 'teste',
+                label: 'Quantidade',
                 data: data_grap,
                 backgroundColor: [
                     //'rgba(255, 99, 132, 0.2)',
@@ -191,7 +191,7 @@
         data: {
             labels: labels_grap,
             datasets: [{
-                label: 'teste',
+                label: 'Quantidade:',
                 data: data_grap,
                 backgroundColor: [
                     //'rgba(255, 99, 132, 0.2)',
@@ -241,21 +241,21 @@
         data: {
             labels: labels_grap,
             datasets: [{
-                label: 'teste',
+                label: 'Quantidade',
                 data: data_grap,
                 backgroundColor: [
-                    //'rgba(255, 99, 132, 0.2)',
+                    'rgba(255, 99, 132, 0.2)'//,
                     //'rgba(54, 162, 235, 0.2)',
                     //'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)'//,
+                    //'rgba(75, 192, 192, 0.2)',
                     //'rgba(153, 102, 255, 0.2)',
                     //'rgba(255, 159, 64, 0.2)'
                 ],
                 borderColor: [
-                    //'rgba(255, 99, 132, 1)',
+                    'rgba(255, 99, 132, 1)'//,
                     //'rgba(54, 162, 235, 1)',
                     //'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)'//,
+                    //'rgba(75, 192, 192, 1)',
                     //'rgba(153, 102, 255, 1)',
                     //'rgba(255, 159, 64, 1)'
                 ],
@@ -280,6 +280,67 @@
     $("#retornar").click(function() {
       location.href = "../eventos"
     });
+
+function alterarAno() {
+    var ano = $('#cb_ano').val();
+    console.log(ano);
+
+    $.ajax({
+        type: "POST",
+        url: "{{ url_for('estatisticas') }}",
+        contentType: "application/json",
+        data: JSON.stringify(ano),
+        dataType: "json",
+        success: function(response) {
+        // recebido a lista com sucesso, é necessário limpar a tabela e reinserir toda a lista
+            console.log(response);
+            
+            labels_grap = []
+            data_grap = []
+
+            for (var i = 0; i < response['biblia'].length; i++) {
+                labels_grap.push(response['biblia'][i]['Nome']);
+                data_grap.push(response['biblia'][i]['total']);
+            }            
+
+            myChart_biblia.data.labels = labels_grap;
+            myChart_biblia.data.datasets[0].data = data_grap;
+
+            labels_grap = []
+            data_grap = []
+
+            for (var i = 0; i < response['harpa'].length; i++) {
+                labels_grap.push(response['harpa'][i]['Nome']);
+                data_grap.push(response['harpa'][i]['total']);
+            }            
+
+            myChart_harpa.data.labels = labels_grap;
+            myChart_harpa.data.datasets[0].data = data_grap;
+
+            labels_grap = []
+            data_grap = []
+
+            for (var i = 0; i < response['musica'].length; i++) {
+                labels_grap.push(response['musica'][i]['Nome']);
+                data_grap.push(response['musica'][i]['total']);
+            }            
+
+            myChart_musica.data.labels = labels_grap;
+            myChart_musica.data.datasets[0].data = data_grap;
+
+
+            myChart_harpa.update();
+            myChart_musica.update();
+            myChart_biblia.update();
+
+        },
+        error: function(err) {
+            console.log(err);
+        }
+    });
+}
+
+
     </script>
   </body>
 </html>
