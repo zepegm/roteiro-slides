@@ -605,7 +605,7 @@ def abrirSlideExternamente():
         if not os.path.isfile(caminho):
             caminho = diretorio + modoNoturno + '\\DEPARTAMENTOS (LETRAS)\\' + nomes[1] + '\\' + nomes[0] + ".pptx"
 
-        print(caminho)
+        #print(caminho)
 
         try:
             prs = ppt(caminho)
@@ -825,7 +825,7 @@ def eventos():
             ' where Roteiro.tema = Tema.id and Roteiro.data >= "' + dataIni + '" and Roteiro.data <= "' + dataFim + '"' + retornarFiltro(tema, ' and Tema.id = ') + retornarFiltroInner(request.form['nome'], [], ' and Rot.Nome like "' + nome + '"') + ' group by Roteiro.id order by Roteiro.data desc LIMIT ' + str(pagina * 10 - 10) + ", 10"
             #print(sql)
             lista = executarConsultaGeral(historico, sql)
-            print(sql)
+            #print(sql)
             sql = 'select count(DISTINCT Roteiro.id) as total from Roteiro, Tema ' + retornarFiltroInner(request.form['nome'], [evento, subcategoria, departamento, forma_musical], 'INNER JOIN evento_roteiro as Rot on Roteiro.id = Rot.id') + retornarFiltro(evento, ' and Rot.Evento = ') + retornarFiltro(subcategoria, ' and Rot.subCategoria = ') + retornarFiltro(departamento, ' and Rot.departamento = ') + retornarFiltro(forma_musical, ' and Rot.formaMusical = ') + retornarFiltroInner(request.form['nome'], [], ' and Nome like "' + nome + '"') + \
             ' where Roteiro.tema = Tema.id and Roteiro.data >= "' + dataIni + '" and Roteiro.data <= "' + dataFim + '"' + retornarFiltro(tema, ' and Tema.id = ') + retornarFiltroInner(request.form['nome'], [], ' and Rot.Nome like "' + nome + '"')
             
@@ -872,7 +872,7 @@ def eventos():
         dicionario.append(evt)
 
     origem = {'nome':'', 'evento':0, 'atividade':0, 'categoria':0, 'departamento':0, 'musica':0, 'pesquisa':False}
-    print(datas)
+    #print(datas)
     return render_template('visualizarEvento.jinja', lista=dicionario, total=total, pagina=pagina, datas=datas, temas=temas, atividades=atividades, catBiblia=catBiblia, departamentos=departamentos, musical=musical, perPage=10, origem=origem)
 
 @app.route('/sobre', methods=['GET', 'POST'])

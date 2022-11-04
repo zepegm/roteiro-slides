@@ -14,19 +14,19 @@ from flask import url_for
 class ppt:
     def __init__(self, caminho):
         self.app = win32com.client.Dispatch("PowerPoint.Application", pythoncom.CoInitialize())
-        self.apresentacoes = []
+        self.apresentacoes = pegarSlidesAbertos()
+        self.objCOM = None
 
-        try:
-            self.objCOM = self.app.Presentations(caminho)
-            
-            # verificar se os arquivos estão compatíveis
-            original = caminho[caminho.find('IGREJA'):].replace('\\', '/')
-            file = self.objCOM.fullName[self.objCOM.fullName.find('IGREJA'):].replace('\\', '/')
-            
-            if original != file:
-                self.objCOM.Close()
-                self.objCOM = self.app.Presentations(caminho)
-        except:
+        if len(self.apresentacoes) > 0:
+            for prs in self.apresentacoes:
+                if prs['caminho'][prs['caminho'].find('IGREJA'):] == caminho[caminho.find('IGREJA'):].replace('\\', '/'):
+                    self.objCOM = self.app.Presentations(caminho)
+                    break
+
+            if self.objCOM == None:
+                self.objCOM = self.app.Presentations.Open(FileName=caminho, WithWindow=1)
+
+        else:
             self.objCOM = self.app.Presentations.Open(FileName=caminho, WithWindow=1)
 
         #print(self.app)
