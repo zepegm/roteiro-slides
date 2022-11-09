@@ -3,7 +3,7 @@ import cv2
 from mss import mss
 from PIL import Image
 
-bounding_box = {'top': 0, 'left': 0, 'width': 1920, 'height': 1080}
+bounding_box = {'top': 0, 'left': 1920, 'width': 1024, 'height': 768}
 
 sct = mss()
 
