@@ -1,16 +1,23 @@
 import numpy as np
 import cv2
 from mss import mss
-from PIL import Image
+import screeninfo
 
-bounding_box = {'top': 0, 'left': 1920, 'width': 1024, 'height': 768}
+def get_resolution():
+    monitores = screeninfo.get_monitors()
 
-sct = mss()
+    if (len(monitores) > 1):
+        return {'top': 0, 'left': monitores[0].width, 'width': monitores[1].width, 'height': monitores[1].height}
+    else:
+        return {'top': 0, 'left': 0, 'width': monitores[0].width, 'height': monitores[0].height}
 
-while True:
+#@staticmethod
+def screen():
+
+    #print('cheguei aqui pelo menos?')
+    bounding_box = get_resolution()
+
+    sct = mss()
     sct_img = sct.grab(bounding_box)
-    cv2.imshow('screen', np.array(sct_img))
-
-    if (cv2.waitKey(1) & 0xFF) == ord('q'):
-        cv2.destroyAllWindows()
-        break
+    #print(cv2.imencode('.jpg', np.array(sct_img)).tobytes())
+    return cv2.imencode('.jpg', np.array(sct_img))[1].tobytes()

@@ -7,7 +7,7 @@ from io import StringIO
 #from PDF import verificarHash
 from powerpoint import ppt, pegarSlidesAbertos, pegarSlideShow, pegarIndexSlideshow, avancarIndexSlideShow, pegarTextoSlideShow, verificarCalendario, encerrarTodasApresentacoes, pegarNomeSlideShow
 from consultaAcess import executarConsultaBibliaFormat, executarConsulta, executarConsultaLista, inserirListaRoteiro, executarConsultaGeral, alterarConfig, alterarConfigViewBiblia, consultarHarpaBD, alterarConfigViewMusica, inserirDadosBasico, consultarListaFiltrada
-from flask import Flask, render_template, request, redirect, url_for, jsonify, send_file
+from flask import Flask, render_template, request, redirect, url_for, jsonify, send_file, Response
 from waitress import serve
 from math import ceil
 from datetime import date
@@ -17,6 +17,7 @@ from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 from ytdown import ytdlp
 from tabela import exibirTabela
+from screencapture import screen
 #from gevent.pywsgi import WSGIServer
 #from gevent import monkey
 #import eventlet
@@ -36,6 +37,13 @@ diretorio = os.path.expanduser('~') + r'\OneDrive - Secretaria da Educação do 
 historico = os.path.expanduser('~') + r'\OneDrive - Secretaria da Educação do Estado de São Paulo\IGREJA\Historico.db'
 locale.setlocale(locale.LC_ALL, "")
 youtube = ytdlp()
+
+def gen():
+    while True:
+        tela = screen()
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + tela + b'\r\n')
+
 
 def eNoturno(noturno):
     if noturno != '':
@@ -384,29 +392,29 @@ def exibirLegenda():
 @app.route('/calendar', methods=['GET', 'POST'])
 def exibirCalendario():
 
-    if request.method == 'POST':
-        if request.is_json:
-            info = request.json
-            prs_name = pegarNomeSlideShow()
+    #if request.method == 'POST':
+        #if request.is_json:
+            #info = request.json
+            #prs_name = pegarNomeSlideShow()
 
-            try:
-                if info['filename'] == prs_name:
-                    if info['index'] != pegarIndexSlideshow():
-                        valor = {'sucess':True}
-                    else:
-                        valor = {'sucess':False}
-                else:
-                    if info['index'] != 0 or prs_name == executarConsulta('Roteiro.db', 'select * from OBS')[0]:
-                        valor = {'sucess':True}
-                    else:
-                        valor = {'sucess':False}
-            except:
-                valor = {'sucess':False}
+            #try:
+                #if info['filename'] == prs_name:
+                    #if info['index'] != pegarIndexSlideshow():
+                        #valor = {'sucess':True}
+                    #else:
+                        #valor = {'sucess':False}
+                #else:
+                    #if info['index'] != 0 or prs_name == executarConsulta('Roteiro.db', 'select * from OBS')[0]:
+                        #valor = {'sucess':True}
+                    #else:
+                        #valor = {'sucess':False}
+            #except:
+                #valor = {'sucess':False}
 
-            return jsonify(valor)
+            #return jsonify(valor)
 
-    resultado = verificarCalendario()
-    return render_template('calendar.jinja', resultado=resultado['resultado'], index=resultado['index'], filename=resultado['filename'])
+    #resultado = verificarCalendario()
+    return render_template('calendar.jinja')#, resultado=resultado['resultado'], index=resultado['index'], filename=resultado['filename'])
 
 @app.route('/viewer', methods=['GET', 'POST'])
 def receberView():
@@ -646,21 +654,21 @@ def loading():
 
 @app.route('/obs', methods=['GET', 'POST'])
 def obs():
-    if request.method == 'POST':
-        if 'filename' in request.form:
+    #if request.method == 'POST':
+        #if 'filename' in request.form:
             # pegar o nome da apresentação atual
-            filename = pegarNomeSlideShow()
-            if filename != request.form['filename'] and filename != None:
-                sql = 'update OBS set Apresentacao = "' + filename + '"'
-                inserirDadosBasico('Roteiro.db', sql)
-                return render_template('viewerOBS.jinja', filename=filename, txt1='Imagem de Apresentação', txt2='Legenda', txt3='../calendar')
+            #filename = pegarNomeSlideShow()
+            #if filename != request.form['filename'] and filename != None:
+                #sql = 'update OBS set Apresentacao = "' + filename + '"'
+                #inserirDadosBasico('Roteiro.db', sql)
+                #return render_template('viewerOBS.jinja', filename=filename, txt1='Imagem de Apresentação', txt2='Legenda', txt3='../calendar')
 
-    filename = executarConsulta('Roteiro.db', 'select * from OBS')[0]
+    #filename = executarConsulta('Roteiro.db', 'select * from OBS')[0]
     config = int(executarConsulta('Roteiro.db', 'select config from OBS')[0])
     if config == 0:
-        return render_template('viewerOBS.jinja', filename=filename, txt1='Legenda', txt2='Imagem de Apresentação', txt3='../subtitle')
+        return render_template('viewerOBS.jinja', txt1='Legenda', txt2='Imagem de Apresentação', txt3='../subtitle') #filename=filename, 
     else:
-        return render_template('viewerOBS.jinja', filename=filename, txt1='Imagem de Apresentação', txt2='Legenda', txt3='../calendar')
+        return render_template('viewerOBS.jinja', txt1='Imagem de Apresentação', txt2='Legenda', txt3='../calendar') # filename=filename
 
 
 @app.route('/alterar_config_obs', methods=['GET', 'POST'])
@@ -907,6 +915,9 @@ def pegarProgressoDownload():
 
             return jsonify(valor)
 
+@app.route('/video_feed')
+def video_feed():
+    return Response(gen(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @socketio.on('connect')
 def on_connect():
