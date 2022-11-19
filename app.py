@@ -392,29 +392,29 @@ def exibirLegenda():
 @app.route('/calendar', methods=['GET', 'POST'])
 def exibirCalendario():
 
-    #if request.method == 'POST':
-        #if request.is_json:
-            #info = request.json
-            #prs_name = pegarNomeSlideShow()
+    if request.method == 'POST':
+        if request.is_json:
+            info = request.json
+            prs_name = pegarNomeSlideShow()
 
-            #try:
-                #if info['filename'] == prs_name:
-                    #if info['index'] != pegarIndexSlideshow():
-                        #valor = {'sucess':True}
-                    #else:
-                        #valor = {'sucess':False}
-                #else:
-                    #if info['index'] != 0 or prs_name == executarConsulta('Roteiro.db', 'select * from OBS')[0]:
-                        #valor = {'sucess':True}
-                    #else:
-                        #valor = {'sucess':False}
-            #except:
-                #valor = {'sucess':False}
+            try:
+                if info['filename'] == prs_name:
+                    if info['index'] != pegarIndexSlideshow():
+                        valor = {'sucess':True}
+                    else:
+                        valor = {'sucess':False}
+                else:
+                    if info['index'] != 0 or prs_name == executarConsulta('Roteiro.db', 'select * from OBS')[0]:
+                        valor = {'sucess':True}
+                    else:
+                        valor = {'sucess':False}
+            except:
+                valor = {'sucess':False}
 
-            #return jsonify(valor)
+            return jsonify(valor)
 
-    #resultado = verificarCalendario()
-    return render_template('calendar.jinja')#, resultado=resultado['resultado'], index=resultado['index'], filename=resultado['filename'])
+    resultado = verificarCalendario()
+    return render_template('calendar.jinja', resultado=resultado['resultado'], index=resultado['index'], filename=resultado['filename'])
 
 @app.route('/viewer', methods=['GET', 'POST'])
 def receberView():
@@ -654,21 +654,22 @@ def loading():
 
 @app.route('/obs', methods=['GET', 'POST'])
 def obs():
-    #if request.method == 'POST':
-        #if 'filename' in request.form:
+    if request.method == 'POST':
+        if 'filename' in request.form:
             # pegar o nome da apresentação atual
-            #filename = pegarNomeSlideShow()
-            #if filename != request.form['filename'] and filename != None:
-                #sql = 'update OBS set Apresentacao = "' + filename + '"'
-                #inserirDadosBasico('Roteiro.db', sql)
-                #return render_template('viewerOBS.jinja', filename=filename, txt1='Imagem de Apresentação', txt2='Legenda', txt3='../calendar')
+            filename = pegarNomeSlideShow()
+            if filename != request.form['filename'] and filename != None:
+                sql = 'update OBS set Apresentacao = "' + filename + '"'
+                inserirDadosBasico('Roteiro.db', sql)
+                return render_template('viewerOBS.jinja', filename=filename, txt1='Imagem de Apresentação', txt2='Legenda', txt3='../calendar')
 
-    #filename = executarConsulta('Roteiro.db', 'select * from OBS')[0]
+    filename = executarConsulta('Roteiro.db', 'select * from OBS')[0]
+    print(filename)
     config = int(executarConsulta('Roteiro.db', 'select config from OBS')[0])
     if config == 0:
-        return render_template('viewerOBS.jinja', txt1='Legenda', txt2='Imagem de Apresentação', txt3='../subtitle') #filename=filename, 
+        return render_template('viewerOBS.jinja', txt1='Legenda', txt2='Imagem de Apresentação', txt3='../subtitle', filename=filename) 
     else:
-        return render_template('viewerOBS.jinja', txt1='Imagem de Apresentação', txt2='Legenda', txt3='../calendar') # filename=filename
+        return render_template('viewerOBS.jinja', txt1='Imagem de Apresentação', txt2='Legenda', txt3='../calendar', filename=filename)
 
 
 @app.route('/alterar_config_obs', methods=['GET', 'POST'])

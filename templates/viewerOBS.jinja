@@ -95,7 +95,11 @@
     <hr>
     <div class="row">
       <div id="principal" class="col-sm-12 text-center">
-        <iframe id="iframe" src="{{txt3}}" width="800x" height="500x"></iframe>  
+        <iframe id="iframe" src="{{txt3}}" width="800x" height="500x"></iframe>
+        {% if txt1 != 'Legenda' %}    
+          <h3 id="status" class="heading">Nome do arquivo de Apresentação: <span class="text-danger"> {{filename}}</span></h3>
+          <button class="btn btn-primary" type="button" id="alterarPRS" onclick="enviarSolicitacaoAlteracao()">Alterar Apresentação Atual</button>
+        {% endif %}
       </div>
     </div>
     <form id="alterarOBS" action="{{url_for('obs')}}" method="post" >
@@ -118,6 +122,10 @@
           $('#iframe').attr("src", "../calendar");
 
           config = 1;
+
+          // agora é a parte chata
+          $('#principal').append('<h3 id="status" class="heading">Nome do arquivo de Apresentação: <span class="text-danger"> {{filename}}</span></h3>');
+          $('#principal').append('<button class="btn btn-primary" type="button" id="alterarPRS" onclick="enviarSolicitacaoAlteracao()">Alterar Apresentação Atual</button>');
 
         } else {
           $('#dropdownMenuButton').text('Legenda');
