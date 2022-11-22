@@ -831,7 +831,7 @@ def eventos():
             sql = r'select Roteiro.id, strftime("%d/%m/%Y", data) as data, Tema.descricao, obs, url from Roteiro, Tema ' + \
             retornarFiltroInner(request.form['nome'], [evento, subcategoria, departamento, forma_musical], 'INNER JOIN evento_roteiro as Rot on Roteiro.id = Rot.id') + \
             retornarFiltro(evento, ' and Rot.Evento = ') + retornarFiltro(subcategoria, ' and Rot.subCategoria = ') + retornarFiltro(departamento, ' and Rot.departamento = ') + retornarFiltro(forma_musical, ' and Rot.formaMusical = ') + retornarFiltroInner(request.form['nome'], [], ' and Nome like "' + nome + '"') + \
-            ' where Roteiro.tema = Tema.id and Roteiro.data >= "' + dataIni + '" and Roteiro.data <= "' + dataFim + '"' + retornarFiltro(tema, ' and Tema.id = ') + retornarFiltroInner(request.form['nome'], [], ' and Rot.Nome like "' + nome + '"') + ' group by Roteiro.id order by Roteiro.data desc LIMIT ' + str(pagina * 10 - 10) + ", 10"
+            ' where Roteiro.tema = Tema.id and Roteiro.data >= "' + dataIni + '" and Roteiro.data <= "' + dataFim + '"' + retornarFiltro(tema, ' and Tema.id = ') + retornarFiltroInner(request.form['nome'], [], ' and Rot.Nome like "' + nome + '"') + ' group by Roteiro.id order by Roteiro.data desc, Roteiro.id desc LIMIT ' + str(pagina * 10 - 10) + ", 10"
             #print(sql)
             lista = executarConsultaGeral(historico, sql)
             #print(sql)
@@ -858,7 +858,7 @@ def eventos():
             
             return render_template('visualizarEvento.jinja', lista=dicionario, total=total, pagina=pagina, datas=datas, temas=temas, atividades=atividades, catBiblia=catBiblia, departamentos=departamentos, musical=musical, perPage=10, origem=origem)
 
-    sql = r'select Roteiro.id, strftime("%d/%m/%Y", data) as data, Tema.descricao, obs, url from Roteiro, Tema where Roteiro.tema = Tema.id order by Roteiro.data desc LIMIT ' + str(pagina * 10 - 10) + ', 10'
+    sql = r'select Roteiro.id, strftime("%d/%m/%Y", data) as data, Tema.descricao, obs, url from Roteiro, Tema where Roteiro.tema = Tema.id order by Roteiro.data desc, Roteiro.id desc LIMIT ' + str(pagina * 10 - 10) + ', 10'
     #print(sql)
     lista = executarConsultaGeral(historico, sql)
     total = executarConsulta(historico, 'select count(*) as total from Roteiro')[0]
