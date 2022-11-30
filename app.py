@@ -37,6 +37,7 @@ diretorio = os.path.expanduser('~') + r'\OneDrive - Secretaria da Educação do 
 historico = os.path.expanduser('~') + r'\OneDrive - Secretaria da Educação do Estado de São Paulo\IGREJA\Historico.db'
 locale.setlocale(locale.LC_ALL, "")
 youtube = ytdlp()
+obs_file = executarConsulta('Roteiro.db', 'select * from OBS')[0]
 
 def gen():
     while True:
@@ -82,7 +83,11 @@ def background_thread():
         #print(new_index)
         if (index != new_index):
             index = new_index
-            socketio.emit('legenda', pegarTextoSlideShow())
+            if (obs_file == pegarNomeSlideShow()):
+                verificarCalendario()
+                socketio.emit('calendar', 1)
+            else:
+                socketio.emit('legenda', pegarTextoSlideShow())
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -391,28 +396,6 @@ def exibirLegenda():
 
 @app.route('/calendar', methods=['GET', 'POST'])
 def exibirCalendario():
-
-    if request.method == 'POST':
-        if request.is_json:
-            info = request.json
-            prs_name = pegarNomeSlideShow()
-
-            try:
-                if info['filename'] == prs_name:
-                    if info['index'] != pegarIndexSlideshow():
-                        valor = {'sucess':True}
-                    else:
-                        valor = {'sucess':False}
-                else:
-                    if info['index'] != 0 or prs_name == executarConsulta('Roteiro.db', 'select * from OBS')[0]:
-                        valor = {'sucess':True}
-                    else:
-                        valor = {'sucess':False}
-            except:
-                valor = {'sucess':False}
-
-            return jsonify(valor)
-
     resultado = verificarCalendario()
     return render_template('calendar.jinja', resultado=resultado['resultado'], index=resultado['index'], filename=resultado['filename'])
 
@@ -661,10 +644,11 @@ def obs():
             if filename != request.form['filename'] and filename != None:
                 sql = 'update OBS set Apresentacao = "' + filename + '"'
                 inserirDadosBasico('Roteiro.db', sql)
+                obs_file = filename
                 return render_template('viewerOBS.jinja', filename=filename, txt1='Imagem de Apresentação', txt2='Legenda', txt3='../calendar')
 
     filename = executarConsulta('Roteiro.db', 'select * from OBS')[0]
-    print(filename)
+    #print(filename)
     config = int(executarConsulta('Roteiro.db', 'select config from OBS')[0])
     if config == 0:
         return render_template('viewerOBS.jinja', txt1='Legenda', txt2='Imagem de Apresentação', txt3='../subtitle', filename=filename) 
