@@ -418,7 +418,7 @@ def receberView():
                 #verificarHash() - não é mais necessário
                 
                 pesquisa = '%' + pesquisaLimpa.upper().replace(' ', '_') + '%'
-                sql = "select Pastas.pasta, MusicasPDF.titulo, MusicasPDF.página, MusicasPDF.texto from MusicasPDF INNER JOIN Pastas ON MusicasPDF.idPasta = Pastas.id where texto like '" + pesquisa + "' or titulo like '" + pesquisa + "' order by titulo, página"
+                sql = "select Pastas.pasta, MusicasPDF.titulo, MusicasPDF.página, LetrasMusicas.texto from MusicasPDF INNER JOIN Pastas ON MusicasPDF.idPasta = Pastas.id INNER JOIN LetrasMusicas ON LetrasMusicas.id_musica = MusicasPDF.id  where LetrasMusicas.texto like '" + pesquisa + "' or titulo like '" + pesquisa + "' group by titulo order by titulo, página"
                 resultados = executarConsultaGeral('Musicas.db', sql)
 
                 if len(resultados) == 0:
