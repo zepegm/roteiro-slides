@@ -2,9 +2,10 @@ import re
 import win32com.client
 import pythoncom
 import os
-from os.path import basename
+import time
 from consultaAcess import executarConsulta, retornarCategoria
-from flask import url_for
+
+diretorio = os.path.expanduser('~') + '\\OneDrive - Secretaria da Educação do Estado de São Paulo\\'
 
 #apresentacoes = []
 
@@ -189,8 +190,13 @@ def verificarCalendario():
 
         if pp.SlideShowWindows.Count > 0:
             filename = pp.SlideShowWindows(1).Presentation.Name
-            if filename == executarConsulta('Roteiro.db', 'select * from OBS')[0]:
-                # salvar arquivo do calendário como imagem
+            if filename == executarConsulta('Roteiro.db', 'select * from OBS where config = 1')[0]:
+                # verificar a data do arquivo
+                fullname = pp.SlideShowWindows(1).Presentation.fullName.replace('https://seesp-my.sharepoint.com/personal/giuseppe_manzella_educacao_sp_gov_br/Documents/', diretorio).replace('/', '\\')
+                data = time.ctime(os.path.getmtime(fullname))
+                if data != executarConsulta('Roteiro.db', 'select * from OBS where config = 2')[0]:
+                    print('aqui inicia o processo de salvamento')
+
                 pp.SlideShowWindows(1).View.Slide.Export(os.path.dirname(os.path.realpath(__file__)) + r'\static\images\Output\Calendario.jpg', 'JPG')
                 return {'resultado':True, 'index':pp.SlideShowWindows(1).View.Slide.SlideIndex, 'filename':filename}
             else:
