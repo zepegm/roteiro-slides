@@ -195,15 +195,19 @@ def verificarCalendario():
                 fullname = pp.SlideShowWindows(1).Presentation.fullName.replace('https://seesp-my.sharepoint.com/personal/giuseppe_manzella_educacao_sp_gov_br/Documents/', diretorio).replace('/', '\\')
                 data = time.ctime(os.path.getmtime(fullname))
                 if data != executarConsulta('Roteiro.db', 'select * from OBS where config = 2')[0]:
-                    print('aqui inicia o processo de salvamento')
-
-                pp.SlideShowWindows(1).View.Slide.Export(os.path.dirname(os.path.realpath(__file__)) + r'\static\images\Output\Calendario.jpg', 'JPG')
-                return {'resultado':True, 'index':pp.SlideShowWindows(1).View.Slide.SlideIndex, 'filename':filename}
+                    #print('aqui inicia o processo de salvamento')
+                    for sld in pp.SlideShowWindows(1).Presentation.Slides:
+                        print(os.path.dirname(os.path.realpath(__file__)) + r'\static\images\Calendar\Slide' + '.jpg')
+                        print(sld.SlideIndex)
+                        sld.Export(os.path.dirname(os.path.realpath(__file__)) + r'\static\images\Calendar' + r'\Slide' + sld.SlideIndex + '.jpg', 'JPG')                    
+                        #pp.SlideShowWindows(1).View.Slide.Export(os.path.dirname(os.path.realpath(__file__)) + r'\static\images\Output\Calendario.jpg', 'JPG')
+                        return {'resultado':True, 'index':pp.SlideShowWindows(1).View.Slide.SlideIndex, 'filename':filename}
             else:
                 return {'resultado':False, 'index':0, 'filename':None}
         else:
             return {'resultado':False, 'index':0, 'filename':None}
     except:
+        #print('ok, ele não salvou....')
         return {'resultado':False, 'index':0, 'filename':None}
 
 #prs = ppt(r'C:\Users\Giuseppe\Desktop\IGREJA\00 - Versões Widescreen\Corinhos, Equipe de Louvor, etc\Avulsos\Casa de oração.pptx')
