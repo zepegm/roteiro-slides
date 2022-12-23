@@ -32,7 +32,7 @@
     <script src="{{ url_for('static', filename='js/socket.io.min.js') }}"></script>
     <body>
         {% if resultado == True %}
-        <div id="slide" class="img" style="background:#fff url(/static/images/Output/Calendario.jpg) no-repeat center; background-size: 100% 100%;"></div>
+        <div id="slide" class="img" style="background:#fff url(/static/images/Calendar/Slide{{index}}.jpg) no-repeat center; background-size: 100% 100%;"></div>
         {% else %}
         <div id="slide" class="img" style="background:#fff url({{ url_for('static', filename='images/Background.jpg') }}) no-repeat center; background-size: 100% 100%;"></div>
         {% endif %}
@@ -42,17 +42,21 @@
             var socket = io();
             //var index = JSON.parse('{{index|tojson}}');
 
-            socket.on('calendar', function(calendar) {
+            socket.on('calendar', function(info) {
                 
-                location.reload();
+                if (info['update']) {
+                    location.reload();
+                } else {
+                    $('#slide').attr('style', "background:#fff url(/static/images/Calendar/Slide" + info['index'] + ".jpg) no-repeat center; background-size: 100% 100%;");
+                }
 
             });
 
-           socket.on('legenda', function(legenda) {
+           /*socket.on('legenda', function(legenda) {
                 
-                location.reload();
+                //location.reload();
 
-            })            
+            })*/
 
         </script>
     </body>

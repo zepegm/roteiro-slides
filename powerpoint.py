@@ -3,7 +3,7 @@ import win32com.client
 import pythoncom
 import os
 import time
-from consultaAcess import executarConsulta, retornarCategoria
+from consultaAcess import executarConsulta, inserirDadosBasico
 
 diretorio = os.path.expanduser('~') + '\\OneDrive - Secretaria da Educação do Estado de São Paulo\\'
 
@@ -195,20 +195,24 @@ def verificarCalendario():
                 fullname = pp.SlideShowWindows(1).Presentation.fullName.replace('https://seesp-my.sharepoint.com/personal/giuseppe_manzella_educacao_sp_gov_br/Documents/', diretorio).replace('/', '\\')
                 data = time.ctime(os.path.getmtime(fullname))
                 if data != executarConsulta('Roteiro.db', 'select * from OBS where config = 2')[0]:
-                    #print('aqui inicia o processo de salvamento')
+                    print('aqui inicia o processo de salvamento')
+                    update = True
                     for sld in pp.SlideShowWindows(1).Presentation.Slides:
-                        print(os.path.dirname(os.path.realpath(__file__)) + r'\static\images\Calendar\Slide' + '.jpg')
-                        print(sld.SlideIndex)
-                        sld.Export(os.path.dirname(os.path.realpath(__file__)) + r'\static\images\Calendar' + r'\Slide' + sld.SlideIndex + '.jpg', 'JPG')                    
+                        sld.Export(os.path.dirname(os.path.realpath(__file__)) + r'\static\images\Calendar' + r'\Slide' + str(sld.SlideIndex) + '.jpg', 'JPG')
+                        sql = "update OBS set Apresentacao = '" + data +  "' where config = 2"
+                        inserirDadosBasico('Roteiro.db', sql)
                         #pp.SlideShowWindows(1).View.Slide.Export(os.path.dirname(os.path.realpath(__file__)) + r'\static\images\Output\Calendario.jpg', 'JPG')
-                        return {'resultado':True, 'index':pp.SlideShowWindows(1).View.Slide.SlideIndex, 'filename':filename}
+                else:
+                    update = False
+                
+                return {'resultado':True, 'index':pp.SlideShowWindows(1).View.Slide.SlideIndex, 'filename':filename, 'update':update}
             else:
-                return {'resultado':False, 'index':0, 'filename':None}
+                return {'resultado':False, 'index':0, 'filename':None, 'update':None}
         else:
-            return {'resultado':False, 'index':0, 'filename':None}
+            return {'resultado':False, 'index':0, 'filename':None, 'update':None}
     except:
         #print('ok, ele não salvou....')
-        return {'resultado':False, 'index':0, 'filename':None}
+        return {'resultado':False, 'index':0, 'filename':None, 'update':None}
 
 #prs = ppt(r'C:\Users\Giuseppe\Desktop\IGREJA\00 - Versões Widescreen\Corinhos, Equipe de Louvor, etc\Avulsos\Casa de oração.pptx')
 #prs.iniciarApresentacao()

@@ -84,8 +84,9 @@ def background_thread():
         if (index != new_index):
             index = new_index
             if (obs_file == pegarNomeSlideShow()):
-                verificarCalendario()
-                socketio.emit('calendar', 1)
+                resultado = verificarCalendario()
+                if (resultado['resultado']):
+                    socketio.emit('calendar', resultado)
             else:
                 socketio.emit('legenda', pegarTextoSlideShow())
 
