@@ -37,7 +37,7 @@ diretorio = os.path.expanduser('~') + r'\OneDrive - Secretaria da Educação do 
 historico = os.path.expanduser('~') + r'\OneDrive - Secretaria da Educação do Estado de São Paulo\IGREJA\Historico.db'
 locale.setlocale(locale.LC_ALL, "")
 youtube = ytdlp()
-obs_file = executarConsulta('Roteiro.db', 'select * from OBS')[0]
+#obs_file = executarConsulta('Roteiro.db', 'select Apresentacao from OBS')[0]
 
 def gen():
     while True:
@@ -83,10 +83,9 @@ def background_thread():
         #print(new_index)
         if (index != new_index):
             index = new_index
-            if (obs_file == pegarNomeSlideShow()):
+            if (executarConsulta('Roteiro.db', 'select Apresentacao from OBS')[0] == pegarNomeSlideShow()):
                 resultado = verificarCalendario()
-                if (resultado['resultado']):
-                    socketio.emit('calendar', resultado)
+                socketio.emit('calendar', resultado)
             else:
                 socketio.emit('legenda', pegarTextoSlideShow())
 
@@ -645,10 +644,10 @@ def obs():
             if filename != request.form['filename'] and filename != None:
                 sql = 'update OBS set Apresentacao = "' + filename + '"'
                 inserirDadosBasico('Roteiro.db', sql)
-                obs_file = filename
+                #obs_file = filename
                 return render_template('viewerOBS.jinja', filename=filename, txt1='Imagem de Apresentação', txt2='Legenda', txt3='../calendar')
 
-    filename = executarConsulta('Roteiro.db', 'select * from OBS')[0]
+    filename = executarConsulta('Roteiro.db', 'select Apresentacao from OBS')[0]
     #print(filename)
     config = int(executarConsulta('Roteiro.db', 'select config from OBS')[0])
     if config == 0:

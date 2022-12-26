@@ -190,16 +190,16 @@ def verificarCalendario():
 
         if pp.SlideShowWindows.Count > 0:
             filename = pp.SlideShowWindows(1).Presentation.Name
-            if filename == executarConsulta('Roteiro.db', 'select * from OBS where config = 1')[0]:
+            if filename == executarConsulta('Roteiro.db', 'select Apresentacao from OBS')[0]:
                 # verificar a data do arquivo
                 fullname = pp.SlideShowWindows(1).Presentation.fullName.replace('https://seesp-my.sharepoint.com/personal/giuseppe_manzella_educacao_sp_gov_br/Documents/', diretorio).replace('/', '\\')
                 data = time.ctime(os.path.getmtime(fullname))
-                if data != executarConsulta('Roteiro.db', 'select * from OBS where config = 2')[0]:
+                if data != executarConsulta('Roteiro.db', 'select ultima_mod from OBS')[0]:
                     print('aqui inicia o processo de salvamento')
                     update = True
                     for sld in pp.SlideShowWindows(1).Presentation.Slides:
                         sld.Export(os.path.dirname(os.path.realpath(__file__)) + r'\static\images\Calendar' + r'\Slide' + str(sld.SlideIndex) + '.jpg', 'JPG')
-                        sql = "update OBS set Apresentacao = '" + data +  "' where config = 2"
+                        sql = "update OBS set ultima_mod = '" + data +  "'"
                         inserirDadosBasico('Roteiro.db', sql)
                         #pp.SlideShowWindows(1).View.Slide.Export(os.path.dirname(os.path.realpath(__file__)) + r'\static\images\Output\Calendario.jpg', 'JPG')
                 else:
