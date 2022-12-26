@@ -205,14 +205,14 @@ def verificarCalendario():
                 else:
                     update = False
                 
-                return {'resultado':True, 'index':pp.SlideShowWindows(1).View.Slide.SlideIndex, 'filename':filename, 'update':update}
+                return {'resultado':True, 'index':pp.SlideShowWindows(1).View.Slide.SlideIndex, 'filename':filename, 'update':update, 'qtdSlides':pp.SlideShowWindows(1).Presentation.Slides.Count}
             else:
-                return {'resultado':False, 'index':0, 'filename':None, 'update':None}
+                return {'resultado':False, 'index':0, 'filename':None, 'update':None, 'qtdSlides':0}
         else:
-            return {'resultado':False, 'index':0, 'filename':None, 'update':None}
+            return {'resultado':False, 'index':0, 'filename':None, 'update':None, 'qtdSlides':0}
     except:
         #print('ok, ele não salvou....')
-        return {'resultado':False, 'index':0, 'filename':None, 'update':None}
+        return {'resultado':False, 'index':0, 'filename':None, 'update':None, 'qtdSlides':0}
 
 #prs = ppt(r'C:\Users\Giuseppe\Desktop\IGREJA\00 - Versões Widescreen\Corinhos, Equipe de Louvor, etc\Avulsos\Casa de oração.pptx')
 #prs.iniciarApresentacao()

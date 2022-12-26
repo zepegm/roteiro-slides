@@ -397,7 +397,7 @@ def exibirLegenda():
 @app.route('/calendar', methods=['GET', 'POST'])
 def exibirCalendario():
     resultado = verificarCalendario()
-    return render_template('calendar.jinja', resultado=resultado['resultado'], index=resultado['index'], filename=resultado['filename'])
+    return render_template('calendar.jinja', resultado=resultado['resultado'], index=resultado['index'], filename=resultado['filename'], qtdSlides=resultado['qtdSlides'])
 
 @app.route('/viewer', methods=['GET', 'POST'])
 def receberView():

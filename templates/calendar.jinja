@@ -2,61 +2,83 @@
     <head>
         <title>Calendário 2022</title>
     </head>
+
     <style>
-        .img {
-            height: 100%;
-            width: 100%;
-            animation-name: fade-in;
-            animation-duration: 0.5s;
-            overflow: hidden;
+        body {
+            text-align: center;
         }
-
-        .out {
-            animation-name: fade-out;
-            animation-duration: 0.5s;
-            opacity: 0;
-        }   
-
-        @keyframes fade-in {
-            from {opacity: 0;}
-            to {opacity: 1;}
-        }   
-
-        @keyframes fade-out {
-            from {opacity: 1;}
-            to {opacity: 0;}
-        }      
-
+         
+        h1 {
+            color: green;
+        }
+         
+        img {
+            position: absolute;
+            left: 400px;
+        }
     </style>
+
     <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/socket.io.min.js') }}"></script>
     <body>
-        {% if resultado == True %}
-        <div id="slide" class="img" style="background:#fff url(/static/images/Calendar/Slide{{index}}.jpg) no-repeat center; background-size: 100% 100%;"></div>
-        {% else %}
-        <div id="slide" class="img" style="background:#fff url({{ url_for('static', filename='images/Background.jpg') }}) no-repeat center; background-size: 100% 100%;"></div>
-        {% endif %}
+
+        <div id="scroll-image">
+            {% for i in range(qtdSlides + 1) %}
+                <img src="/static/images/Calendar/Slide{{i}}.jpg" class="test" style="opacity: 0;" />
+            {% endfor %}
+        </div>        
+
+        <!-- <div id="slide" class="img" style="background:#fff url(/static/images/Calendar/Slide{{index}}.jpg) no-repeat center; background-size: 100% 100%;"></div> -->
 
         <script>
 
             var socket = io();
-            //var index = JSON.parse('{{index|tojson}}');
+            var cur = JSON.parse('{{index|tojson}}');
+            var images = document.getElementsByClassName("test");
+            var aux = -1;
+            var topo = 1;
+
+            images[cur].style.opacity = 1;         
 
             socket.on('calendar', function(info) {
                 
+                //console.log(info);
                 if (info['update']) {
                     location.reload();
                 } else {
-                    $('#slide').attr('style', "background:#fff url(/static/images/Calendar/Slide" + info['index'] + ".jpg) no-repeat center; background-size: 100% 100%;");
+                    if (cur != info['index']) {
+                        //console.log(topo);
+                        images[cur].style.zIndex = topo;
+                        aux = cur;
+                        cur = info['index'];
+                        images[cur].style.opacity = 1;
+                        transition();
+                        topo += 1;
+                    }
+                }
+
+                function transition() {
+                    return new Promise(function(resolve, reject) {
+                        var del = 0.01;
+                        var id = setInterval(changeOpacity, 10);
+
+                        function changeOpacity() {
+                            images[aux].style.opacity -= del;
+                            if (images[aux].style.opacity <= 0) {
+                                clearInterval(id);
+                                resolve();
+                            }                            
+                        }
+                    })
                 }
 
             });
 
-           socket.on('legenda', function(legenda) {
+           /*socket.on('legenda', function(legenda) {
                 
                 $('#slide').attr('style', "background:#fff url(/static/images/Background.jpg) no-repeat center; background-size: 100% 100%;");
 
-            });
+            });*/
 
         </script>
     </body>
