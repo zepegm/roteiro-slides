@@ -14,7 +14,10 @@
          
         img {
             position: absolute;
-            left: 400px;
+            left: 0px;
+            top: 0px;
+            height: 100%;
+            width: 100%;
         }
     </style>
 
@@ -33,19 +36,21 @@
         <script>
 
             var socket = io();
-            var cur = JSON.parse('{{index|tojson}}');
+            var cur = {{index}};
             var images = document.getElementsByClassName("test");
             var aux = -1;
             var topo = 1;
+            var qtdSlides = {{qtdSlides}};
 
             images[cur].style.opacity = 1;         
 
             socket.on('calendar', function(info) {
                 
                 //console.log(info);
-                if (info['update']) {
+                if (info['update'] || info['qtdSlides'] != qtdSlides) {
                     location.reload();
                 } else {
+                    console.log(info);
                     if (cur != info['index']) {
                         //console.log(topo);
                         images[cur].style.zIndex = topo;
@@ -57,9 +62,23 @@
                     }
                 }
 
+           socket.on('legenda', function(legenda) {
+                
+                    if (cur != legenda['index'] && legenda['index'] == 0) {
+                        //console.log(topo);
+                        images[cur].style.zIndex = topo;
+                        aux = cur;
+                        cur = legenda['index'];
+                        images[cur].style.opacity = 1;
+                        transition();
+                        topo += 1;
+                    }
+
+            });
+
                 function transition() {
                     return new Promise(function(resolve, reject) {
-                        var del = 0.01;
+                        var del = 0.03;
                         var id = setInterval(changeOpacity, 10);
 
                         function changeOpacity() {
@@ -73,12 +92,6 @@
                 }
 
             });
-
-           /*socket.on('legenda', function(legenda) {
-                
-                $('#slide').attr('style', "background:#fff url(/static/images/Background.jpg) no-repeat center; background-size: 100% 100%;");
-
-            });*/
 
         </script>
     </body>
