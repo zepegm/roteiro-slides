@@ -50,7 +50,7 @@
                 if (info['update'] || info['qtdSlides'] != qtdSlides) {
                     location.reload();
                 } else {
-                    console.log(info);
+                    //console.log(info);
                     if (cur != info['index']) {
                         //console.log(topo);
                         images[cur].style.zIndex = topo;
@@ -80,10 +80,11 @@
                     return new Promise(function(resolve, reject) {
                         var del = 0.03;
                         var id = setInterval(changeOpacity, 10);
+                        var tmp = aux;
 
                         function changeOpacity() {
-                            images[aux].style.opacity -= del;
-                            if (images[aux].style.opacity <= 0) {
+                            images[tmp].style.opacity -= del;
+                            if (images[tmp].style.opacity <= 0) {
                                 clearInterval(id);
                                 resolve();
                             }                            
