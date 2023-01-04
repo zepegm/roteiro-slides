@@ -172,7 +172,7 @@ def pegarTextoSlideShow():
                     texto = pp.SlideShowWindows(1).View.Slide.Shapes(2).TextFrame.TextRange.Text
 
                 
-                texto = texto.replace(chr(11), ' ').replace(chr(13), ' ').replace('  ', ' ')
+                texto = texto.replace(chr(11), ' ').replace(chr(13), '<br>').replace('  ', ' ')
                 conteudo = {'cabecalho':'', 'texto':texto, 'index':index}               
 
                 return conteudo
