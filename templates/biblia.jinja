@@ -119,6 +119,12 @@
         <select type="text" class="form-control" id="versao" name="versao" placeholder="" required>
           <option value='ARC' selected="selected">ARC - Almeida, Revista e Corrigida</option>
           {% block content %}
+          {% if versao == 'ARA' %}
+            <option value='ARA' selected="selected">ARA - Almeida, Revista e Atualizada</option>
+          {% else %}
+            <option value='ARA'>ARA - Almeida, Revista e Atualizada</option>
+          {% endif %}
+
           {% if versao == 'NAA' %}
             <option value='NAA' selected="selected">NAA - Nova Almeida Atualizada</option>
           {% else %}
