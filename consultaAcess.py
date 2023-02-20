@@ -43,11 +43,13 @@ def inserirListaRoteiro(banco, lista):
         cursor.execute('DELETE FROM lista')
 
         for l in lista:
-            codigoSQL = "INSERT INTO lista VALUES('%s', '%s', %s)" % (l['caminho'], l['nome'], l['check'])
+            codigoSQL = "INSERT INTO lista VALUES('%s', '%s', %s)" % (l['caminho'].replace("'", "''"), l['nome'].replace("'", "''"), l['check'])
+            print(codigoSQL)
             cursor.execute(codigoSQL)
 
     else:
-        codigoSQL = "INSERT INTO lista VALUES('%s', '%s', %s)" % (lista['caminho'], lista['nome'], lista['check'])
+        codigoSQL = "INSERT INTO lista VALUES('%s', '%s', %s)" % (lista['caminho'].replace("'", "''"), lista['nome'].replace("'", "''"), lista['check'])
+        print(codigoSQL)
         cursor.execute(codigoSQL)
 
     conn.commit()
