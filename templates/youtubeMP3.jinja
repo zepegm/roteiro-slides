@@ -95,8 +95,16 @@
     <p class="text-center text-primary"><strong id="final"></strong></p>
     <form action="{{ url_for('download_mp3') }}" method="post" autocomplete="off" id="baixar">
       <div class="row">
-        <div class="col-sm-10">
+        <div class="col-sm-8">
           <input class="form-control" id="url" name="url" type="text" placeholder="Digite a URL..." required>
+        </div>
+        <div class="col-sm-2">
+          <select class="form-control" id="opcao" name="opcao">
+
+            <option value="1">MP3 - Áudio</option>
+            <option value="2">MP4 - Vídeo</option>
+
+          </select>
         </div>
         <div class="col-sm-2">
           <input class="form-control btn btn-primary" type="submit" value="Baixar" id="botao">

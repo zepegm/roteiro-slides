@@ -880,8 +880,13 @@ def download_mp3():
                 if request.form['url'] == 'hook':
                     exibirTabela()
                     return render_template('youtubeMP3.jinja', msg='Comando secreto ativado! Iniciando interface gráfica de "Hook"')
+                
+                if request.form['opcao'] == '1':
+                    caminho = youtube.downloadMP3(request.form['url'])
+                else:
+                    caminho = youtube.downloadMP4(request.form['url'])
 
-                caminho = youtube.downloadMP3(request.form['url'])
+                
                 return send_file(caminho['caminho'], as_attachment=True, download_name=caminho['nome'])
             except:
                 return render_template('youtubeMP3.jinja', msg='Erro! URL inválida ou erro no sistema, por favor tente novamente.')

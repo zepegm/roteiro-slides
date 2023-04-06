@@ -40,6 +40,33 @@ class ytdlp:
             self.texto = 'Encerrado...'
 
         return info
+    
+    def downloadMP4(self, URLS):
+        self.texto = 'Iniciando...'
+        #URLS = ['https://www.youtube.com/watch?v=ZpeEJaATDBk']
+        caminho = os.path.expanduser('~') + '\\Downloads\\Youtube\\'
+
+        ydl_opts = {
+            #'format': 'mp3/bestaudio/best',
+            'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4+best[height<=480]',
+            'outtmpl': caminho + 'video.%(ext)s',
+            'progress_hooks': [functools.partial(my_hook, obj=self)],
+            # ℹ️ See help(yt_dlp.postprocessor) for a list of available Postprocessors and their arguments
+            #'postprocessors': [{  # Extract audio using ffmpeg
+                #'key': 'FFmpegExtractAudio',
+                #'preferredcodec': 'mp3',
+            #}]
+        }
+
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            # error_code = ydl.download(URLS)
+            info_dict = ydl.extract_info(URLS, download=True)
+            titulo = info_dict.get('title').replace('|', '').replace('?', '').replace('\\', '').replace('/', '').replace(':', '').replace('*', '').replace('"', '').strip() + ".mp4"
+            caminho = caminho + 'video.mp4'
+            info = {'nome':titulo, 'caminho':caminho}
+            self.texto = 'Encerrado...'
+
+        return info
 
     def getText(self):
         return self.texto
