@@ -742,6 +742,8 @@ def novo_evento():
             msg = '<span class="text-danger">Erro ao cadastrar dados!</span>'
 
     if 'import' in request.args:
+        # ele vai aproveitar e excluir os antigos registros de log
+        inserirDadosBasico(historico, "delete from log where julianday('now') - julianday(data) > 60")
         if request.args['import'] == 'log':
             sql = "select nome, categoria from log where data like '{}%'".format(request.args['data'])
             lista = executarConsultaGeral(historico, sql)
