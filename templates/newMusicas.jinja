@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.88.1">
+    <title>Abrir Músicas</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.1/examples/navbar-fixed/">
+
+    
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{ url_for('static', filename='stylesheets/bootstrap.min.css') }}" rel="stylesheet">
+
+    <style>
+      ul {
+        list-style-type: none;
+      }
+
+      .rect {
+        min-height:20px;
+        padding:19px;
+        margin-bottom:20px;
+        background-color:#fbfbfb;
+        border:1px solid #999;
+        -webkit-border-radius:4px;
+        -moz-border-radius:4px;
+        border-radius:4px;
+        -webkit-box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.05);
+        -moz-box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.05);
+        box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.05)
+      }
+
+      .tree {
+          
+      }
+      .tree li {
+          list-style-type:none;
+          margin:0;
+          padding:10px 5px 0 5px;
+          position:relative
+      }
+      .tree li::before, .tree li::after {
+          content:'';
+          left:-20px;
+          position:absolute;
+          right:auto
+      }
+      .tree li::before {
+          border-left:1px solid #999;
+          bottom:50px;
+          height:100%;
+          top:0;
+          width:1px
+      }
+      .tree li::after {
+          border-top:1px solid #999;
+          height:20px;
+          top:25px;
+          width:25px
+      }
+      .tree li span {
+          -moz-border-radius:5px;
+          -webkit-border-radius:5px;
+          border:1px solid #999;
+          border-radius:5px;
+          display:inline-block;
+          padding:4px 8px;
+          text-decoration:none;
+          height: 38px;
+      }
+      .tree li.parent_li>span {
+          cursor:pointer
+      }
+      .tree>ul>li::before, .tree>ul>li::after {
+          border:0
+      }
+      .tree li:last-child::before {
+          height:30px
+      }
+      .tree li.parent_li>span:hover, .tree li.parent_li>span:hover+ul li span {
+          background:#cfcfcf;
+          border:1px solid #94a0b4;
+          color:#000000
+      }
+
+      .blue {
+        background-color: rgb(13, 110, 253); 
+        color:white;
+      }
+
+      .yellow {
+        background-color: rgb(0, 0, 0);
+        color:rgb(255, 255, 255);
+      }
+
+      .horizontal {
+        display: inline; /* the default for span */
+        width: auto;
+        white-space:nowrap;
+        /*height: 100px;*/
+        padding: 5px;
+        /*border: 1px solid rgb(34, 34, 34);  */
+        background-color: rgb(0, 0, 0); 
+        color:rgb(255, 255, 255);
+        margin: 0px 0px 10px 10px;
+        font-weight: bold
+      }
+
+    </style>
+
+    
+    <!-- Custom styles for this template -->
+    <link href="{{ url_for('static', filename='stylesheets/navbar-top-fixed.css') }}" rel="stylesheet">   
+    <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/Logo Colorido.png') }}">
+  </head>
+  
+  <body style="background-color: rgba(248, 249, 250, 0.726);">
+    
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{{ url_for('index') }}">
+      <img src="{{ url_for('static', filename='images/Logo ADCPTA.png') }}" width="25" height="30" class="d-inline-block align-top" alt="">
+      Roteiro
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <ul class="navbar-nav me-auto mb-2 mb-md-0">
+        <li class="nav-item">
+          <a class="nav-link" href="../abrirbiblia">Abrir Bíblia</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link " href="../abrirharpa">Abrir Harpa</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page"  href="#">Músicas</a>
+        </li>    
+        <li class="nav-item">
+          <a class="nav-link" href="../apresentador">Apresentador</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="../viewer">Visualizador</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="../obs">OBS</a>
+        </li>   
+        <li class="nav-item">
+          <a class="nav-link" href="../eventos">Eventos</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="../download_mp3">YouTube - MP3</a>
+        </li>         
+        <li class="nav-item">
+          <a class="nav-link" href="../sobre">Sobre</a>
+        </li>                        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<main class="container">
+  <div class="bg-light p-1 rounded">
+    <h1 class="display-5 text-center">Repertório musical da Igreja</h1>
+    <p class="lead text-center">Você pode consultar a lista geral e usar os filtros de pesquisa que inclui os vínculos e um campo para digitação.</p>
+    <p class="text-center {{ corstatus }}"><strong>{{ status }}</strong></p>
+
+    <div class="row rect" id="vinculos">
+      <div class="col-sm-6">
+
+        <div class="tree well">
+            <ul>
+                <li>
+                    <span class="blue first_click">Filtro de Vínculos</span> <button class="btn btn-secondary">Limpar Filtro</button>
+                    <ul id="first_vinculo" hidden>
+                        <li>
+                          <span class="yellow">Ministério de Louvor</span> <a href="#">Selecionar Todos</a>
+
+                          {% for item in cat1 %}
+                            <ul>
+                                <li><label><input class="form-check-input me-1" type="checkbox" name="checkEL" value="{{item['id']}}">{{item['descricao']}}</label></li>
+                            </ul>
+                          {% endfor %}
+
+                        </li>
+
+                        <li>
+                          <span class="yellow">Jovens e Adolescentes</span> <a href="#">Selecionar Todos</a>
+
+                          {% for item in cat2 %}
+                            <ul>
+                                <li><label><input class="form-check-input me-1" type="checkbox" name="checkEL" value="{{item['id']}}">{{item['descricao']}}</label></li>
+                            </ul>
+                          {% endfor %}
+
+                        </li>      
+
+                        <li>
+                          <span class="yellow">Departamentos</span> <a href="#">Selecionar Todos</a>
+
+                          {% for item in cat3 %}
+                            <ul>
+                                <li><label><input class="form-check-input me-1" type="checkbox" name="checkEL" value="{{item['id']}}">{{item['descricao']}}</label></li>
+                            </ul>
+                          {% endfor %}
+
+                        </li>   
+
+                        <li>
+                          <span class="yellow">Avulsos</span> <a href="#">Selecionar Todos</a>
+
+                          {% for item in cat4 %}
+                            <ul>
+                                <li><label><input class="form-check-input me-1" type="checkbox" name="checkEL" value="{{item['id']}}">{{item['descricao']}}</label></li>
+                            </ul>
+                          {% endfor %}
+
+                        </li>                                                                 
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+      </div>
+
+      <div class="col-sm-6">
+      
+        <div class="tree">
+          <label for="pesquisa" class="form-label">Pesquisa:</label>
+          <input type="text" class="form-control numeric" id="pesquisa" name="pesquisa" placeholder="" value=""/>
+        </div>
+      
+      </div>
+
+    </div>
+
+    <div id="items_selected" class="row">
+      
+    </div>
+
+    <div class="row rect">
+    
+      <div class="col-sm-6">
+        <h2>Lista Geral</h2>
+        <div class="list-group">
+          {% for item in musicas %}
+            <a href="#" class="list-group-item list-group-item-action" data-id="{{item['id']}}" data-vinculo="{{item['vinculos']}}">
+              {{item['nome_arquivo'][:-5]}}
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="col-sm-6">
+        <h2>Informações:</h2>
+        <div class="info_inicial">
+          <span>Selecione uma música antes.</span>
+        </div>
+      </div>
+    
+    </div>
+
+  </div>
+</main>
+
+    <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script> 
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    <script>
+
+          function removeClassSelected() {
+            if ($('.horizontal').length < 1) {
+              $('#items_selected').removeClass('rect');
+            }
+          }
+
+          $(document).on('click', '.dispose', function(e) {
+            $('a[data-id="' + $(this).parent().parent().attr('data-id') + '"]').removeClass('active');
+            $(this).parent().parent().remove();
+            removeClassSelected();
+          });
+
+          $('a.list-group-item').on('click', function (e) {
+
+            if ($(this).hasClass('active')) {
+              $(this).removeClass('active');
+              $('div[data-id="' + $(this).attr('data-id') + '"]').remove();
+              removeClassSelected();
+            } else {
+              $(this).addClass('active');
+              $('#items_selected').addClass('rect');
+              $('#items_selected').append('<div data-id="' + $(this).attr('data-id') + '" class="horizontal">' + $(this).text() + '<span><button class="btn btn-dark dispose">X</button></span></div>');
+
+              // consultar informações
+              var id = $(this).attr('data-id');
+              $.ajax({
+                type: "POST",
+                url: "{{ url_for('proximoSlide') }}",
+                contentType: "application/json",
+                data: JSON.stringify(id),
+                dataType: "json",
+                success: function(response) {
+                  //console.log(response)
+                },
+                error: function(err) {
+                  console.log(err);
+                }
+              });              
+            }
+          });
+
+      //$(".hidden").hide('fast');
+
+          $('.first_click').on('click', function (e) {
+
+            if ($(this).hasClass('first_click')) {
+
+              $('#first_vinculo').removeAttr('hidden');
+              $(this).removeClass('first_click');
+              $('.tree li:has(ul)').addClass('parent_li').find(' > span').attr('title', 'Fechar');       
+
+
+              $('.tree li.parent_li > span').on('click', function (e) {
+                  console.log('yes');
+                  var children = $(this).parent('li.parent_li').find(' > ul > li');
+                  if (children.is(":visible")) {
+                      children.hide('fast');
+                      $(this).attr('title', 'Expandir').find(' > i').addClass('icon-plus-sign').removeClass('icon-minus-sign');
+                  } else {
+                      children.show('fast');
+                      $(this).attr('title', 'Fechar').find(' > i').addClass('icon-minus-sign').removeClass('icon-plus-sign');
+                  }
+                  e.stopPropagation();
+              });  
+
+            }            
+
+          });
+
+      </script>
+  </body>
+</html>

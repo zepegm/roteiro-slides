@@ -2,6 +2,7 @@ from email.utils import parsedate_to_datetime
 import os
 import csv
 import locale
+import operator
 from io import StringIO
 #from unittest import result
 #from PDF import verificarHash
@@ -250,6 +251,21 @@ def abrirharpa():
     return render_template('harpa.jinja', listahinos=listahinos, status='', corstatus='', noturno=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Harpa' and configuration = 'Noturno'")[0])
 
 @app.route('/abrirslidemusica', methods=['GET', 'POST'])
+def abrirNewMusica():
+
+    cat1 = executarConsultaGeral('NewMusicas.db', 'select * from categoria where supercategoria = 1 order by descricao')
+    cat2 = executarConsultaGeral('NewMusicas.db', 'select * from categoria where supercategoria = 2 order by descricao')
+    cat3 = executarConsultaGeral('NewMusicas.db', 'select * from categoria where supercategoria = 3 order by descricao')
+    cat4 = executarConsultaGeral('NewMusicas.db', 'select * from categoria where supercategoria = 4 order by descricao')
+
+    musicas = executarConsultaGeral('NewMusicas.db', 'select id, nome_arquivo, "[" || vinculo_1 || "]" || ifnull("[" || vinculo_2 || "]", "") || ifnull("[" || vinculo_3 || "]", "") as vinculos from listaMusicas')
+    musicas.sort(key=lambda t: (locale.strxfrm(t['nome_arquivo'])))
+    #print(musicas)
+
+    return render_template('newMusicas.jinja', cat1=cat1, cat2=cat2, cat3=cat3, cat4=cat4, musicas=musicas)
+
+
+@app.route('/old_musica', methods=['GET', 'POST'])
 def abrirslidemusica():
     sucesso = 0
 
