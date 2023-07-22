@@ -377,6 +377,63 @@ def proxPRS():
     encerrarTodasApresentacoes()
     return redirect(url_for('index'))
 
+@app.route('/addComent', methods=['GET', 'POST'])
+def addComent():
+    if request.method == 'POST':
+        #print('got a post request!')
+
+        if request.is_json: # application/json
+            # handle your ajax request here!
+            comentario = request.json
+            sql = 'insert into comentarios values(%s, "%s", datetime("now", "localtime"), "%s")' % (comentario['id-musica'], comentario['user'], comentario['comentario'].replace('"', '""'))
+            #print(sql)
+            try:
+                inserirDadosBasico('NewMusicas.db', sql)
+                return jsonify(True)
+            except:
+                return jsonify(False)   
+
+@app.route('/getInfoMusica', methods=['GET', 'POST'])
+def getInfoMusica():
+
+    if request.method == 'POST':
+        #print('got a post request!')
+
+        if request.is_json: # application/json
+            # handle your ajax request here!
+            id = request.json
+            info = executarConsulta('NewMusicas.db', 'SELECT '
+                                                        'cat1.descricao as vinculo1, '
+                                                        'vinc1.descricao as status1, '
+                                                        'desc_1, '
+                                                        'cat2.descricao as vinculo2, '
+                                                        'vinc2.descricao as status2, '
+                                                        'desc_2, '
+                                                        ' cat3.descricao as vinculo3, '
+                                                        'vinc3.descricao as status3, '
+                                                        'desc_3, '
+                                                        'nome_arquivo, '
+                                                        'super1.descricao as super1, '
+                                                        'super2.descricao as super2, '
+                                                        'super3.descricao as super3 '
+                                                    'from listaMusicas '
+                                                        'LEFT JOIN categoria as cat1 ON cat1.id = vinculo_1 '
+                                                        'LEFT JOIN vinculo as vinc1 ON vinc1.id = status_1 '
+                                                        'LEFT JOIN categoria as cat2 ON cat2.id = vinculo_2 '
+                                                        'LEFT JOIN vinculo as vinc2 ON vinc2.id = status_2 '
+                                                        'LEFT JOIN categoria as cat3 ON cat3.id = vinculo_3 '
+                                                        'LEFT JOIN vinculo as vinc3 ON vinc3.id = status_3 '
+                                                        'LEFT JOIN supercategoria as super1 ON super1.id = cat1.supercategoria '
+                                                        'LEFT JOIN supercategoria as super2 ON super2.id = cat2.supercategoria '
+                                                        'LEFT JOIN supercategoria as super3 ON super3.id = cat3.supercategoria '
+                                                    'where listaMusicas.id = ' + id)
+            
+            comentarios = executarConsultaGeral('NewMusicas.db', 'select user, comentario, substring(data, 9, 2) || "/" || substring(data, 6, 2) || "/" || substring(data, 1, 4) || " às " || substring(data, 11, 6) as data from comentarios where id_musica = ' + id + ' order by datetime(data) desc')
+            
+            lista = {'info':info, 'comentarios':comentarios}
+
+            return jsonify(lista)
+
 @app.route('/verificarMudanca', methods=['GET', 'POST'])
 def verificarMudanca():
     

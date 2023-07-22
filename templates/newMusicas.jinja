@@ -13,7 +13,7 @@
     
 
     <!-- Bootstrap core CSS -->
-    <link href="{{ url_for('static', filename='stylesheets/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='stylesheets/bootstrap.min.css') }}" rel="stylesheet">  
 
     <style>
       ul {
@@ -102,13 +102,69 @@
         width: auto;
         white-space:nowrap;
         /*height: 100px;*/
-        padding: 5px;
+        /*padding: 2px;*/
         /*border: 1px solid rgb(34, 34, 34);  */
-        background-color: rgb(0, 0, 0); 
+        background-color: rgb(33, 37, 41); 
         color:rgb(255, 255, 255);
         margin: 0px 0px 10px 10px;
-        font-weight: bold
+        font-weight: bold;
+        border-radius: 15px
       }
+
+      .Forte {
+        background-color: rgb(115, 249, 139);
+        border-radius: 15px;
+        padding: 2%;
+      }
+
+      .Médio {
+        background-color: rgb(250, 191, 135);
+        border-radius: 15px;
+        padding: 2%;
+      }
+
+      .Fraco {
+        background-color: rgb(249, 159, 237);
+        border-radius: 15px;
+        padding: 2%;
+      }
+
+      .text {
+        background-color: rgb(255, 255, 255);
+        border-radius: 15px;
+        padding: 2%;
+        margin-top: 10px;
+      }
+
+      .bold {
+        font-weight: bold;
+      }
+
+      .titulo {
+        color:rgb(133, 0, 0)
+      }
+
+      .comentarios {
+        background-color: rgb(228, 249, 39);
+        border-radius: 15px;
+        padding: 2%;        
+      }
+
+      .user {
+        font-style: italic;
+      }
+
+      .erro_coment {
+        color:red;
+        font-weight: bold;
+        text-align: center;
+      }
+
+    .sucess-msg {
+        color:blue;
+        font-weight: bold;
+        text-align: center;      
+    }
 
     </style>
 
@@ -119,7 +175,32 @@
   </head>
   
   <body style="background-color: rgba(248, 249, 250, 0.726);">
-    
+
+    <div class="modal fade" id="form_add_coment" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Adicionar Comentário</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form id="form_add_comentario">
+            <div class="modal-body">
+              <div id="titulo_musica_addcoment" class="title" data-id="0"></div><br>
+                <input type="text" class="form-control" id="nome_addcoment" name="nome_addcoment" placeholder="Digite seu nome:" value="" maxlength="30" required/>
+                <div>&nbsp;</div>
+                <textarea class="form-control" id="text_addcoment" rows="9" placeholder="Digite seu comentário:" maxlength="500" required></textarea>
+                <div id="limite_char_coment" class="fw-lighter">0/500 de caracteres.</div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+              <input type="submit" value="Salvar Comentário" class="btn btn-primary" data-bs-dismiss="modal"/>
+            </div>
+            <div class="erro_coment"></div>
+          </form>
+        </div>
+      </div>
+    </div>
+
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
   <div class="container-fluid">
     <a class="navbar-brand" href="{{ url_for('index') }}">
@@ -255,8 +336,8 @@
         </div>
       </div>
 
-      <div class="col-sm-6">
-        <h2>Informações:</h2>
+      <div id="infos" class="col-sm-6">
+        <h4>Informações: <span id="nome_musica" class="titulo"></span></h4>
         <div class="info_inicial">
           <span>Selecione uma música antes.</span>
         </div>
@@ -277,6 +358,49 @@
             }
           }
 
+          $("#form_add_coment").on("hidden.bs.modal", function () {
+              $("#nome_addcoment").val("");
+              $("#text_addcoment").val("");
+              $("#limite_char_coment").text("0/500 de caracteres.");
+              $(".erro_coment").html("");
+          });
+
+          $('#form_add_comentario').on('submit', function (e) {
+            e.preventDefault();
+            comentario = {'id-musica':$('#titulo_musica_addcoment').attr('data-id'), 'user':$("#nome_addcoment").val(), 'comentario':$('#text_addcoment').val()};
+
+              $.ajax({
+                type: "POST",
+                url: "{{ url_for('addComent') }}",
+                contentType: "application/json",
+                data: JSON.stringify(comentario),
+                dataType: "json",
+                success: function(response) {
+                  //console.log(response);
+                  if (response) {
+                    $(".sucess-msg").html('<div>Comentário adicionado com sucesso!</div><div>&nbsp;</div>');
+                    $('#conteudo-comentarios').prepend('<div class="coment"><div class="user">' + comentario['user'] + ' disse AGORA:</div><div class="text-coment">' + comentario['comentario'] + '</div></div><div class="blank_space">&nbsp;</div>');
+                  } else {
+                    $(".erro_coment").html('<div>Falha ao tentar salvar comentário! Avise o Giuseppe.</div><div>&nbsp;</div>');
+                  }
+                },
+                error: function(err) {
+                  console.log(err);
+                }
+              });  
+
+          });
+
+          $('#text_addcoment').on('keyup change', function (e) {
+            var tamanho = $("#text_addcoment").val().length;
+            $('#limite_char_coment').text(tamanho + '/500 de caracteres.');
+          });
+
+          $(document).on('click', '#add_coment', function(e) {
+            $('#titulo_musica_addcoment').html('<span class="bold">Música: </span>' + $('#nome_musica').text());
+            $('#form_add_coment').modal('show');
+          });
+
           $(document).on('click', '.dispose', function(e) {
             $('a[data-id="' + $(this).parent().parent().attr('data-id') + '"]').removeClass('active');
             $(this).parent().parent().remove();
@@ -296,14 +420,44 @@
 
               // consultar informações
               var id = $(this).attr('data-id');
+              $('#titulo_musica_addcoment').attr('data-id', id);
               $.ajax({
                 type: "POST",
-                url: "{{ url_for('proximoSlide') }}",
+                url: "{{ url_for('getInfoMusica') }}",
                 contentType: "application/json",
                 data: JSON.stringify(id),
                 dataType: "json",
                 success: function(response) {
-                  //console.log(response)
+                  //console.log(response);
+                  $('.info_inicial').remove();
+                  $('.Forte').remove();
+                  $('.Médio').remove();
+                  $('.Fraco').remove();
+                  $('.blank_space').remove();
+                  $('.comentarios').remove();
+                  $('.sucess-msg').remove();
+                  $('#nome_musica').text(response['info'][9].substring(0, response['info'][9].length - 5));
+                  $("#infos").append('<div class="' + response['info'][1] + '"><div><strong>Vínculo 1: </strong>' + response['info'][0] + ' - ' + response['info'][10] + '</div><div><strong>Status: </strong>' + response['info'][1] + '</div><div class="text">' + response['info'][2] + '</div></div>')
+                  
+                  if (response['info'][3] != null) {
+                      $("#infos").append('<div class="blank_space">&nbsp;</div>')
+                      $("#infos").append('<div class="' + response['info'][4] + '"><div><strong>Vínculo 2: </strong>' + response['info'][3] + ' - ' + response['info'][11] + '</div><div><strong>Status: </strong>' + response['info'][4] + '</div><div class="text">' + response['info'][5] + '</div></div>')
+                  
+                      if (response['info'][6] != null) {
+                        $("#infos").append('<div class="blank_space">&nbsp;</div>')
+                        $("#infos").append('<div class="' + response['info'][7] + '"><div><strong>Vínculo 3: </strong>' + response['info'][6] + ' - ' + response['info'][12] + '</div><div><strong>Status: </strong>' + response['info'][7] + '</div><div class="text">' + response['info'][8] + '</div></div>')                        
+                      }
+                  }
+
+                  $("#infos").append('<div class="blank_space">&nbsp;</div>');
+                  $("#infos").append('<div class="sucess-msg"></div>');
+                  $("#infos").append('<div class="comentarios"><div class="bold">Comentários:</div><div id="conteudo-comentarios"></div></div>');
+                  for (var item in response['comentarios']) {
+                    $('#conteudo-comentarios').append('<div class="coment"><div class="user">' + response['comentarios'][item]['user'] + ' disse em ' + response['comentarios'][item]['data'] + ':</div><div class="text-coment">' + response['comentarios'][item]['comentario'] + '</div></div>');
+                    $("#conteudo-comentarios").append('<div class="blank_space">&nbsp;</div>')
+                  }
+                  $("#conteudo-comentarios").append('<button id="add_coment" class="btn btn-warning">Adicionar Comentário</button>');
+
                 },
                 error: function(err) {
                   console.log(err);
