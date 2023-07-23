@@ -265,6 +265,10 @@ def abrirNewMusica():
         else:
             pasta = diretorio + r'\Músicas\Claro'
 
+        if request.form['modo-abertura'] == "importar":
+            listaAtual = executarConsultaLista('Roteiro.db')
+            
+
         sucesso = 0
         falha = False
 

@@ -275,44 +275,44 @@
                           <label class="bold"><input class="form-check-input me-1" type="checkbox" id="habilitar_vinculo_fraco">Exibir Vínculos Fracos</label>
                         </li>
                         <li>
-                          <span class="yellow">Ministério de Louvor</span> <a href="#">Selecionar Todos</a>
+                          <span class="yellow">Ministério de Louvor</span> <a href="javascript:selectallCat(1, true)">Todos</a> <a href="javascript:selectallCat(1, false)">Nenhum</a>
 
                           {% for item in cat1 %}
                             <ul>
-                                <li><label><input class="form-check-input me-1 filtro-vinculo-check" type="checkbox" name="checkEL" value="{{item['id']}}">{{item['descricao']}}</label></li>
+                                <li><label><input class="form-check-input me-1 filtro-vinculo-check cat1" type="checkbox" name="checkEL" value="{{item['id']}}">{{item['descricao']}}</label></li>
                             </ul>
                           {% endfor %}
 
                         </li>
 
                         <li>
-                          <span class="yellow">Jovens e Adolescentes</span> <a href="#">Selecionar Todos</a>
+                          <span class="yellow">Jovens e Adolescentes</span> <a href="javascript:selectallCat(2, true)">Todos</a> <a href="javascript:selectallCat(2, false)">Nenhum</a>
 
                           {% for item in cat2 %}
                             <ul>
-                                <li><label><input class="form-check-input me-1 filtro-vinculo-check" type="checkbox" name="checkEL" value="{{item['id']}}">{{item['descricao']}}</label></li>
+                                <li><label><input class="form-check-input me-1 filtro-vinculo-check cat2" type="checkbox" name="checkEL" value="{{item['id']}}">{{item['descricao']}}</label></li>
                             </ul>
                           {% endfor %}
 
                         </li>      
 
                         <li>
-                          <span class="yellow">Departamentos</span> <a href="#">Selecionar Todos</a>
+                          <span class="yellow">Departamentos</span> <a href="javascript:selectallCat(3, true)">Todos</a> <a href="javascript:selectallCat(3, false)">Nenhum</a>
 
                           {% for item in cat3 %}
                             <ul>
-                                <li><label><input class="form-check-input me-1 filtro-vinculo-check" type="checkbox" name="checkEL" value="{{item['id']}}">{{item['descricao']}}</label></li>
+                                <li><label><input class="form-check-input me-1 filtro-vinculo-check cat3" type="checkbox" name="checkEL" value="{{item['id']}}">{{item['descricao']}}</label></li>
                             </ul>
                           {% endfor %}
 
                         </li>   
 
                         <li>
-                          <span class="yellow">Avulsos</span> <a href="#">Selecionar Todos</a>
+                          <span class="yellow">Avulsos</span> <a href="javascript:selectallCat(4, true)">Todos</a> <a href="javascript:selectallCat(4, false)">Nenhum</a>
 
                           {% for item in cat4 %}
                             <ul>
-                                <li><label><input class="form-check-input me-1" type="checkbox" name="checkEL" value="{{item['id']}}">{{item['descricao']}}</label></li>
+                                <li><label><input class="form-check-input me-1 filtro-vinculo-check cat4" type="checkbox" name="checkEL" value="{{item['id']}}">{{item['descricao']}}</label></li>
                             </ul>
                           {% endfor %}
 
@@ -339,7 +339,7 @@
       
     </div>
 
-    <div class="row">
+    <div id="msg_feedeback" class="row">
       <div class="col-sm-12">
       {{ msg|safe }}
         <!-- <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -351,7 +351,10 @@
 
     <form id="form_openmusicas" action="{{ url_for('abrirNewMusica') }}" method="post" autocomplete="off">
       <div class="row">
-        <div class="col-sm-2"><input id="btn-abrirSlide" class="btn btn-primary" type="submit" value="Abrir Slide(s)" disabled></div>
+        <div class="col-sm-6">
+          <input id="btn-abrirSlide" class="btn btn-primary" type="submit" value="Abrir Slide(s)" disabled>
+          <input id="btn-importarRoteiro" class="btn btn-success" type="submit" value="Importar para o Roteiro" disabled>
+        </div>
         <div class="col-sm-2">
           <label class="a8z-toggle-switch" for="example_colors_7" data-size="lg" data-style="rounded" data-color="gray" style="--a8z-ts-input-checked-content:'Modo Escuro'; --a8z-ts-input-unchecked-content: 'Modo Claro'; --a8z-ts-width: 150px;">
             <input checked name="modo_cor" type="checkbox" id="example_colors_7">
@@ -362,7 +365,8 @@
         </div>
         <div>&nbsp;</div>
       </div>
-      <input type="hidden" id="lista-ids-musicas" name="lista-ids-musicas" val="">
+      <input type="hidden" id="lista-ids-musicas" name="lista-ids-musicas" value="">
+      <input type="hidden" id="modo-abertura" name="modo-abertura" value="abrir">
     </form>
 
     <div class="row rect">
@@ -394,8 +398,44 @@
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
     <script>
 
+          function selectallCat(cat, select) {
+            $('.cat' + cat).each(function() { this.checked = select; });
+
+            lista = []
+            $('.filtro-vinculo-check:checked').filter(function(index) {
+              lista.push($(this).val())
+            });
+            
+            if (lista.length > 0) {
+              $("#lista_geral a").toggleClass('toggled-vinc', true);
+
+              if ($('#habilitar_vinculo_fraco').is(':checked')) {
+                for (var i in lista) {
+                  $("#lista_geral a").filter(function () {
+                    if ($(this).attr('data-vincforte').indexOf('[' + lista[i] + ']') > -1 || $(this).attr('data-vincfraco').indexOf('[' + lista[i] + ']') > -1) {
+                      $(this).removeClass('toggled-vinc');
+                    }
+                  });
+                }
+              } else {
+                for (var i in lista) {
+                  $("#lista_geral a").filter(function () {
+                    if ($(this).attr('data-vincforte').indexOf('[' + lista[i] + ']') > -1) {
+                      $(this).removeClass('toggled-vinc');
+                    }
+                  });
+                }
+              }
+            } else {
+              $("#lista_geral a").removeClass('toggled-vinc');
+            }            
+          }
+
           $('#form_openmusicas').on('submit', function (e) {
             //e.preventDefault();
+            if (e['originalEvent']['submitter']['id'] == "btn-importarRoteiro") {
+              $('#modo-abertura').val('importar');
+            }
             var lista_id = '';
             $('.horizontal').filter(function () {
               lista_id = lista_id + $(this).attr('data-id') + ', ';
@@ -473,6 +513,7 @@
             if ($('.horizontal').length < 1) {
               $('#items_selected').removeClass('rect');
               $('#btn-abrirSlide').attr("disabled", '');
+              $('#btn-importarRoteiro').attr("disabled", '');
             }
           }
 
@@ -533,6 +574,7 @@
               removeClassSelected();
             } else {
               $('#btn-abrirSlide').removeAttr('disabled');
+              $('#btn-importarRoteiro').removeAttr('disabled');
               $('.horizontal').removeClass('horizontalactive');
               $('.dispose').removeClass('btn-light');
               $('.dispose').addClass('btn-dark');
