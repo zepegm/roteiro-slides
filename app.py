@@ -253,6 +253,14 @@ def abrirharpa():
 @app.route('/abrirslidemusica', methods=['GET', 'POST'])
 def abrirNewMusica():
 
+    if request.method == 'POST':
+        musicas = request.form['lista-ids-musicas']
+        nomes = executarConsultaGeral('NewMusicas.db', 'select nome_arquivo from listaMusicas musicas where id in (' + musicas + ')')
+
+        if 'modo_cor' in request.form:
+            print(nomes)
+        #print(cor)
+
     cat1 = executarConsultaGeral('NewMusicas.db', 'select * from categoria where supercategoria = 1 order by descricao')
     cat2 = executarConsultaGeral('NewMusicas.db', 'select * from categoria where supercategoria = 2 order by descricao')
     cat3 = executarConsultaGeral('NewMusicas.db', 'select * from categoria where supercategoria = 3 order by descricao')

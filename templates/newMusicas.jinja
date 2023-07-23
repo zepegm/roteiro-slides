@@ -14,6 +14,9 @@
 
     <!-- Bootstrap core CSS -->
     <link href="{{ url_for('static', filename='stylesheets/bootstrap.min.css') }}" rel="stylesheet">  
+    
+    <!-- Extra CSS -->
+    <link href="{{ url_for('static', filename='stylesheets/toggle-switch.css') }}" rel="stylesheet">  
 
     <style>
       ul {
@@ -336,12 +339,21 @@
       
     </div>
 
-    <div class="row">
     <form id="form_openmusicas" action="{{ url_for('abrirNewMusica') }}" method="post" autocomplete="off">
-      <div class="col-sm-2"><input id="btn-abrirSlide" class="btn btn-primary" type="submit" value="Abrir Slide(s)" disabled></div>
-      <div>&nbsp;</div>
+      <div class="row">
+        <div class="col-sm-2"><input id="btn-abrirSlide" class="btn btn-primary" type="submit" value="Abrir Slide(s)" disabled></div>
+        <div class="col-sm-2">
+          <label class="a8z-toggle-switch" for="example_colors_7" data-size="lg" data-style="rounded" data-color="gray" style="--a8z-ts-input-checked-content:'Modo Escuro'; --a8z-ts-input-unchecked-content: 'Modo Claro'; --a8z-ts-width: 150px;">
+            <input checked name="modo_cor" type="checkbox" id="example_colors_7">
+            <span class="toggle">
+              <span class="switch"></span>
+            </span>
+          </label>        
+        </div>
+        <div>&nbsp;</div>
+      </div>
+      <input type="hidden" id="lista-ids-musicas" name="lista-ids-musicas" val="">
     </form>
-    </div>
 
     <div class="row rect">
     
@@ -372,11 +384,21 @@
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
     <script>
 
+          $('#form_openmusicas').on('submit', function (e) {
+            //e.preventDefault();
+            var lista_id = '';
+            $('.horizontal').filter(function () {
+              lista_id = lista_id + $(this).attr('data-id') + ', ';
+            });
+            $("#lista-ids-musicas").val(lista_id.slice(0, -2));
+            //$(this).trigger( "submit" );
+          });
+
           $('#btn-limparFiltro').click(function (e) {
             $('#pesquisa').val("");
             $("#lista_geral a").removeClass('toggled');
 
-            $('input:checkbox').each(function() { this.checked = false; });
+            $('.form-check-input').each(function() { this.checked = false; });
             $("#lista_geral a").removeClass('toggled-vinc');
           }); 
 
