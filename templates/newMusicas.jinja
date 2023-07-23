@@ -336,6 +336,13 @@
       
     </div>
 
+    <div class="row">
+    <form id="form_openmusicas" action="{{ url_for('abrirNewMusica') }}" method="post" autocomplete="off">
+      <div class="col-sm-2"><input id="btn-abrirSlide" class="btn btn-primary" type="submit" value="Abrir Slide(s)" disabled></div>
+      <div>&nbsp;</div>
+    </form>
+    </div>
+
     <div class="row rect">
     
       <div class="col-sm-6">
@@ -433,6 +440,7 @@
           function removeClassSelected() {
             if ($('.horizontal').length < 1) {
               $('#items_selected').removeClass('rect');
+              $('#btn-abrirSlide').attr("disabled", '');
             }
           }
 
@@ -492,6 +500,7 @@
               $('div[data-id="' + $(this).attr('data-id') + '"]').remove();
               removeClassSelected();
             } else {
+              $('#btn-abrirSlide').removeAttr('disabled');
               $('.horizontal').removeClass('horizontalactive');
               $('.dispose').removeClass('btn-light');
               $('.dispose').addClass('btn-dark');

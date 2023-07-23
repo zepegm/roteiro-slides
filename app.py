@@ -277,7 +277,7 @@ def abrirNewMusica():
                                                         '(CASE WHEN status_3 = 3 THEN '
                                                             '"[" || vinculo_3 || "]" '
                                                         'ELSE "" END) as vinc_fraco from listaMusicas')
-    print(len(musicas))
+    #print(len(musicas))
     musicas.sort(key=lambda t: (locale.strxfrm(t['nome_arquivo'])))
     #print(musicas)
 
