@@ -258,7 +258,26 @@ def abrirNewMusica():
     cat3 = executarConsultaGeral('NewMusicas.db', 'select * from categoria where supercategoria = 3 order by descricao')
     cat4 = executarConsultaGeral('NewMusicas.db', 'select * from categoria where supercategoria = 4 order by descricao')
 
-    musicas = executarConsultaGeral('NewMusicas.db', 'select id, nome_arquivo, "[" || vinculo_1 || "]" || ifnull("[" || vinculo_2 || "]", "") || ifnull("[" || vinculo_3 || "]", "") as vinculos from listaMusicas')
+    musicas = executarConsultaGeral('NewMusicas.db', 'select id, nome_arquivo, '
+                                                        '(CASE WHEN status_1 < 3 THEN '
+                                                            '"[" || vinculo_1 || "]" '
+                                                        'ELSE "" END) || '
+                                                        '(CASE WHEN status_2 < 3 THEN '
+                                                            '"[" || vinculo_2 || "]" '
+                                                        'ELSE "" END) || '
+                                                        '(CASE WHEN status_3 < 3 THEN '
+                                                            '"[" || vinculo_3 || "]" '
+                                                        'ELSE "" END) as vinc_forte, '
+                                                        '(CASE WHEN status_1 = 3 THEN '
+                                                            '"[" || vinculo_1 || "]" '
+                                                        'ELSE "" END) || '
+                                                        '(CASE WHEN status_2 = 3 THEN '
+                                                            '"[" || vinculo_2 || "]" '
+                                                        'ELSE "" END) || '
+                                                        '(CASE WHEN status_3 = 3 THEN '
+                                                            '"[" || vinculo_3 || "]" '
+                                                        'ELSE "" END) as vinc_fraco from listaMusicas')
+    print(len(musicas))
     musicas.sort(key=lambda t: (locale.strxfrm(t['nome_arquivo'])))
     #print(musicas)
 
