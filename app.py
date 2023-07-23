@@ -36,6 +36,7 @@ thread_lock = Lock()
 
 diretorio = os.path.expanduser('~') + r'\OneDrive - Secretaria da Educação do Estado de São Paulo\IGREJA'
 historico = os.path.expanduser('~') + r'\OneDrive - Secretaria da Educação do Estado de São Paulo\IGREJA\Historico.db'
+musicas_dir = os.path.expanduser('~') + r'\OneDrive - Secretaria da Educação do Estado de São Paulo\IGREJA\Músicas\NewMusicas.db'
 locale.setlocale(locale.LC_ALL, "")
 youtube = ytdlp()
 #obs_file = executarConsulta('Roteiro.db', 'select Apresentacao from OBS')[0]
@@ -255,18 +256,26 @@ def abrirNewMusica():
 
     if request.method == 'POST':
         musicas = request.form['lista-ids-musicas']
-        nomes = executarConsultaGeral('NewMusicas.db', 'select nome_arquivo from listaMusicas musicas where id in (' + musicas + ')')
+        nomes = executarConsultaGeral(musicas_dir, 'select nome_arquivo from listaMusicas musicas where id in (' + musicas + ')')
 
         if 'modo_cor' in request.form:
-            print(nomes)
+            pasta = diretorio + r'\Músicas\Escuro'
+        else:
+            pasta = diretorio + r'\Músicas\Claro'
+
+        sucesso = 0
+
+        for item in nomes:
+            prs = ppt(pasta + '\\' + item['nome_arquivo'])
+            sucesso += 1
         #print(cor)
 
-    cat1 = executarConsultaGeral('NewMusicas.db', 'select * from categoria where supercategoria = 1 order by descricao')
-    cat2 = executarConsultaGeral('NewMusicas.db', 'select * from categoria where supercategoria = 2 order by descricao')
-    cat3 = executarConsultaGeral('NewMusicas.db', 'select * from categoria where supercategoria = 3 order by descricao')
-    cat4 = executarConsultaGeral('NewMusicas.db', 'select * from categoria where supercategoria = 4 order by descricao')
+    cat1 = executarConsultaGeral(musicas_dir, 'select * from categoria where supercategoria = 1 order by descricao')
+    cat2 = executarConsultaGeral(musicas_dir, 'select * from categoria where supercategoria = 2 order by descricao')
+    cat3 = executarConsultaGeral(musicas_dir, 'select * from categoria where supercategoria = 3 order by descricao')
+    cat4 = executarConsultaGeral(musicas_dir, 'select * from categoria where supercategoria = 4 order by descricao')
 
-    musicas = executarConsultaGeral('NewMusicas.db', 'select id, nome_arquivo, '
+    musicas = executarConsultaGeral(musicas_dir, 'select id, nome_arquivo, '
                                                         '(CASE WHEN status_1 < 3 THEN '
                                                             '"[" || vinculo_1 || "]" '
                                                         'ELSE "" END) || '
@@ -415,7 +424,7 @@ def addComent():
             sql = 'insert into comentarios values(%s, "%s", datetime("now", "localtime"), "%s")' % (comentario['id-musica'], comentario['user'], comentario['comentario'].replace('"', '""'))
             #print(sql)
             try:
-                inserirDadosBasico('NewMusicas.db', sql)
+                inserirDadosBasico(musicas_dir, sql)
                 return jsonify(True)
             except:
                 return jsonify(False)   
@@ -429,7 +438,7 @@ def getInfoMusica():
         if request.is_json: # application/json
             # handle your ajax request here!
             id = request.json
-            info = executarConsulta('NewMusicas.db', 'SELECT '
+            info = executarConsulta(musicas_dir, 'SELECT '
                                                         'cat1.descricao as vinculo1, '
                                                         'vinc1.descricao as status1, '
                                                         'desc_1, '
@@ -455,7 +464,7 @@ def getInfoMusica():
                                                         'LEFT JOIN supercategoria as super3 ON super3.id = cat3.supercategoria '
                                                     'where listaMusicas.id = ' + id)
             
-            comentarios = executarConsultaGeral('NewMusicas.db', 'select user, comentario, substring(data, 9, 2) || "/" || substring(data, 6, 2) || "/" || substring(data, 1, 4) || " às " || substring(data, 11, 6) as data from comentarios where id_musica = ' + id + ' order by datetime(data) desc')
+            comentarios = executarConsultaGeral(musicas_dir, 'select user, comentario, substring(data, 9, 2) || "/" || substring(data, 6, 2) || "/" || substring(data, 1, 4) || " às " || substring(data, 11, 6) as data from comentarios where id_musica = ' + id + ' order by datetime(data) desc')
             
             lista = {'info':info, 'comentarios':comentarios}
 
