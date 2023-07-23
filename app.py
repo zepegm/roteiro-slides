@@ -254,6 +254,8 @@ def abrirharpa():
 @app.route('/abrirslidemusica', methods=['GET', 'POST'])
 def abrirNewMusica():
 
+    msg = ""
+
     if request.method == 'POST':
         musicas = request.form['lista-ids-musicas']
         nomes = executarConsultaGeral(musicas_dir, 'select nome_arquivo from listaMusicas musicas where id in (' + musicas + ')')
@@ -264,11 +266,22 @@ def abrirNewMusica():
             pasta = diretorio + r'\Músicas\Claro'
 
         sucesso = 0
+        falha = False
 
         for item in nomes:
-            prs = ppt(pasta + '\\' + item['nome_arquivo'])
-            sucesso += 1
-        #print(cor)
+            try:
+                prs = ppt(pasta + '\\' + item['nome_arquivo'])
+                msg = msg + item['nome_arquivo'][:-5] + ", "
+                sucesso += 1
+            except:
+                falha = True
+        
+        if sucesso > 1:
+            msg = '<div class="alert alert-success alert-dismissible fade show" role="alert">Arquivos <strong>' + msg[:-2] + '</strong> abertos com sucesso!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
+        elif sucesso == 1:
+            msg = '<div class="alert alert-success alert-dismissible fade show" role="alert">Arquivo <strong>' + msg[:-2] + '</strong> aberto com sucesso!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
+        elif falha:            
+            msg = '<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Atenção!</strong> Falha ao tentar abrir um ou mais dos arquivos selecionados!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
 
     cat1 = executarConsultaGeral(musicas_dir, 'select * from categoria where supercategoria = 1 order by descricao')
     cat2 = executarConsultaGeral(musicas_dir, 'select * from categoria where supercategoria = 2 order by descricao')
@@ -298,7 +311,7 @@ def abrirNewMusica():
     musicas.sort(key=lambda t: (locale.strxfrm(t['nome_arquivo'])))
     #print(musicas)
 
-    return render_template('newMusicas.jinja', cat1=cat1, cat2=cat2, cat3=cat3, cat4=cat4, musicas=musicas)
+    return render_template('newMusicas.jinja', cat1=cat1, cat2=cat2, cat3=cat3, cat4=cat4, musicas=musicas, msg=msg)
 
 
 @app.route('/old_musica', methods=['GET', 'POST'])
