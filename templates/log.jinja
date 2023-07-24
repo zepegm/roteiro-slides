@@ -99,6 +99,8 @@
                 <td>{{row['Obs']}}</td>
                 {% if row['Status'] == '1' %}
                 <td class="text-primary">{{row['status_descricao']}}</td>
+                {% elif row['Status'] == '4' %}
+                <td class="text-success">{{row['status_descricao']}}</td>
                 {% else %}
                 <td class="text-danger">{{row['status_descricao']}}</td>
                 {% endif %}

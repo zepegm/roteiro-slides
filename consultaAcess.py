@@ -43,13 +43,13 @@ def inserirListaRoteiro(banco, lista):
         cursor.execute('DELETE FROM lista')
 
         for l in lista:
-            codigoSQL = "INSERT INTO lista VALUES('%s', '%s', %s)" % (l['caminho'].replace("'", "''"), l['nome'].replace("'", "''"), l['check'])
-            print(codigoSQL)
+            codigoSQL = "INSERT OR REPLACE INTO lista VALUES('%s', '%s', %s)" % (l['caminho'].replace("'", "''"), l['nome'].replace("'", "''"), l['check'])
+            #print(codigoSQL)
             cursor.execute(codigoSQL)
 
     else:
-        codigoSQL = "INSERT INTO lista VALUES('%s', '%s', %s)" % (lista['caminho'].replace("'", "''"), lista['nome'].replace("'", "''"), lista['check'])
-        print(codigoSQL)
+        codigoSQL = "INSERT OR REPLACE INTO lista VALUES('%s', '%s', %s)" % (lista['caminho'].replace("'", "''"), lista['nome'].replace("'", "''"), lista['check'])
+        #print(codigoSQL)
         cursor.execute(codigoSQL)
 
     conn.commit()
@@ -68,6 +68,13 @@ def executarConsultaGeral(banco, sql):
     cursor = conn.cursor()
     cursor.execute(sql)
     return [dict(row) for row in cursor.fetchall()]    
+
+def executarConsultaGeralArray(banco, sql):
+    conn = sqlite3.connect(banco)
+    cursor = conn.cursor()
+    cursor.execute(sql)
+    return [row[0] for row in cursor.fetchall()]  
+
 
 def alterarConfig(banco, valor, pagina, config):
     conn = sqlite3.connect(banco)

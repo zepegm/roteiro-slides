@@ -3,11 +3,12 @@ import os
 import csv
 import locale
 import operator
+import hashlib
 from io import StringIO
 #from unittest import result
 #from PDF import verificarHash
 from powerpoint import ppt, pegarSlidesAbertos, pegarSlideShow, pegarIndexSlideshow, avancarIndexSlideShow, pegarTextoSlideShow, verificarCalendario, encerrarTodasApresentacoes, pegarNomeSlideShow
-from consultaAcess import executarConsultaBibliaFormat, executarConsulta, executarConsultaLista, inserirListaRoteiro, executarConsultaGeral, alterarConfig, alterarConfigViewBiblia, consultarHarpaBD, alterarConfigViewMusica, inserirDadosBasico, consultarListaFiltrada
+from consultaAcess import executarConsultaBibliaFormat, executarConsulta, executarConsultaLista, inserirListaRoteiro, executarConsultaGeral, alterarConfig, alterarConfigViewBiblia, consultarHarpaBD, alterarConfigViewMusica, inserirDadosBasico, consultarListaFiltrada, executarConsultaGeralArray
 from flask import Flask, render_template, request, redirect, url_for, jsonify, send_file, Response
 from waitress import serve
 from math import ceil
@@ -218,35 +219,53 @@ def abrirharpa():
         lista = request.form['numero']
         hinos = lista.split(';')
         sucesso = 0
-        status = 'Você não digitou um número válido!'
-        corstatus = 'text-danger'
+        status = '<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Atenção!</strong> Você não digitou um número válido!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
         resultado = ''
 
         if 'noturno' in request.form:
             noturno = r'\Modo Escuro'
             alterarConfig('Roteiro.db', 1, 'Harpa', 'Noturno')
+            modo = 2
         else:
             noturno = ''
             alterarConfig('Roteiro.db', 0, 'Harpa', 'Noturno')
+            modo = 1
 
-        for hino in hinos:
-            if hino.isdigit():
-                #print(hino)
-                if int(hino) > 0 and int(hino) < 641:
-                    #print(diretorio + noturno + '\\HARPA\\HINO ' + hino.zfill(3) + '.pptx')
-                    prs = ppt(diretorio + noturno + '\\HARPA\\HINO ' + hino.zfill(3) + '.pptx')
-                    sucesso += 1
-                    resultado += hino.zfill(3) + ', '
-                    # registrar no log
-                    inserirDadosBasico(historico, "insert into log values (datetime('now', 'localtime'), 'HINO " + hino.zfill(3) + ".pptx', 2, " + eNoturno(noturno) + ", '" + executarConsulta('Musicas.db', "select Conteúdo from [Harpa] where Hino = {} and Tipo = 'Titulo'".format(hino))[0].replace("'", "''") + "', 1)")
+        if request.form['modo_abertura'] == 'importar':
+            inserirDadosBasico('Roteiro.db', 'delete from lista where `check` = 1')
+            for hino in hinos:
+                if hino.isdigit():
+                    if int(hino) > 0 and int(hino) < 641:
+                        sql = "insert or replace into lista values ('%s', '%s', 0)" % (diretorio + noturno + '\\HARPA\\HINO ' + hino.zfill(3) + '.pptx', 'HINO ' + hino.zfill(3))
+                        inserirDadosBasico('Roteiro.db', sql)
+                        sql = "insert into log values(datetime('now', 'localtime'), '%s', 2, %s, '-', 4)" % ('HINO ' + hino.zfill(3) + '.pptx', modo)
+                        inserirDadosBasico(historico, sql)
+                        sucesso += 1
+                        resultado += hino.zfill(3) + ', '
 
-        if sucesso == 1:
-            status = 'Hino ' + resultado[0:-2] + ' aberto com sucesso!'
-            corstatus = 'text-primary'
-        elif sucesso > 1:
-            status = 'Hinos ' + resultado[0:-2] + ' abertos com sucesso!'
-            corstatus = 'text-primary' 
-        return render_template('harpa.jinja', listahinos=listahinos, status=status, corstatus=corstatus, noturno=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Harpa' and configuration = 'Noturno'")[0])
+            if sucesso == 1:
+                status = '<div class="alert alert-success alert-dismissible fade show" role="alert">Hino <strong>' + resultado[0:-2] + '</strong> adicionado à lista do Roteiro com sucesso! <a href="\\">Clique aqui para visualizar.</a><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
+            elif sucesso > 1:
+                status = '<div class="alert alert-success alert-dismissible fade show" role="alert">Hinos <strong>' + resultado[0:-2] + '</strong> adicionados à lista do Roteiro com sucesso! <a href="\\">Clique aqui para visualizar.</a><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
+            return render_template('harpa.jinja', listahinos=listahinos, status=status, noturno=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Harpa' and configuration = 'Noturno'")[0])
+
+        else:
+            for hino in hinos:
+                if hino.isdigit():
+                    #print(hino)
+                    if int(hino) > 0 and int(hino) < 641:
+                        #print(diretorio + noturno + '\\HARPA\\HINO ' + hino.zfill(3) + '.pptx')
+                        prs = ppt(diretorio + noturno + '\\HARPA\\HINO ' + hino.zfill(3) + '.pptx')
+                        sucesso += 1
+                        resultado += hino.zfill(3) + ', '
+                        # registrar no log
+                        inserirDadosBasico(historico, "insert into log values (datetime('now', 'localtime'), 'HINO " + hino.zfill(3) + ".pptx', 2, " + eNoturno(noturno) + ", '" + executarConsulta('Musicas.db', "select Conteúdo from [Harpa] where Hino = {} and Tipo = 'Titulo'".format(hino))[0].replace("'", "''") + "', 1)")
+
+            if sucesso == 1:
+                status = '<div class="alert alert-success alert-dismissible fade show" role="alert">Hino <strong>' + resultado[0:-2] + '</strong> aberto com sucesso!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
+            elif sucesso > 1:
+                status = '<div class="alert alert-success alert-dismissible fade show" role="alert">Hinos <strong>' + resultado[0:-2] + '</strong> abertos com sucesso!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
+            return render_template('harpa.jinja', listahinos=listahinos, status=status, noturno=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Harpa' and configuration = 'Noturno'")[0])
 
 
     return render_template('harpa.jinja', listahinos=listahinos, status='', corstatus='', noturno=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Harpa' and configuration = 'Noturno'")[0])
@@ -262,31 +281,53 @@ def abrirNewMusica():
 
         if 'modo_cor' in request.form:
             pasta = diretorio + r'\Músicas\Escuro'
+            modo = 2
         else:
             pasta = diretorio + r'\Músicas\Claro'
+            modo = 1
 
         if request.form['modo-abertura'] == "importar":
-            listaAtual = executarConsultaLista('Roteiro.db')
-            
-
-        sucesso = 0
-        falha = False
-
-        for item in nomes:
-            try:
-                prs = ppt(pasta + '\\' + item['nome_arquivo'])
+            inserirDadosBasico('Roteiro.db', 'delete from lista where `check` = 1')
+            sucesso = 0
+            for item in nomes:
+                sql = "insert or replace into lista values ('%s', '%s', 0)" % (pasta + '\\' + item['nome_arquivo'], item['nome_arquivo'][:-5])
+                inserirDadosBasico('Roteiro.db', sql)
+                sql = "insert into log values(datetime('now', 'localtime'), '%s', 3, %s, '-', 4)" % (item['nome_arquivo'], modo)
+                inserirDadosBasico(historico, sql)
                 msg = msg + item['nome_arquivo'][:-5] + ", "
                 sucesso += 1
-            except:
-                falha = True
-        
-        if sucesso > 1:
-            msg = '<div class="alert alert-success alert-dismissible fade show" role="alert">Arquivos <strong>' + msg[:-2] + '</strong> abertos com sucesso!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
-        elif sucesso == 1:
-            msg = '<div class="alert alert-success alert-dismissible fade show" role="alert">Arquivo <strong>' + msg[:-2] + '</strong> aberto com sucesso!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
-        elif falha:            
-            msg = '<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Atenção!</strong> Falha ao tentar abrir um ou mais dos arquivos selecionados!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
 
+            if sucesso > 1:
+                msg = '<div class="alert alert-success alert-dismissible fade show" role="alert">Arquivos <strong>' + msg[:-2] + '</strong> adicionados com sucesso à lista do Roteiro. <a href="\\">Clique aqui para visualizar.</a><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
+            elif sucesso == 1:
+                msg = '<div class="alert alert-success alert-dismissible fade show" role="alert">Arquivo <strong>' + msg[:-2] + '</strong> adicionado com sucesso à lista do Roteiro. <a href="\\">Clique aqui para visualizar.</a><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
+            elif falha:            
+                msg = '<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Atenção!</strong> Falha ao tentar abrir um ou mais dos arquivos selecionados!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
+
+        else:
+            sucesso = 0
+            falha = False
+
+            for item in nomes:
+                try:
+                    prs = ppt(pasta + '\\' + item['nome_arquivo'])
+                    msg = msg + item['nome_arquivo'][:-5] + ", "
+                    sucesso += 1
+                    sql = "insert into log values(datetime('now', 'localtime'), '%s', 3, %s, '-', 1)" % (item['nome_arquivo'], modo)
+                    inserirDadosBasico(historico, sql)                    
+                except:
+                    falha = True
+                    sql = "insert into log values(datetime('now', 'localtime'), '%s', 3, %s, '-', 3)" % (item['nome_arquivo'], modo)
+                    inserirDadosBasico(historico, sql)                     
+            
+            if sucesso > 1:
+                msg = '<div class="alert alert-success alert-dismissible fade show" role="alert">Arquivos <strong>' + msg[:-2] + '</strong> abertos com sucesso!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
+            elif sucesso == 1:
+                msg = '<div class="alert alert-success alert-dismissible fade show" role="alert">Arquivo <strong>' + msg[:-2] + '</strong> aberto com sucesso!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
+            elif falha:            
+                msg = '<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Atenção!</strong> Falha ao tentar abrir um ou mais dos arquivos selecionados!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
+
+    
     cat1 = executarConsultaGeral(musicas_dir, 'select * from categoria where supercategoria = 1 order by descricao')
     cat2 = executarConsultaGeral(musicas_dir, 'select * from categoria where supercategoria = 2 order by descricao')
     cat3 = executarConsultaGeral(musicas_dir, 'select * from categoria where supercategoria = 3 order by descricao')
@@ -317,6 +358,41 @@ def abrirNewMusica():
 
     return render_template('newMusicas.jinja', cat1=cat1, cat2=cat2, cat3=cat3, cat4=cat4, musicas=musicas, msg=msg)
 
+
+@app.route('/adm_musicas', methods=['GET', 'POST'])
+def acessarAreaADM():
+
+    msg = ""
+    novos_arquivos = []
+
+    if request.method == 'POST':
+        if 'senha' in request.form:
+            senha = hashlib.md5(request.form['senha'].encode())
+            if senha.hexdigest() == "f744deb599586656f42823afe88d744e":
+                msg="1"
+
+                # lista de categorias de vinculos
+                categoria = executarConsultaGeral(musicas_dir, 'select id, descricao from categoria')
+                status = executarConsultaGeral(musicas_dir, 'select id, descricao from vinculo')
+
+                # criar array da lista dos arquivos
+                list_files = []
+                for file in os.listdir(diretorio + r'\Músicas\Escuro'):
+                    list_files.append(file)
+
+                # criar array do banco de dados
+                list_db = executarConsultaGeralArray(musicas_dir, 'select nome_arquivo from listaMusicas order by nome_arquivo')
+                
+                # arquivos novos mas ausentes do banco de dados
+                novos_arquivos = list(set(list_files) - set(list_db)) 
+
+                return render_template('area_adm_musicas.jinja', msg=msg, novos_arquivos=novos_arquivos, categoria=categoria, status=status)
+                
+
+            else:
+                msg = '<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Senha incorreta!</strong> Acesso negado!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
+
+    return render_template('area_adm_musicas.jinja', msg=msg, novos_arquivos=novos_arquivos)
 
 @app.route('/old_musica', methods=['GET', 'POST'])
 def abrirslidemusica():

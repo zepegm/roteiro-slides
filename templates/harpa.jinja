@@ -76,32 +76,30 @@
   <div class="bg-light p-1 rounded">
     <h1 class="display-5 text-center">Abrir Slides Hinos da Harpa</h1>
     <p class="lead text-center">Digite o números dos hinos, os separando com um ";" ou pesquise pelo nome no campo abaixo:</p>
-    <p class="text-center {{ corstatus }}"><strong>{{ status }}</strong></p>
-    <form action="{{ url_for('abrirharpa') }}" method="post" autocomplete="off">
+    <p class="text-center">{{ status }}</p>
+    <form id="form-principal" action="{{ url_for('abrirharpa') }}" method="post" autocomplete="off">
       <div class="row g-3">
-          <div class="col-sm-2 col-sm-3">
+          <div class="col-sm-2">
             <label for="numero" class="form-label">Número do Hino:</label>
             <input type="text" class="form-control numeric" id="numero" name="numero" placeholder="" value="" onkeypress='return event.charCode >= 48 && event.charCode <= 57 || event.charCode == 59' required/>
+            <input type="hidden" name="modo_abertura" id="modo_abertura" value="abrir"/>
             <div class="invalid-feedback">
               Digite um número válido!
             </div>           
           </div>
-        <div class="col-sm-2 align-self-end" style="text-align : center">
+        <div class="col-sm-4 align-self-end" style="text-align : center">
           <label for="botao" class="form-label"></label>
           <input type="submit" class="btn btn-md btn-primary" id="abrirSlide" name="abrirSlide" value="Abrir Hino da Harpa">
+          <input type="submit" class="btn btn-md btn-success" id="importarSlide" name="importarSlide" value="Importar para o Roteiro">
         </div>
-        <div class="col-sm-2 align-self-end">
+        <div class="col-sm-3 align-self-end">
           {% if noturno == 1 %}
-            <input type="checkbox" class="form-check-input" id="noturno" name="noturno" value="1" checked/> 
+            <label><input type="checkbox" class="form-check-input align-self-center" id="noturno" name="noturno" value="1" checked/> Fundo Escuro</label>
           {% else %} 
-            <input type="checkbox" class="form-check-input" id="noturno" name="noturno" value="1"/>  
-          {% endif %}         
-          <label class="form-check-label" for="noturno">Modo Noturno</label>
-        </div>         
-        <div class="col-sm-2 align-self-end">      
-          <label for="limpar" class="form-label"></label>
+            <label><input type="checkbox" class="form-check-input align-self-center" id="noturno" name="noturno" value="1"/> Fundo Escuro</label>
+          {% endif %} 
           <input type="button" class="btn btn-md btn-secondary" id="limpar" name="limpar" value="Limpar Tudo">
-        </div>   
+        </div>            
         <div class="col-sm-2 col-sm-3">
           <label for="numero" class="form-label">Pesquisa:</label>
           <input type="text" class="form-control numeric" id="pesquisa" name="pesquisa" placeholder="" value=""/>
@@ -157,6 +155,12 @@
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
     <script type="text/javascript">
+
+      $("#form-principal").on('submit', function(e) {
+        if (e['originalEvent']['submitter']['id'] == "importarSlide") {
+          $('#modo_abertura').val('importar');
+        }        
+      });
 
       $('.list-group').change(function() {
         //let text = String($('input[name=checkHarpa]').val());

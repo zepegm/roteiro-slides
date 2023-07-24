@@ -354,9 +354,10 @@
         <div class="col-sm-6">
           <input id="btn-abrirSlide" class="btn btn-primary" type="submit" value="Abrir Slide(s)" disabled>
           <input id="btn-importarRoteiro" class="btn btn-success" type="submit" value="Importar para o Roteiro" disabled>
+          <button id="btn-areaADM" class="btn btn-danger">Área do ADM</button>
         </div>
         <div class="col-sm-2">
-          <label class="a8z-toggle-switch" for="example_colors_7" data-size="lg" data-style="rounded" data-color="gray" style="--a8z-ts-input-checked-content:'Modo Escuro'; --a8z-ts-input-unchecked-content: 'Modo Claro'; --a8z-ts-width: 150px;">
+          <label class="a8z-toggle-switch" for="example_colors_7" data-size="lg" data-style="rounded" data-color="gray" style="--a8z-ts-input-checked-content:'Fundo Escuro'; --a8z-ts-input-unchecked-content: 'Fundo Claro'; --a8z-ts-width: 150px;">
             <input checked name="modo_cor" type="checkbox" id="example_colors_7">
             <span class="toggle">
               <span class="switch"></span>
@@ -432,6 +433,12 @@
           }
 
           $('#form_openmusicas').on('submit', function (e) {
+
+            if (e['originalEvent']['submitter']['id'] == "btn-areaADM") {
+              e.preventDefault();
+              location.href = "{{ url_for('acessarAreaADM') }}";
+            }
+
             //e.preventDefault();
             if (e['originalEvent']['submitter']['id'] == "btn-importarRoteiro") {
               $('#modo-abertura').val('importar');
