@@ -32,6 +32,29 @@
         -moz-box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.05);
         box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.05)
       }
+
+      .box {
+        padding:10px;
+        background-color:#b2d6ff;
+        padding-bottom: 20px;
+      }
+
+      .blue {
+        background-color:#b2d6ff;
+      }   
+
+      .yellow {
+        background-color:#fffed8;
+      }   
+
+      .pink {
+        background-color:#ffe9ff;
+      }
+
+      .blood {
+        color:#800000;
+      }
+
     </style>
 
     
@@ -42,6 +65,61 @@
   
   <body style="background-color: rgba(248, 249, 250, 0.726);">
 
+    {% if msg != "" %}
+
+    <div class="modal fade" id="window-link-files" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Relacionar arquivos abaixo:</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            <div class="row">
+                <div class="col-sm-6">
+                    <label for="arquivo_diretorio" class="form-label fw-bold">Arquivos do diretório</label>
+                    <select id="arquivo_diretorio" id="arquivo_diretorio" class="form-select" aria-label="Default select example" required>
+                    {% for item in novos_arquivos %}
+                        <option value="{{item}}">{{item}}</option>
+                    {% endfor %}
+                    </select>  
+                </div>
+                <div class="col-sm-6">
+                    <label for="arquivo_banco" class="form-label fw-bold">Arquivos do banco</label>
+                    <select id="arquivo_banco" id="arquivo_banco" class="form-select" aria-label="Default select example" required>
+                    {% for item in arquivos_faltando %}
+                        <option value="{{item['id']}}">{{item['nome_arquivo']}}</option>
+                    {% endfor %}
+                    </select>  
+                </div>                
+            </div>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button id="btn-confirm-change" class="btn btn-success">Confirmar Alteração</button>
+            </div>
+            </div>
+        </div>
+    </div>    
+
+    <div class="modal fade" id="form_delete_db" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Atenção!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Você realmente deseja deletar?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Não</button>
+                <button id="btn-confirm-delete" type="button" class="btn btn-danger">Sim</button>
+            </div>
+            </div>
+        </div>
+    </div>
 
     <div class="modal fade" id="form_add_db" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg">
@@ -50,16 +128,18 @@
             <h1 class="modal-title fs-5" id="exampleModalLabel">Adicionar Arquivo ao Banco</h1>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          <form id="form_add_arquivo">
+          <form id="form_add_arquivo" action="{{ url_for('acessarAreaADM') }}", method="post">
+            <input type="hidden" name="senha" value = "120393"/>
+            <input type="hidden" id="nome_arquivo" name="nome_arquivo" value = ""/>
             <div class="modal-body">
               <div id="titulo_musica_addcoment" class="title" data-id="0"></div><br>
                 <div><span class="fw-bold">Título: </span><span id="titulo_arquivo"></span></div>
                 <div>&nbsp;</div>
 
-                <div class="row">
+                <div class="row box blue">
                     <div class="col-sm-8">
-                        <div class="fw-bold">Vínculo 1:</div>
-                        <select class="form-select" aria-label="Default select example">
+                        <div class="fw-bold">Vínculo 1 (Obrigatório):</div>
+                        <select class="form-select" aria-label="Default select example" name="vinc1" required>
                             {% for item in categoria %}
                                 <option value="{{item['id']}}">{{item['descricao']}}</option>
                             {% endfor %}
@@ -67,32 +147,92 @@
                     </div>
                     <div class="col-sm-4">
                         <div class="fw-bold">Status 1:</div>
-                        <select class="form-select" aria-label="Default select example">
+                        <select class="form-select" aria-label="Default select example" name="status1" required>
                             {% for item in status %}
                                 <option value="{{item['id']}}">{{item['descricao']}}</option>
                             {% endfor %}
                         </select>                    
                     </div>
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <div class="fw-bold">Descrição:</div>
-                        </div>
-                        <div class="col-sm-12">
-                            <textarea class="form-control" id="text_addcoment" rows="2" placeholder="Digite a descrição:" maxlength="200" required></textarea>
-                        </div>
+
+                    <div class="col-sm-12">
+                        <div class="fw-bold">Descrição:</div>
+                    </div>
+                    <div class="col-sm-12">
+                        <textarea name="desc1" class="form-control" id="desc_vinc1" rows="2" placeholder="Digite a descrição:" maxlength="200" required></textarea>
                     </div>
                 </div>
+
+                <hr>
+
+                <div class="row box yellow">
+
+                    <div class="col-sm-8">
+                        <div class="fw-bold">Vínculo 2:</div>
+                        <select id="add_vinc2" class="form-select vincopt" name="vinc2" aria-label="Default select example">
+                            <option value="0">-</option>
+                            {% for item in categoria %}
+                                <option value="{{item['id']}}">{{item['descricao']}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="fw-bold">Status 2:</div>
+                        <select class="form-select form-vinc2" aria-label="Default select example" name="status2" disabled>
+                            {% for item in status %}
+                                <option value="{{item['id']}}">{{item['descricao']}}</option>
+                            {% endfor %}
+                        </select>                    
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="fw-bold">Descrição:</div>
+                    </div>
+                    <div class="col-sm-12">
+                        <textarea name="desc2" class="form-control form-vinc2" id="desc_vinc2" rows="2" placeholder="Digite a descrição:" maxlength="200" disabled required></textarea>
+                    </div>                    
+
+                </div>      
+
+                <hr>
+
+                <div class="row box pink">
+
+                    <div class="col-sm-8">
+                        <div class="fw-bold">Vínculo 3:</div>
+                        <select id="add_vinc3" class="form-select vincopt" name="vinc3" aria-label="Default select example" disabled>
+                            <option value="0">-</option>
+                            {% for item in categoria %}
+                                <option value="{{item['id']}}">{{item['descricao']}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="fw-bold">Status 3:</div>
+                        <select name="status3" class="form-select form-vinc3" aria-label="Default select example" disabled>
+                            {% for item in status %}
+                                <option value="{{item['id']}}">{{item['descricao']}}</option>
+                            {% endfor %}
+                        </select>                    
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="fw-bold">Descrição:</div>
+                    </div>
+                    <div class="col-sm-12">
+                        <textarea name="desc3" class="form-control form-vinc3" id="desc_vinc3" rows="2" placeholder="Digite a descrição:" maxlength="200" disabled required></textarea>
+                    </div>                    
+
+                </div>                           
 
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-              <input type="submit" value="Salvar" class="btn btn-primary" data-bs-dismiss="modal"/>
+              <input type="submit" value="Salvar" class="btn btn-primary" />
             </div>
             <div class="erro_coment"></div>
           </form>
         </div>
       </div>
     </div>
+    {% endif %}
 
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
         <div class="container-fluid">
@@ -112,7 +252,7 @@
                 <a class="nav-link " href="../abrirharpa">Abrir Harpa</a>
                 </li>
                 <li class="nav-item">
-                <a class="nav-link active" aria-current="page"  href="#">Músicas</a>
+                <a class="nav-link active" aria-current="page"  href="../abrirslidemusica">Músicas</a>
                 </li>    
                 <li class="nav-item">
                 <a class="nav-link" href="../apresentador">Apresentador</a>
@@ -138,10 +278,10 @@
     </nav>
 
     <main class="container">
-        {% if msg == "" %}
-        <div class="row"><div class="col-sm-12">{{msg|safe}}</div></div>
+        {% if msg == "0" %}
+        <div class="row"><div class="col-sm-12">{{erro|safe}}</div></div>
         <div class="row rect">
-            <h1>Área do Administrador</h1>
+            <h1 class="blood">Área do Administrador</h1>
             <p>Atenção! Essa área é apenas para o Administrador modificar o banco de dados das músicas, se você entrou aqui por acidente por favor <a href="{{ url_for('abrirNewMusica') }}">clique aqui para voltar.</a></p>
             <div class="col-sm-4">
                 <form id="form_login" action="{{ url_for('acessarAreaADM') }}", method="post">
@@ -155,39 +295,253 @@
         </div>
         {% else %}
         <!-- aqui é o código quando o login for efetuado -->
-        <h1>Área do Administrador</h1>
-        <div class="row rect">
-            <div class="col-sm-12"><h4>Controle de inconsistências</h4></div>
-            {% if novos_arquivos|length > 0 %}
-            <div class="col-sm-4">
-                <p>Arquivos Ausentes no Banco</p>
-                <div id="lista_geral" class="list-group">
-                    {% for item in novos_arquivos %}
-                        <a href="#" class="list-group-item list-group-item-action list1">{{item}}</a>
-                    {% endfor %}
-                    <div>&nbsp;</div>
-                    <button id="add_db" class="btn btn-primary" disabled>Adicionar ao Banco</button>
+        <h1 class="blood">Área do Administrador</h1>
+            {% if novos_arquivos|length > 0 or arquivos_faltando|length > 0 %}
+            <div class="row rect">
+                <div class="col-sm-12"><h4>Controle de inconsistências</h4></div>
+                {% if novos_arquivos|length > 0 %}
+                <div class="col-sm-4">
+                    <p>Arquivos Ausentes no Banco</p>
+                    <div id="lista_geral" class="list-group">
+                        {% for item in novos_arquivos %}
+                            <a href="#" class="list-group-item list-group-item-action list1">{{item}}</a>
+                        {% endfor %}
+                        <div>&nbsp;</div>
+                        <button id="add_db" class="btn btn-primary" disabled>Adicionar ao Banco</button>
+                    </div>
                 </div>
-            </div>
+                {% endif %}
+
+                {% if arquivos_faltando|length > 0 %}
+                <div class="col-sm-4">
+                    <p>Arquivos Ausentes no Diretório</p>
+                    <form id="formExcluir" action="{{ url_for('acessarAreaADM') }}", method="post">
+                        <input type="hidden" name="senha" value = "120393"/>
+                        <input type="hidden" id="id_arquivo_delete" name="id_arquivo_delete" value = ""/>                
+                    </form>
+                    <div id="lista_geral" class="list-group">
+                        {% for item in arquivos_faltando %}
+                            <a href="#" class="list-group-item list-group-item-action list2" data-id="{{item['id']}}">{{item['nome_arquivo']}}</a>
+                        {% endfor %}
+                        <div>&nbsp;</div>
+                        <button id="delete_db" class="btn btn-danger" disabled>Deletar do Banco</button>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if arquivos_faltando|length == novos_arquivos|length and arquivos_faltando|length > 0 %}
+                <div class="col-sm-4 align-self-end">
+                    <p>Atenção! O número de arquivos ausentes no banco e no diretório são iguais, isso quer dizer que talvez um arquivo tenha sido renomeado.</p>
+                    <button id="btn-relacionar-arquivos" class="btn btn-success">Relacionar arquivos</button>
+                    <form id="formRenomear" action="{{ url_for('acessarAreaADM') }}", method="post">
+                        <input type="hidden" name="senha" value = "120393"/>
+                        <input type="hidden" id="id_arquivo_origem" name="id_arquivo_origem" value = ""/>                      
+                        <input type="hidden" id="novo_nome" name="novo_nome" value = ""/> 
+                    </form>
+                </div>
+                {% endif %}
+
+            </div>        
             {% endif %}
-        </div>        
+
+            <div class="row rect">
+                <div class="col-sm-6">
+                    <h2>Lista Geral</h2>
+                    <div id="lista_geral" class="list-group">
+                    {% for item in list_db %}
+                        <a href="#" class="list-group-item list-group-item-action ls-principal" data-id="{{item['id']}}" data-vincforte="{{item['vinc_forte']}}" data-vincfraco="{{item['vinc_fraco']}}">
+                        {{item['nome_arquivo'][:-5]}}
+                        </a>
+                    {% endfor %}
+                    </div>
+                </div>       
+                <div class="col-sm-6">
+                    <h2>Dados:</h2>
+                    <label for="txt_nome_arquivo" class="form-label fw-bold">Nome do Arquivo:</label>
+                    <input type="text" class="form-control" id="txt_nome_arquivo" name="txt_nome_arquivo" placeholder="" value="" disabled required />
+
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <label for="cbVinculo1" class="form-label fw-bold">Vínculo 1:</label>
+                            <select id="cbVinculo1" class="form-select" aria-label="Default select example" name="cbVinculo1" disabled required>
+                                {% for item in categoria %}
+                                    <option value="{{item['id']}}">{{item['descricao']}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <label for="cbStatus1" class="form-label fw-bold">Status 1:</label>
+                            <select class="form-select" id="cbStatus1" aria-label="Default select example" name="cbStatus1" disabled required>
+                                {% for item in status %}
+                                    <option value="{{item['id']}}">{{item['descricao']}}</option>
+                                {% endfor %}
+                            </select>                     
+                        </div>
+
+                        <div class="col-sm-12">
+                            <label for="txtDesc1" class="fw-bold">Descrição 1:</label>
+                            <textarea name="txtDesc1" class="form-control" id="txtDesc1" rows="4" placeholder="Digite a descrição:" maxlength="200" disabled required></textarea>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                   <div class="row">
+                        <div class="col-sm-6">
+                            <label for="cbVinculo2" class="form-label fw-bold">Vínculo 2:</label>
+                            <select id="cbVinculo2" class="form-select" aria-label="Default select example" name="cbVinculo2" disabled required>
+                                {% for item in categoria %}
+                                    <option value="{{item['id']}}">{{item['descricao']}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <label for="cbStatus2" class="form-label fw-bold">Status 2:</label>
+                            <select class="form-select" id="cbStatus2" aria-label="Default select example" name="cbStatus2" disabled required>
+                                {% for item in status %}
+                                    <option value="{{item['id']}}">{{item['descricao']}}</option>
+                                {% endfor %}
+                            </select>                     
+                        </div>
+
+                        <div class="col-sm-12">
+                            <label for="txtDesc2" class="fw-bold">Descrição 2:</label>
+                            <textarea name="txtDesc2" class="form-control" id="txtDesc2" rows="4" placeholder="Digite a descrição:" maxlength="200" disabled required></textarea>
+                        </div>
+                    </div>                    
+
+                    <hr>                     
+                    
+                   <div class="row">
+                        <div class="col-sm-6">
+                            <label for="cbVinculo3" class="form-label fw-bold">Vínculo 3:</label>
+                            <select id="cbVinculo3" class="form-select" aria-label="Default select example" name="cbVinculo3" disabled required>
+                                {% for item in categoria %}
+                                    <option value="{{item['id']}}">{{item['descricao']}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <label for="cbStatus3" class="form-label fw-bold">Status 3:</label>
+                            <select class="form-select" id="cbStatus3" aria-label="Default select example" name="cbStatus3" disabled required>
+                                {% for item in status %}
+                                    <option value="{{item['id']}}">{{item['descricao']}}</option>
+                                {% endfor %}
+                            </select>                     
+                        </div>
+
+                        <div class="col-sm-12">
+                            <label for="txtDesc3" class="fw-bold">Descrição 3:</label>
+                            <textarea name="txtDesc3" class="form-control" id="txtDesc3" rows="4" placeholder="Digite a descrição:" maxlength="200" disabled required></textarea>
+                        </div>
+                    </div> 
+
+                </div>                      
+            </div>
+
         {% endif %}
     </main>
 
     <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script> 
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    {% if msg != "" %}
     <script>
+
+        if ( window.history.replaceState ) {
+            window.history.replaceState(null, null, window.location.href);
+        }
+
+        $(".ls-principal").on('click', function (e) {
+            $(".ls-principal").removeClass('active');
+            $(this).addClass('active');
+
+            var id = $(this).attr('data-id');
+
+            $.ajax({
+                type: "POST",
+                url: "{{ url_for('getInfoMusicaBruto') }}",
+                contentType: "application/json",
+                data: JSON.stringify(id),
+                dataType: "json",
+                success: function(response) {
+                    $("#txt_nome_arquivo").val(response[1]);
+                    $("#txt_nome_arquivo").removeAttr("disabled", "");
+                },
+                error: function(err) {
+                  console.log(err);
+                }           
+            });
+        });
+
+        $("#btn-confirm-change").on('click', function (e) {
+            $("#id_arquivo_origem").val($("#arquivo_banco").val());
+            $("#novo_nome").val($("#arquivo_diretorio").val());
+            $("#formRenomear").submit();
+        });
+
+        $("#btn-relacionar-arquivos").on('click', function (e) {
+            $("#window-link-files").modal('show');
+        });
+
+        $("#btn-confirm-delete").on('click', function(e) {
+            $("#formExcluir").submit();
+        });
+
+        $("#delete_db").on('click', function(e) {
+            $("#form_delete_db").modal('show');
+        });
+
+        $('.vincopt').on('change', function (e) {
+            value = $(this).val();
+            number = $(this).attr('id').slice(-1);
+            
+            if ($(this).attr('id') == "add_vinc2" && value != 0) {
+                $("#add_vinc3").removeAttr('disabled');
+            } else if($(this).attr('id') == "add_vinc2" && value == 0) {
+                $("#add_vinc3").attr('disabled', '');
+                $("#desc_vinc3").val("");
+                $("#add_vinc3").val("0");
+                $('.form-vinc3').attr('disabled', '');                
+            }
+
+            if (value != 0) {
+                $('.form-vinc' + number).removeAttr('disabled');
+            } else {
+                $("#desc_vinc" + number).val("");
+                $('.form-vinc' + number).attr('disabled', '');
+            }
+            
+        });
 
         $('.list1').on('click', function (e) {
             $('.list1').removeClass('active');
             $(this).addClass('active');
             $("#add_db").removeAttr('disabled');
             $("#titulo_arquivo").text($(this).text());
+            $("#nome_arquivo").val($(this).text());
+
+            $('.list2').removeClass('active');
+            $("#delete_db").attr('disabled', '');
         });
+
+        $('.list2').on('click', function (e) {
+            $('.list2').removeClass('active');
+            $(this).addClass('active');
+            $("#delete_db").removeAttr('disabled');
+            $("#id_arquivo_delete").val(($(this).attr('data-id')));
+            $('.list1').removeClass('active');
+            $("#add_db").attr('disabled', '');
+        });        
 
         $("#add_db").on('click', function(e) {
             $('#form_add_db').modal('show');
         });
 
     </script>
+    {% endif %}
 </body>

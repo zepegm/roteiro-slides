@@ -8,7 +8,7 @@ from io import StringIO
 #from unittest import result
 #from PDF import verificarHash
 from powerpoint import ppt, pegarSlidesAbertos, pegarSlideShow, pegarIndexSlideshow, avancarIndexSlideShow, pegarTextoSlideShow, verificarCalendario, encerrarTodasApresentacoes, pegarNomeSlideShow
-from consultaAcess import executarConsultaBibliaFormat, executarConsulta, executarConsultaLista, inserirListaRoteiro, executarConsultaGeral, alterarConfig, alterarConfigViewBiblia, consultarHarpaBD, alterarConfigViewMusica, inserirDadosBasico, consultarListaFiltrada, executarConsultaGeralArray
+from consultaAcess import executarConsultaBibliaFormat, executarConsulta, executarConsultaLista, inserirListaRoteiro, executarConsultaGeral, alterarConfig, alterarConfigViewBiblia, consultarHarpaBD, alterarConfigViewMusica, inserirDadosBasico, consultarListaFiltrada, executarConsultaGeralArray, inserirMusicaNova
 from flask import Flask, render_template, request, redirect, url_for, jsonify, send_file, Response
 from waitress import serve
 from math import ceil
@@ -362,10 +362,38 @@ def abrirNewMusica():
 @app.route('/adm_musicas', methods=['GET', 'POST'])
 def acessarAreaADM():
 
-    msg = ""
+    msg = "0"
+    erro = ""
     novos_arquivos = []
+    arquivos_faltando = []
 
     if request.method == 'POST':
+
+        # evento provocado ao inserir novo arquivo no banco
+        if 'vinc1' in request.form:
+            new_file = {'nome_arquivo':request.form['nome_arquivo'], 'vinculo_1':request.form['vinc1'], 'status_1':request.form['status1'], 'desc_1':request.form['desc1']}
+            
+            #print (request.form['vinc2'])
+
+            if int(request.form['vinc2']) != 0:
+                new_file.update({'vinculo_2':request.form['vinc2'], 'status_2':request.form['status2'], 'desc_2':request.form['desc2']})
+
+                if int(request.form['vinc3']) != 0:
+                    new_file.update({'vinculo_3':request.form['vinc3'], 'status_3':request.form['status3'], 'desc_3':request.form['desc3']})
+
+            inserirMusicaNova(musicas_dir, new_file)
+
+        # evento provocado ao excluir um arquivo do banco
+        if 'id_arquivo_delete' in request.form:
+            sql = "DELETE FROM listaMusicas where id = %s" % request.form['id_arquivo_delete']
+            inserirDadosBasico(musicas_dir, sql)
+
+
+        # evento provocado ao vincular um arquivo do banco com um do diretório
+        if 'novo_nome' in request.form:
+            sql = "UPDATE listaMusicas set nome_arquivo = '%s' WHERE id = %s" % (request.form['novo_nome'], request.form['id_arquivo_origem'])
+            inserirDadosBasico(musicas_dir, sql)
+
         if 'senha' in request.form:
             senha = hashlib.md5(request.form['senha'].encode())
             if senha.hexdigest() == "f744deb599586656f42823afe88d744e":
@@ -381,18 +409,26 @@ def acessarAreaADM():
                     list_files.append(file)
 
                 # criar array do banco de dados
-                list_db = executarConsultaGeralArray(musicas_dir, 'select nome_arquivo from listaMusicas order by nome_arquivo')
-                
-                # arquivos novos mas ausentes do banco de dados
-                novos_arquivos = list(set(list_files) - set(list_db)) 
+                list_db = executarConsultaGeral(musicas_dir, 'select id, nome_arquivo from listaMusicas order by id')
+                list_db_simple = executarConsultaGeralArray(musicas_dir, 'select nome_arquivo from listaMusicas order by nome_arquivo')
 
-                return render_template('area_adm_musicas.jinja', msg=msg, novos_arquivos=novos_arquivos, categoria=categoria, status=status)
+                # arquivos novos mas ausentes do banco de dados
+                novos_arquivos = list(set(list_files) - set(list_db_simple)) 
+
+                for i in list_db:
+                    if i['nome_arquivo'] not in list_files:
+                        arquivos_faltando.append(i)
+
+                
+                list_db.sort(key=lambda t: (locale.strxfrm(t['nome_arquivo'])))
+
+                return render_template('area_adm_musicas.jinja', msg=msg, erro=erro, novos_arquivos=novos_arquivos, arquivos_faltando=arquivos_faltando, categoria=categoria, status=status, list_db=list_db)
                 
 
             else:
-                msg = '<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Senha incorreta!</strong> Acesso negado!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
+                erro = '<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Senha incorreta!</strong> Acesso negado!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
 
-    return render_template('area_adm_musicas.jinja', msg=msg, novos_arquivos=novos_arquivos)
+    return render_template('area_adm_musicas.jinja', msg=msg, erro=erro, novos_arquivos=novos_arquivos)
 
 @app.route('/old_musica', methods=['GET', 'POST'])
 def abrirslidemusica():
@@ -521,6 +557,19 @@ def addComent():
                 return jsonify(True)
             except:
                 return jsonify(False)   
+
+@app.route('/getInfoMusicaBruto', methods=['GET', 'POST'])
+def getInfoMusicaBruto():
+    if request.method == 'POST':
+        #print('got a post request!')
+
+        if request.is_json: # application/json
+            # handle your ajax request here!
+            id = request.json
+
+            info = executarConsulta(musicas_dir, 'select * from listaMusicas where id = ' + id)
+            return jsonify(info)
+
 
 @app.route('/getInfoMusica', methods=['GET', 'POST'])
 def getInfoMusica():

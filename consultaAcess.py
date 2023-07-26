@@ -54,6 +54,27 @@ def inserirListaRoteiro(banco, lista):
 
     conn.commit()
 
+def inserirMusicaNova(banco, lista):
+    cols = ""
+    vals = ""
+    for key in lista:
+        cols += r"`" + key + r"`, "
+        if key[0:4] == "desc" or key[0:4] == "nome":
+            vals += "'" + lista[key] + "', "
+        else:
+            vals += lista[key] + ", "
+
+    cols = cols[:-2]
+    vals = vals[:-2]
+    
+    sql = "INSERT INTO listaMusicas(%s) VALUES(%s)" % (cols, vals)
+
+    conn = sqlite3.connect(banco)
+    cursor = conn.cursor()
+    cursor.execute(sql)
+    conn.commit()
+    
+
 def executarConsultaLista(banco):
     conn = sqlite3.connect(banco)
     conn.row_factory = sqlite3.Row
