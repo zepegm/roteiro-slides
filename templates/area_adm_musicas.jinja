@@ -17,6 +17,9 @@
     
     <!-- Extra CSS -->
     <link href="{{ url_for('static', filename='stylesheets/toggle-switch.css') }}" rel="stylesheet">  
+    <link href="{{ url_for('static', filename='font-awesome/css/fontawesome.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='font-awesome/css/brands.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='font-awesome/css/solid.css') }}" rel="stylesheet">
 
     <style>
       .rect {
@@ -55,17 +58,47 @@
         color:#800000;
       }
 
+       #lista_geral a.toggled { display: none; }
+
     </style>
 
     
     <!-- Custom styles for this template -->
-    <link href="{{ url_for('static', filename='stylesheets/navbar-top-fixed.css') }}" rel="stylesheet">   
+    <link href="{{ url_for('static', filename='stylesheets/navbar-top-fixed.css') }}" rel="stylesheet">
     <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/Logo Colorido.png') }}">
   </head>
   
   <body style="background-color: rgba(248, 249, 250, 0.726);">
 
-    {% if msg != "" %}
+    {% if msg != "0" %}
+
+    <div class="modal fade" id="form_moderate_coments" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Moderação de Comentários</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table" id="tabela-comentarios">
+                    <thead class="table-dark">
+                        <tr>
+                            <th scope="col">Usuário</th>
+                            <th scope="col">Data</th>
+                            <th scope="col">Hora</th>
+                            <th scope="col">Comentário</th>
+                            <th scope="col">Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+            </div>
+        </div>
+    </div>
 
     <div class="modal fade" id="window-link-files" tabindex="-1">
         <div class="modal-dialog modal-lg">
@@ -285,7 +318,7 @@
             <p>Atenção! Essa área é apenas para o Administrador modificar o banco de dados das músicas, se você entrou aqui por acidente por favor <a href="{{ url_for('abrirNewMusica') }}">clique aqui para voltar.</a></p>
             <div class="col-sm-4">
                 <form id="form_login" action="{{ url_for('acessarAreaADM') }}", method="post">
-                <label for="pesquisa" class="form-label">Digite a senha:</label>
+                <label for="senha" class="form-label">Digite a senha:</label>
                 <input type="password" class="form-control numeric" id="senha" name="senha" placeholder="" value=""/>
             </div>
             <div class="col-sm-8 align-self-end">
@@ -302,7 +335,7 @@
                 {% if novos_arquivos|length > 0 %}
                 <div class="col-sm-4">
                     <p>Arquivos Ausentes no Banco</p>
-                    <div id="lista_geral" class="list-group">
+                    <div id="lista_geral_ausentes_db" class="list-group">
                         {% for item in novos_arquivos %}
                             <a href="#" class="list-group-item list-group-item-action list1">{{item}}</a>
                         {% endfor %}
@@ -319,7 +352,7 @@
                         <input type="hidden" name="senha" value = "120393"/>
                         <input type="hidden" id="id_arquivo_delete" name="id_arquivo_delete" value = ""/>                
                     </form>
-                    <div id="lista_geral" class="list-group">
+                    <div id="lista_geral_ausentes_dir" class="list-group">
                         {% for item in arquivos_faltando %}
                             <a href="#" class="list-group-item list-group-item-action list2" data-id="{{item['id']}}">{{item['nome_arquivo']}}</a>
                         {% endfor %}
@@ -347,9 +380,17 @@
             <div class="row rect">
                 <div class="col-sm-6">
                     <h2>Lista Geral</h2>
+
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="pesquisa" placeholder="name@example.com">
+                        <label for="pesquisa">Pesquisa</label>
+                    </div>
+
+                    <div>&nbsp;</div>
+
                     <div id="lista_geral" class="list-group">
                     {% for item in list_db %}
-                        <a href="#" class="list-group-item list-group-item-action ls-principal" data-id="{{item['id']}}" data-vincforte="{{item['vinc_forte']}}" data-vincfraco="{{item['vinc_fraco']}}">
+                        <a href="#" class="list-group-item list-group-item-action ls-principal" data-id="{{item['id']}}">
                         {{item['nome_arquivo'][:-5]}}
                         </a>
                     {% endfor %}
@@ -361,7 +402,7 @@
                     <input type="text" class="form-control" id="txt_nome_arquivo" name="txt_nome_arquivo" placeholder="" value="" disabled required />
 
                     <hr>
-
+                    <input type="hidden" id="hidden_id" value="0" />
                     <div class="row">
                         <div class="col-sm-6">
                             <label for="cbVinculo1" class="form-label fw-bold">Vínculo 1:</label>
@@ -392,7 +433,8 @@
                    <div class="row">
                         <div class="col-sm-6">
                             <label for="cbVinculo2" class="form-label fw-bold">Vínculo 2:</label>
-                            <select id="cbVinculo2" class="form-select" aria-label="Default select example" name="cbVinculo2" disabled required>
+                            <select id="cbVinculo2" class="form-select vincoptedit" aria-label="Default select example" name="cbVinculo2" disabled required>
+                                <option value="0">-</option>
                                 {% for item in categoria %}
                                     <option value="{{item['id']}}">{{item['descricao']}}</option>
                                 {% endfor %}
@@ -419,7 +461,8 @@
                    <div class="row">
                         <div class="col-sm-6">
                             <label for="cbVinculo3" class="form-label fw-bold">Vínculo 3:</label>
-                            <select id="cbVinculo3" class="form-select" aria-label="Default select example" name="cbVinculo3" disabled required>
+                            <select id="cbVinculo3" class="form-select vincoptedit" aria-label="Default select example" name="cbVinculo3" disabled required>
+                                <option value="0">-</option>
                                 {% for item in categoria %}
                                     <option value="{{item['id']}}">{{item['descricao']}}</option>
                                 {% endfor %}
@@ -441,6 +484,19 @@
                         </div>
                     </div> 
 
+                    <div class="row">
+                        <div class="col-sm-12">&nbsp;</div>
+                        <div class="col-sm-12">
+                            <button id="btn_salvar_alteracoes" class="btn btn-primary" disabled>Salvar Alterações</button>
+                            <button id="btn_abrir_comentarios" class="btn btn-warning" disabled>Abrir Comentários</button>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-12">&nbsp;</div>
+                        <div id="feedback" class="col-sm-12"></div>
+                    </div>
+
                 </div>                      
             </div>
 
@@ -449,18 +505,146 @@
 
     <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script> 
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
-    {% if msg != "" %}
+    {% if msg != "0" %}
     <script>
 
         if ( window.history.replaceState ) {
             window.history.replaceState(null, null, window.location.href);
         }
 
+        $(document).on('click', '.button-delete-coment', function(e) {
+            dict = {};
+            dict['user'] = $(this).attr('data-user');
+            dict['data'] = $(this).attr('data-fulldate');
+
+            var element = $(this).parent().parent();
+
+            $.ajax({
+                type: "POST",
+                url: "{{ url_for('deleteComent') }}",
+                contentType: "application/json",
+                data: JSON.stringify(dict),
+                dataType: "json",
+                success: function(response) {
+                    if (response) {
+                        element.remove();
+                    }
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });             
+        });
+
+        $("#btn_abrir_comentarios").on('click', function(e) {
+            // primeiro irei consultar a lista de comentários por ordem decrescente
+            var id = $("#hidden_id").val();
+                $.ajax({
+                type: "POST",
+                url: "{{ url_for('getAllComents') }}",
+                contentType: "application/json",
+                data: JSON.stringify(id),
+                dataType: "json",
+                success: function(response) {
+                    $("#tabela-comentarios tbody").empty();
+                    for (var item in response) {
+                        $("#tabela-comentarios tbody").append('<tr><th scope="row">' + response[item]['user'] + '</th><td>' + response[item]['dia'] + '</td><td>' + response[item]['hora'] + '</td><td>' + response[item]['comentario'] +'</td><td><button data-user="' + response[item]['user'] + '" data-fulldate="' + response[item]['data'] + '" class="btn button-delete-coment"><i class="fa-solid fa-trash"></i></button></td></tr>');
+                    }
+                    //tabela-comentarios
+                    $("#form_moderate_coments").modal('show');
+
+                },
+                error: function(err) {
+                    console.log(err);
+                }
+            });             
+        });
+
+        $('#pesquisa').on('keyup', function (e) {
+            var value = $(this).val().toLowerCase();
+            $(".ls-principal").toggleClass('toggled', true);
+            $(".ls-principal").filter(function() {
+                if ($(this).text().toLowerCase().indexOf(value) > -1) {
+                $(this).removeClass('toggled');
+                }
+                //console.log($(this).find("label").find("input").data("pasta"))
+            });
+        });
+
+        $("#btn_salvar_alteracoes").on('click', function(e) {
+            var dict = {};
+
+            dict['id'] = $("#hidden_id").val();
+            dict['nome_arquivo'] = "'" + $("#txt_nome_arquivo").val() + "'";
+
+            dict['vinculo_1'] = $("#cbVinculo1").val();
+            dict['status_1'] = $("#cbStatus1").val();
+            dict['desc_1'] = "'" + $("#txtDesc1").val() + "'";
+
+            if ($("#cbVinculo2").val() != 0) {
+                dict['vinculo_2'] = $("#cbVinculo2").val();
+                dict['status_2'] = $("#cbStatus2").val();
+                dict['desc_2'] = "'" + $("#txtDesc2").val() + "'";
+            } else {
+                dict['vinculo_2'] = 'null';
+                dict['status_2'] = 'null';
+                dict['desc_2'] = 'null';               
+            }
+
+            if ($("#cbVinculo3").val() != 0) {
+                dict['vinculo_3'] = $("#cbVinculo3").val();
+                dict['status_3'] = $("#cbStatus3").val();
+                dict['desc_3'] = "'" + $("#txtDesc3").val() + "'";
+            } else {
+                dict['vinculo_3'] = 'null';
+                dict['status_3'] = 'null';
+                dict['desc_3'] = 'null';               
+            }            
+
+              $.ajax({
+                type: "POST",
+                url: "{{ url_for('editMusic') }}",
+                contentType: "application/json",
+                data: JSON.stringify(dict),
+                dataType: "json",
+                success: function(response) {
+                  $("#feedback").append(response);
+                  if ($("#alert-feedback").attr('class').indexOf('alert-success') > -1) {
+                    console.log($('.ls-principal .active').text());
+                    $('.ls-principal.active').text($("#txt_nome_arquivo").val().slice(0, -5));
+                  }
+                },
+                error: function(err) {
+                  console.log(err);
+                }
+              });
+        });
+
+        $('.vincoptedit').on('change', function (e) {
+            value = $(this).val();
+            number = $(this).attr('id').slice(-1);
+
+            if (value != 0) {
+                $('#cbStatus' + number).removeAttr('disabled');
+                $('#txtDesc' + number).removeAttr('disabled');
+            } else {
+                $('#cbStatus' + number).val('1');
+                $('#cbStatus' + number).attr('disabled', '');
+                $('#txtDesc' + number).val('');
+                $('#txtDesc' + number).attr('disabled', '');
+            }
+            
+        });
+
         $(".ls-principal").on('click', function (e) {
             $(".ls-principal").removeClass('active');
+            $("#btn_salvar_alteracoes").removeAttr('disabled');
+            $("#btn_abrir_comentarios").removeAttr('disabled');
+
             $(this).addClass('active');
 
             var id = $(this).attr('data-id');
+            $('#hidden_id').val(id);
 
             $.ajax({
                 type: "POST",
@@ -469,8 +653,54 @@
                 data: JSON.stringify(id),
                 dataType: "json",
                 success: function(response) {
+                    //console.log(response);
                     $("#txt_nome_arquivo").val(response[1]);
                     $("#txt_nome_arquivo").removeAttr("disabled", "");
+
+                    $("#cbVinculo1").val(response[2]);
+                    $("#cbVinculo1").removeAttr("disabled");
+
+                    $("#cbStatus1").val(response[3]);
+                    $("#cbStatus1").removeAttr("disabled");
+
+                    $("#txtDesc1").val(response[4]);
+                    $("#txtDesc1").removeAttr("disabled");
+
+                    if (response[5] != null) {
+                        $("#cbVinculo2").val(response[5]);
+                        $("#cbVinculo2").removeAttr("disabled");
+
+                        $("#cbStatus2").val(response[6]);
+                        $("#cbStatus2").removeAttr("disabled");
+
+                        $("#txtDesc2").val(response[7]);
+                        $("#txtDesc2").removeAttr("disabled");
+                    } else {
+                        $("#cbVinculo2").val(0);
+                        $("#cbVinculo2").removeAttr("disabled");
+                        $("#cbStatus2").val(1);
+                        $("#cbStatus2").attr("disabled", "");                        
+                        $("#txtDesc2").val("");
+                        $("#txtDesc2").attr("disabled", "");
+                    }
+
+                    if (response[8] != null) {
+                        $("#cbVinculo3").val(response[8]);
+                        $("#cbVinculo3").removeAttr("disabled");
+
+                        $("#cbStatus3").val(response[9]);
+                        $("#cbStatus3").removeAttr("disabled");
+
+                        $("#txtDesc3").val(response[10]);
+                        $("#txtDesc3").removeAttr("disabled");
+                    } else {
+                        $("#cbVinculo3").val(0);
+                        $("#cbVinculo3").removeAttr("disabled");
+                        $("#cbStatus3").val(1);
+                        $("#cbStatus3").attr("disabled", "");                        
+                        $("#txtDesc3").val("");
+                        $("#txtDesc3").attr("disabled", "");
+                    }                    
                 },
                 error: function(err) {
                   console.log(err);

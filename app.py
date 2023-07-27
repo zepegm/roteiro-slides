@@ -193,12 +193,14 @@ def abrirbiblia():
             consultaBD = executarConsultaBibliaFormat('BibliaFormat.db', livro, capitulo)
             # registrar no log
             inserirDadosBasico(historico, "insert into log values (datetime('now', 'localtime'), '" + livro + ' - ' + '{0:03}'.format(int(capitulo)) + ".pptx', 1, " + eNoturno(noturno) + ", '" + livro + ', cap. ' + capitulo + " - " + versao + "', 1)")
-            return render_template('biblia.jinja', status='Arquivo aberto com sucesso!', corstatus='text-primary', livro=request.form['livro'], capitulo=capitulo, versao=versao, noturno=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Noturno'")[0], rapido=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Rapido'")[0], versiculo=versiculo, sucesso='ok', consultaBD=consultaBD)
+            status = '<div class="alert alert-success alert-dismissible fade show" role="alert">Arquivo aberto com <strong>sucesso!</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
+            return render_template('biblia.jinja', status=status, livro=request.form['livro'], capitulo=capitulo, versao=versao, noturno=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Noturno'")[0], rapido=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Rapido'")[0], versiculo=versiculo, sucesso='ok', consultaBD=consultaBD)
 
         else:
             # registrar no log
             inserirDadosBasico(historico, "insert into log values (datetime('now', 'localtime'), '" + livro + ' - ' + '{0:03}'.format(int(capitulo)) + ".pptx', 1, " + eNoturno(noturno) + ", '" + livro + ', cap. ' + capitulo + " - " + versao + "', 2)")
-            return render_template('biblia.jinja', status='Esse capítulo não existe!', corstatus='text-danger', livro=request.form['livro'], capitulo=capitulo, versao=versao, noturno=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Noturno'")[0], rapido=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Rapido'")[0], versiculo=versiculo, sucesso='', consultaBD='')
+            status = '<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Atenção!</strong> Esse capítulo não existe ou você tentou abrir um slide da <strong>ARA</strong> que está incompleta.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
+            return render_template('biblia.jinja', status=status, livro=request.form['livro'], capitulo=capitulo, versao=versao, noturno=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Noturno'")[0], rapido=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Rapido'")[0], versiculo=versiculo, sucesso='', consultaBD='')
 
     return render_template('biblia.jinja', status='', corstatus='', livro='', capitulo='', versao='', noturno=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Noturno'")[0], rapido=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Rapido'")[0], versiculo='', sucesso='', consultaBD='')
     
@@ -388,6 +390,9 @@ def acessarAreaADM():
             sql = "DELETE FROM listaMusicas where id = %s" % request.form['id_arquivo_delete']
             inserirDadosBasico(musicas_dir, sql)
 
+            sql = "DELETE FROM comentarios where id_musica = %s" % request.form['id_arquivo_delete']
+            inserirDadosBasico(musicas_dir, sql)
+
 
         # evento provocado ao vincular um arquivo do banco com um do diretório
         if 'novo_nome' in request.form:
@@ -542,6 +547,47 @@ def proxPRS():
     encerrarTodasApresentacoes()
     return redirect(url_for('index'))
 
+@app.route('/editMusic', methods=['GET', 'POST'])
+def editMusic():
+    if request.method == 'POST':
+        if request.is_json: # application/json
+            info = request.json
+            
+            try:
+                # primeiro haverá a tentativa de trocar o nome original
+                nome_original =  executarConsulta(musicas_dir, 'select nome_arquivo from listaMusicas where id = ' + info['id'])[0]
+                
+                if nome_original != info['nome_arquivo'][1:-1]:
+                    # executar renomeação
+                    dir_original = diretorio + "\\Músicas\\Escuro\\%s" % nome_original
+                    new_name = diretorio + "\\Músicas\\Escuro\\%s" % info['nome_arquivo'][1:-1]
+
+                    if os.path.exists(dir_original):
+                        os.rename(dir_original, new_name)
+
+                    dir_original = diretorio + "\\Músicas\\Claro\\%s" % nome_original
+                    new_name = diretorio + "\\Músicas\\Claro\\%s" % info['nome_arquivo'][1:-1]
+                    
+                    if os.path.exists(dir_original):
+                        os.rename(dir_original, new_name)
+
+
+                # agora haverá a inserção no banco de dados
+                sql = "UPDATE listaMusicas SET "
+                for item in info:
+                    if (item != "id"):
+                        sql += item + "=" + info[item] + ", "
+
+                sql = sql[:-2] + " WHERE id = " + info['id']
+
+                inserirDadosBasico(musicas_dir, sql)
+
+                msg_final = '<div id="alert-feedback" class="alert alert-success alert-dismissible fade show" role="alert"><strong>Alterações efetuadas com sucesso!</strong></a><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
+            except:
+                msg_final = '<div id="alert-feedback" class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Atenção!</strong> Erro ao tentar processar a alteração dos dados, verifique se o arquivo precisa se renomeado e se encontra aberto!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
+
+            return jsonify(msg_final)
+
 @app.route('/addComent', methods=['GET', 'POST'])
 def addComent():
     if request.method == 'POST':
@@ -557,6 +603,29 @@ def addComent():
                 return jsonify(True)
             except:
                 return jsonify(False)   
+
+@app.route('/getAllComents', methods=['GET', 'POST'])
+def getAllComents():
+    if request.method == 'POST':
+        if request.is_json: # application/json    
+            id = request.json
+            
+            comentarios = executarConsultaGeral(musicas_dir, 'select user, comentario, substring(data, 9, 2) || "/" || substring(data, 6, 2) || "/" || substring(data, 1, 4) as dia, substring(data, 11, 6) as hora, data from comentarios where id_musica = ' + id + ' order by datetime(data) desc')
+
+            return jsonify(comentarios)
+
+@app.route('/deleteComent', methods=['GET', 'POST'])
+def deleteComent():
+    if request.method == 'POST':
+        if request.is_json: # application/json
+            info = request.json
+            sql = "DELETE FROM comentarios WHERE user = '%s' AND data = '%s'" % (info['user'], info['data'])
+            try:
+                inserirDadosBasico(musicas_dir, sql)
+                return jsonify(True)
+            except:
+                return jsonify(False)
+
 
 @app.route('/getInfoMusicaBruto', methods=['GET', 'POST'])
 def getInfoMusicaBruto():

@@ -97,7 +97,7 @@
   <div class="bg-light p-1 rounded">
     <h1 class="display-5 text-center">Abrir Slides Bíblia</h1>
     <p class="lead text-center">Escolha o livro, digite o capítulo, é possível visualizar o texto na parte de baixo.</p>
-    <p class="text-center {{ corstatus }}"><strong>{{ status }}</strong></p>
+    <p class="text-center">{{ status|safe }}</p>
     <form action="{{ url_for('abrirbiblia') }}" method="post" autocomplete="off">
       <div class="row g-3">
           <div class="col-sm-2">

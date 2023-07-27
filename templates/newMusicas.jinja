@@ -618,12 +618,12 @@
                   if (response['info'][3] != null) {
                       $("#infos").append('<div class="blank_space">&nbsp;</div>')
                       $("#infos").append('<div class="' + response['info'][4] + '"><div><strong>Vínculo 2: </strong>' + response['info'][3] + ' - ' + response['info'][11] + '</div><div><strong>Status: </strong>' + response['info'][4] + '</div><div class="text">' + response['info'][5] + '</div></div>')
-                  
-                      if (response['info'][6] != null) {
-                        $("#infos").append('<div class="blank_space">&nbsp;</div>')
-                        $("#infos").append('<div class="' + response['info'][7] + '"><div><strong>Vínculo 3: </strong>' + response['info'][6] + ' - ' + response['info'][12] + '</div><div><strong>Status: </strong>' + response['info'][7] + '</div><div class="text">' + response['info'][8] + '</div></div>')                        
-                      }
                   }
+
+                  if (response['info'][6] != null) {
+                    $("#infos").append('<div class="blank_space">&nbsp;</div>')
+                    $("#infos").append('<div class="' + response['info'][7] + '"><div><strong>Vínculo 3: </strong>' + response['info'][6] + ' - ' + response['info'][12] + '</div><div><strong>Status: </strong>' + response['info'][7] + '</div><div class="text">' + response['info'][8] + '</div></div>')                        
+                  }                  
 
                   $("#infos").append('<div class="blank_space">&nbsp;</div>');
                   $("#infos").append('<div class="sucess-msg"></div>');
