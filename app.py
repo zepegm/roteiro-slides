@@ -102,7 +102,7 @@ def index():
         socketio.emit('refresh', 1)
 
     listaPPT = executarConsultaLista('Roteiro.db')
-    return render_template('index.jinja', listaPPT=listaPPT, total=len(listaPPT))
+    return render_template('index.jinja', listaPPT=listaPPT, total=len(listaPPT), menu=0)
 
 
 @app.route('/proximoSlide', methods=['GET', 'POST'])
@@ -194,15 +194,15 @@ def abrirbiblia():
             # registrar no log
             inserirDadosBasico(historico, "insert into log values (datetime('now', 'localtime'), '" + livro + ' - ' + '{0:03}'.format(int(capitulo)) + ".pptx', 1, " + eNoturno(noturno) + ", '" + livro + ', cap. ' + capitulo + " - " + versao + "', 1)")
             status = '<div class="alert alert-success alert-dismissible fade show" role="alert">Arquivo aberto com <strong>sucesso!</strong><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
-            return render_template('biblia.jinja', status=status, livro=request.form['livro'], capitulo=capitulo, versao=versao, noturno=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Noturno'")[0], rapido=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Rapido'")[0], versiculo=versiculo, sucesso='ok', consultaBD=consultaBD)
+            return render_template('biblia.jinja', status=status, livro=request.form['livro'], capitulo=capitulo, versao=versao, noturno=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Noturno'")[0], rapido=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Rapido'")[0], versiculo=versiculo, sucesso='ok', consultaBD=consultaBD, menu=1)
 
         else:
             # registrar no log
             inserirDadosBasico(historico, "insert into log values (datetime('now', 'localtime'), '" + livro + ' - ' + '{0:03}'.format(int(capitulo)) + ".pptx', 1, " + eNoturno(noturno) + ", '" + livro + ', cap. ' + capitulo + " - " + versao + "', 2)")
             status = '<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Atenção!</strong> Esse capítulo não existe ou você tentou abrir um slide da <strong>ARA</strong> que está incompleta.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
-            return render_template('biblia.jinja', status=status, livro=request.form['livro'], capitulo=capitulo, versao=versao, noturno=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Noturno'")[0], rapido=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Rapido'")[0], versiculo=versiculo, sucesso='', consultaBD='')
+            return render_template('biblia.jinja', status=status, livro=request.form['livro'], capitulo=capitulo, versao=versao, noturno=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Noturno'")[0], rapido=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Rapido'")[0], versiculo=versiculo, sucesso='', consultaBD='', menu=1)
 
-    return render_template('biblia.jinja', status='', corstatus='', livro='', capitulo='', versao='', noturno=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Noturno'")[0], rapido=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Rapido'")[0], versiculo='', sucesso='', consultaBD='')
+    return render_template('biblia.jinja', status='', corstatus='', livro='', capitulo='', versao='', noturno=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Noturno'")[0], rapido=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Biblia' and configuration = 'Rapido'")[0], versiculo='', sucesso='', consultaBD='', menu=1)
     
 
 @app.route('/abrirharpa', methods=['GET', 'POST'])
@@ -267,10 +267,10 @@ def abrirharpa():
                 status = '<div class="alert alert-success alert-dismissible fade show" role="alert">Hino <strong>' + resultado[0:-2] + '</strong> aberto com sucesso!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
             elif sucesso > 1:
                 status = '<div class="alert alert-success alert-dismissible fade show" role="alert">Hinos <strong>' + resultado[0:-2] + '</strong> abertos com sucesso!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
-            return render_template('harpa.jinja', listahinos=listahinos, status=status, noturno=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Harpa' and configuration = 'Noturno'")[0])
+            return render_template('harpa.jinja', listahinos=listahinos, status=status, noturno=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Harpa' and configuration = 'Noturno'")[0], menu=2)
 
 
-    return render_template('harpa.jinja', listahinos=listahinos, status='', corstatus='', noturno=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Harpa' and configuration = 'Noturno'")[0])
+    return render_template('harpa.jinja', listahinos=listahinos, status='', corstatus='', noturno=executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'Harpa' and configuration = 'Noturno'")[0], menu=2)
 
 @app.route('/abrirslidemusica', methods=['GET', 'POST'])
 def abrirNewMusica():
@@ -358,7 +358,7 @@ def abrirNewMusica():
     musicas.sort(key=lambda t: (locale.strxfrm(t['nome_arquivo'])))
     #print(musicas)
 
-    return render_template('newMusicas.jinja', cat1=cat1, cat2=cat2, cat3=cat3, cat4=cat4, musicas=musicas, msg=msg)
+    return render_template('newMusicas.jinja', cat1=cat1, cat2=cat2, cat3=cat3, cat4=cat4, musicas=musicas, msg=msg, menu=3, menu_l="#")
 
 
 @app.route('/adm_musicas', methods=['GET', 'POST'])
@@ -427,13 +427,13 @@ def acessarAreaADM():
                 
                 list_db.sort(key=lambda t: (locale.strxfrm(t['nome_arquivo'])))
 
-                return render_template('area_adm_musicas.jinja', msg=msg, erro=erro, novos_arquivos=novos_arquivos, arquivos_faltando=arquivos_faltando, categoria=categoria, status=status, list_db=list_db)
+                return render_template('area_adm_musicas.jinja', msg=msg, erro=erro, novos_arquivos=novos_arquivos, arquivos_faltando=arquivos_faltando, categoria=categoria, status=status, list_db=list_db, menu=3, menu_l="../abrirslidemusica")
                 
 
             else:
                 erro = '<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Senha incorreta!</strong> Acesso negado!<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>'
 
-    return render_template('area_adm_musicas.jinja', msg=msg, erro=erro, novos_arquivos=novos_arquivos)
+    return render_template('area_adm_musicas.jinja', msg=msg, erro=erro, novos_arquivos=novos_arquivos, menu=3, menu_l="../abrirslidemusica")
 
 @app.route('/old_musica', methods=['GET', 'POST'])
 def abrirslidemusica():
@@ -527,7 +527,7 @@ def apresentador():
         
     listaSlideShow = pegarSlideShow(True)
     index = pegarIndexSlideshow()
-    return render_template('apresentador.jinja', listaSlideShow=listaSlideShow, index=index)
+    return render_template('apresentador.jinja', listaSlideShow=listaSlideShow, index=index, menu=4)
 
 @app.route('/proxPRS', methods=['GET', 'POST'])
 def proxPRS():
@@ -748,10 +748,10 @@ def receberView():
                 else:
                     mensagem = '<span class="text-primary">Total de ' + str(len(resultados)) + ' resultados!</span>'
 
-                return render_template('viewerMusicas.jinja', pesquisa=pesquisaLimpa, resultados=resultados, mensagem=mensagem, total=len(resultados))
+                return render_template('viewerMusicas.jinja', pesquisa=pesquisaLimpa, resultados=resultados, mensagem=mensagem, total=len(resultados), menu=5)
 
 
-            return render_template('viewerMusicas.jinja', pesquisa='', resultados=None)
+            return render_template('viewerMusicas.jinja', pesquisa='', resultados=None, menu=5)
 
         # isso aqui é para a harpa
         if request.args['destino'] == 'harpa':
@@ -771,7 +771,7 @@ def receberView():
                 else:
                     mensagem = '<span class="text-primary">Total de ' + str(total) + ' resultados!</span>'
 
-                return render_template('viewerHarpa.jinja', harpa=None, pesquisa=resultados, txtPesquisa=request.form['pesquisa'], mensagem=mensagem, total=total)
+                return render_template('viewerHarpa.jinja', harpa=None, pesquisa=resultados, txtPesquisa=request.form['pesquisa'], mensagem=mensagem, total=total, menu=5)
 
 
             # caso seja uma consulta padrão sem pesquisa
@@ -783,7 +783,7 @@ def receberView():
             else:
                 resultHarpa = consultarHarpaBD(401, 640)
 
-            return render_template('viewerHarpa.jinja', harpa=resultHarpa, pagina=pagina, pesquisa=None, txtPesquisa='', mensagem=None, total=None)
+            return render_template('viewerHarpa.jinja', harpa=resultHarpa, pagina=pagina, pesquisa=None, txtPesquisa='', mensagem=None, total=None, menu=5)
 
     # ele não vai pra Bíblia caso a última págin de visita seja outra
     visita = executarConsulta("Roteiro.db", "select valor from Config where Pagina = 'View' and configuration = 'visita'")[0]
@@ -809,7 +809,7 @@ def receberView():
                 else:
                     alterarConfigViewBiblia('Roteiro.db', capitulo, 'viewBiblia', livro)
 
-                return render_template('viewer.jinja', consultaBD=consultaBD, consultaPesquisa=None, txtPesquisa='', livro=livro, capitulo=capitulo, mensagem=None, pagina=1)
+                return render_template('viewer.jinja', consultaBD=consultaBD, consultaPesquisa=None, txtPesquisa='', livro=livro, capitulo=capitulo, mensagem=None, pagina=1, menu=5)
         elif 'pesquisa' in request.form:
             pesquisa = '%' + str(request.form['pesquisa']).lower().replace('%', '').replace(' ', '%').replace('á','_').replace('à','_').replace('â','_').replace('ã','_').replace('é','_').replace('ê','_').replace('í','_').replace('ó','_').replace('ô','_').replace('õ','_').replace('ú','_').replace('ç','_') + '%'
             pagina = int(request.form['paginaInicial']) * 100 - 100
@@ -855,9 +855,9 @@ def receberView():
                 msg = 'Resultados da pesquisa: ' + str(pagina + 1) + ' de ' + str(pagina + len(resultados)) + ' <span class="text-danger">(total de ' + str(total) + ' resultados!)</span>'
             totalPaginas = ceil(total/100)
 
-            return render_template('viewer.jinja', consultaBD=None, consultaPesquisa=resultados, total=total, txtPesquisa=request.form['pesquisa'], msg=msg, cor=cor, livro=livro, capitulo=str(capitulo), mensagem=None, pagina=int(request.form['paginaInicial']), totalPaginas=totalPaginas)
+            return render_template('viewer.jinja', consultaBD=None, consultaPesquisa=resultados, total=total, txtPesquisa=request.form['pesquisa'], msg=msg, cor=cor, livro=livro, capitulo=str(capitulo), mensagem=None, pagina=int(request.form['paginaInicial']), totalPaginas=totalPaginas, menu=5)
 
-    return render_template('viewer.jinja', consultaBD=executarConsultaBibliaFormat('BibliaFormat.db', livro, str(capitulo)), consultaPesquisa=None, txtPesquisa='' , livro=livro, capitulo=str(capitulo), mensagem=None, pagina=1)
+    return render_template('viewer.jinja', consultaBD=executarConsultaBibliaFormat('BibliaFormat.db', livro, str(capitulo)), consultaPesquisa=None, txtPesquisa='' , livro=livro, capitulo=str(capitulo), mensagem=None, pagina=1, menu=5)
 
 @app.route('/abrirSlideExternamente', methods=['GET', 'POST'])
 def abrirSlideExternamente():
@@ -965,15 +965,15 @@ def obs():
                 sql = 'update OBS set Apresentacao = "' + filename + '"'
                 inserirDadosBasico('Roteiro.db', sql)
                 #obs_file = filename
-                return render_template('viewerOBS.jinja', filename=filename, txt1='Imagem de Apresentação', txt2='Legenda', txt3='../calendar')
+                return render_template('viewerOBS.jinja', filename=filename, txt1='Imagem de Apresentação', txt2='Legenda', txt3='../calendar', menu=6)
 
     filename = executarConsulta('Roteiro.db', 'select Apresentacao from OBS')[0]
     #print(filename)
     config = int(executarConsulta('Roteiro.db', 'select config from OBS')[0])
     if config == 0:
-        return render_template('viewerOBS.jinja', txt1='Legenda', txt2='Imagem de Apresentação', txt3='../subtitle', filename=filename) 
+        return render_template('viewerOBS.jinja', txt1='Legenda', txt2='Imagem de Apresentação', txt3='../subtitle', filename=filename, menu=6) 
     else:
-        return render_template('viewerOBS.jinja', txt1='Imagem de Apresentação', txt2='Legenda', txt3='../calendar', filename=filename)
+        return render_template('viewerOBS.jinja', txt1='Imagem de Apresentação', txt2='Legenda', txt3='../calendar', filename=filename, menu=6)
 
 
 @app.route('/alterar_config_obs', methods=['GET', 'POST'])
@@ -1075,7 +1075,7 @@ def novo_evento():
     catMusica = executarConsultaGeral(historico, 'select * from Departamento')
     formaMusical = executarConsultaGeral(historico, 'select * from [Forma Musical]')
 
-    return render_template('cadastroEvento.jinja', temas=temas, data=data, lista=lista, eventos=eventos, catBiblia=catBiblia, catMusica=catMusica, formaMusical=formaMusical, msg=msg)
+    return render_template('cadastroEvento.jinja', temas=temas, data=data, lista=lista, eventos=eventos, catBiblia=catBiblia, catMusica=catMusica, formaMusical=formaMusical, msg=msg, menu=7, submenu=True)
 
 @app.route('/estatisticas', methods=['GET', 'POST'])
 def estatisticas():
@@ -1101,7 +1101,7 @@ def estatisticas():
     musica = executarConsultaGeral(historico, 'select Nome, count(Nome) as total from evento_roteiro where evento = 3 group by Nome order by total desc limit 0, 10')
     harpa = executarConsultaGeral(historico, 'select Nome, count(Nome) as total from evento_roteiro where evento = 2 group by Nome order by total desc limit 0, 10')
     anos = executarConsultaGeral(historico, "select distinct strftime('%Y', Data) as ano from Roteiro order by ano desc")
-    return render_template('estatisticas.jinja', biblia=biblia, musica=musica, harpa=harpa, anos=anos)
+    return render_template('estatisticas.jinja', biblia=biblia, musica=musica, harpa=harpa, anos=anos, menu=7)
 
 @app.route('/eventos', methods=['GET', 'POST'])
 def eventos():
@@ -1162,7 +1162,7 @@ def eventos():
                 
                 dicionario.append(evt)
             
-            return render_template('visualizarEvento.jinja', lista=dicionario, total=total, pagina=pagina, datas=datas, temas=temas, atividades=atividades, catBiblia=catBiblia, departamentos=departamentos, musical=musical, perPage=10, origem=origem)
+            return render_template('visualizarEvento.jinja', menu=7, lista=dicionario, total=total, pagina=pagina, datas=datas, temas=temas, atividades=atividades, catBiblia=catBiblia, departamentos=departamentos, musical=musical, perPage=10, origem=origem)
 
     sql = r'select Roteiro.id, strftime("%d/%m/%Y", data) as data, Tema.descricao, obs, url from Roteiro, Tema where Roteiro.tema = Tema.id order by Roteiro.data desc, Roteiro.id desc LIMIT ' + str(pagina * 10 - 10) + ', 10'
     #print(sql)
@@ -1188,11 +1188,11 @@ def eventos():
 
     origem = {'nome':'', 'evento':0, 'atividade':0, 'categoria':0, 'departamento':0, 'musica':0, 'pesquisa':False}
     #print(datas)
-    return render_template('visualizarEvento.jinja', lista=dicionario, total=total, pagina=pagina, datas=datas, temas=temas, atividades=atividades, catBiblia=catBiblia, departamentos=departamentos, musical=musical, perPage=10, origem=origem)
+    return render_template('visualizarEvento.jinja', menu=7, lista=dicionario, total=total, pagina=pagina, datas=datas, temas=temas, atividades=atividades, catBiblia=catBiblia, departamentos=departamentos, musical=musical, perPage=10, origem=origem)
 
 @app.route('/sobre', methods=['GET', 'POST'])
 def sobre():
-    return render_template('sobre.html')
+    return render_template('sobre.html', menu=9)
 
 @app.route('/download_mp3', methods=['GET', 'POST'])
 def download_mp3():
@@ -1201,7 +1201,7 @@ def download_mp3():
             try:
                 if request.form['url'] == 'hook':
                     exibirTabela()
-                    return render_template('youtubeMP3.jinja', msg='Comando secreto ativado! Iniciando interface gráfica de "Hook"')
+                    return render_template('youtubeMP3.jinja', msg='Comando secreto ativado! Iniciando interface gráfica de "Hook"', menu=8)
                 
                 if request.form['opcao'] == '1':
                     caminho = youtube.downloadMP3(request.form['url'])
@@ -1211,9 +1211,9 @@ def download_mp3():
                 
                 return send_file(caminho['caminho'], as_attachment=True, download_name=caminho['nome'])
             except:
-                return render_template('youtubeMP3.jinja', msg='Erro! URL inválida ou erro no sistema, por favor tente novamente.')
+                return render_template('youtubeMP3.jinja', msg='Erro! URL inválida ou erro no sistema, por favor tente novamente.', menu=8)
     
-    return render_template('youtubeMP3.jinja', msg='')
+    return render_template('youtubeMP3.jinja', msg='', menu=8)
 
 @app.route('/pegarProgressoDownload', methods=['GET', 'POST'])
 def pegarProgressoDownload():
