@@ -1,0 +1,87 @@
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <div class="container-fluid">
+        {% if menu == 0 %}
+        <a class="navbar-brand" href="#">
+        {% else %}
+        <a class="navbar-brand" href="{{ url_for('index') }}">
+        {% endif %}
+            <img src="{{ url_for('static', filename='images/Logo ADCPTA.png') }}" width="25" height="30" class="d-inline-block align-top" alt="">
+            Roteiro
+        </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav me-auto mb-2 mb-md-0">
+          <li class="nav-item">
+            {% if menu == 1 %}
+            <a class="nav-link active" href="#"><i class="fa-solid fa-book-bible">&nbsp;</i>Abrir Bíblia</a>
+            {% else %}
+            <a class="nav-link" href="../abrirbiblia"><i class="fa-solid fa-book-bible">&nbsp;</i>Abrir Bíblia</a>
+            {% endif %}
+          </li>
+          <li class="nav-item">
+            {% if menu == 2 %}
+            <a class="nav-link active" href="#"><i class="fa-solid fa-guitar">&nbsp;</i>Abrir Harpa</a>
+            {% else %}
+            <a class="nav-link" href="../abrirharpa"><i class="fa-solid fa-guitar">&nbsp;</i>Abrir Harpa</a>
+            {% endif %}
+          </li>
+          <li class="nav-item">
+            {% if menu == 3 %}
+            <a class="nav-link active" href="{{menu_l}}"><i class="fa-solid fa-music">&nbsp;</i>Músicas</a>
+            {% else %}
+            <a class="nav-link" href="../abrirslidemusica"><i class="fa-solid fa-music">&nbsp;</i>Músicas</a>
+            {% endif %}
+          </li>  
+          <li class="nav-item">
+            {% if menu == 4 %}
+            <a class="nav-link active" href="#"><i class="fa-solid fa-file-powerpoint">&nbsp;</i>Apresentador</a>
+            {% else %}
+            <a class="nav-link" href="../apresentador"><i class="fa-solid fa-file-powerpoint">&nbsp;</i>Apresentador</a>
+            {% endif %}
+          </li>
+          <li class="nav-item">
+            {% if menu == 5 %}
+            <a class="nav-link active" href="#"><i class="fa-solid fa-magnifying-glass">&nbsp;</i>Visualizador</a>
+            {% else %}
+            <a class="nav-link" href="../viewer"><i class="fa-solid fa-magnifying-glass">&nbsp;</i>Visualizador</a>
+            {% endif %}
+          </li>  
+          <li class="nav-item">
+            {% if menu == 6 %}
+            <a class="nav-link active" href="#"><i class="fa-solid fa-video">&nbsp;</i>OBS</a>
+            {% else %}
+            <a class="nav-link" href="../obs"><i class="fa-solid fa-video">&nbsp;</i>OBS</a>
+            {% endif %}
+          </li>                              
+          <li class="nav-item">
+            {% if menu == 7 %}
+              {% if submenu %}
+              <a class="nav-link active" href="../eventos"><i class="fa-solid fa-file-lines">&nbsp;</i>Eventos</a>
+              {% else %}
+              <a class="nav-link active" href="#"><i class="fa-solid fa-file-lines">&nbsp;</i>Eventos</a>
+              {% endif %}
+            {% else %}
+            <a class="nav-link" href="../eventos"><i class="fa-solid fa-file-lines">&nbsp;</i>Eventos</a>
+            {% endif %}
+          </li>          
+          <li class="nav-item">
+            {% if menu == 8 %}
+            <a class="nav-link active" href="#"><i class="fa-brands fa-youtube">&nbsp;</i>YouTube - MP3</a>
+            {% else %}
+            <a class="nav-link" href="../download_mp3"><i class="fa-brands fa-youtube">&nbsp;</i>YouTube - MP3</a>
+            {% endif %}
+          </li>          
+          <li class="nav-item">
+            {% if menu == 9 %}
+            <a class="nav-link active" href="#"><i class="fa-solid fa-circle-info">&nbsp;</i>Sobre</a>
+            {% else %}
+            <a class="nav-link" href="../sobre"><i class="fa-solid fa-circle-info">&nbsp;</i>Sobre</a>
+            {% endif %}
+          </li>
+          <li class="nav-item"></li>
+        </ul>
+      </div>
+    </div>
+  </nav>

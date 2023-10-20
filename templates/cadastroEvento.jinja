@@ -21,11 +21,15 @@
       }
     </style>
 
+    <link href="{{ url_for('static', filename='stylesheets/navbar-top-fixed.css') }}" rel="stylesheet">   
+    {% include 'font-awesome.html '%}
     <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/Logo Colorido.png') }}">
   </head>
   
   <body style="background-color: rgba(248, 249, 250, 0.726);">
     
+  {% include 'menu.html' %}
+
 <main class="container">
   <form action="" method="post" autocomplete="off">
     {% if msg != None %}
