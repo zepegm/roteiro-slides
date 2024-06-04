@@ -91,3 +91,4 @@ dmypy.json
 # Pyre type checker
 .pyre/
 Roteiro.db
+static/harpa.pdf
